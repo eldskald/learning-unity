@@ -69,6 +69,7 @@ Shader "Custom/CelShader" {
             #pragma target 3.0
 
             #define FORWARD_BASE_PASS // Define to be read by the include file.
+            #pragma multi_compile _ SHADOWS_SCREEN
 
             #include "CelShadedLighting.cginc"
 
@@ -111,5 +112,14 @@ Shader "Custom/CelShader" {
 
             ENDCG
         }
+
+        // Unity's shadow built-in caster pass. If you want to understand it in detail,
+        // I recommend Catlike's https://catlikecoding.com/unity/tutorials/rendering/
+        // tutorial. It explains how shadows are rendered in detail, as well as makes
+        // its own shadow caster pass for you to better understand it. Unity's own
+        // documentation also explains how to quickly implement shadows without going
+        // into detail on how they work on this page here:
+        // https://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html
+        UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
     }
 }

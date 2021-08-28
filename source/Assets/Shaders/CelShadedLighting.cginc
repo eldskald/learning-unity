@@ -8,8 +8,8 @@
 #pragma vertex vert
 #pragma fragment frag
 
-#include "AutoLight.cginc"
 #include "UnityPBSLighting.cginc"
+#include "AutoLight.cginc"
 
 fixed4 _Color;
 sampler2D _MainTex;
@@ -38,20 +38,22 @@ struct MeshData {
 };
 
 struct Interpolators {
-    float4 vertex : SV_POSITION;
+    float4 pos : SV_POSITION;
     float2 uv : TEXCOORD0;
     float3 normal : TEXCOORD1;
     float3 worldPos : TEXCOORD2;
     float3 worldViewDir : TEXCOORD3;
+    SHADOW_COORDS(4)
 };
 
-Interpolators vert (MeshData v) {
+Interpolators vert (MeshData i) {
     Interpolators o;
-    o.vertex = UnityObjectToClipPos(v.vertex);
-    o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-    o.normal = UnityObjectToWorldNormal(v.normal);
-    o.worldPos = mul(unity_ObjectToWorld, v.vertex);
+    o.pos = UnityObjectToClipPos(i.vertex);
+    o.uv = TRANSFORM_TEX(i.uv, _MainTex);
+    o.normal = UnityObjectToWorldNormal(i.normal);
+    o.worldPos = mul(unity_ObjectToWorld, i.vertex);
     o.worldViewDir = normalize(_WorldSpaceCameraPos - o.worldPos);
+    TRANSFER_SHADOWS(o)
     return o;
 }
 
@@ -106,7 +108,7 @@ LightData GetLight (Interpolators i) {
         light.dir = _WorldSpaceLightPos0.xyz;
     #endif
     
-    UNITY_LIGHT_ATTENUATION(atten, 0, i.worldPos);
+    UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
     light.attenuation = atten;
     light.color = _LightColor0.rgb;
     return light;
