@@ -193,3 +193,4 @@ Received Import Request.
 Start importing Assets/Shaders/CelShader.shader using Guid(5fa4b24ad6d41b6ddb8d7e66a202e34f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '095eacb04d895171aee0dd24614a5a2e') in 0.001119 seconds 
   Import took 0.004699 seconds .
 
+AssetImportWorkerClient::OnTransportError - code=2 error=End of file

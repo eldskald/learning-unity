@@ -64,7 +64,7 @@ Shader "Custom/CelShader" {
         Pass {
             Tags { "LightMode" = "ForwardBase" }
 
-            CGPROGRAM //ahdflkjadfhalsdkjfhakj
+            CGPROGRAM
 
             #pragma target 3.0
 
