@@ -154,3 +154,42 @@ AssetImportParameters requested are different than current active one (requested
   custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
   custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  path: Assets/Shaders/CelShadedLighting.cginc
+  artifactKey: Guid(12dd4b04962535b5593540ab5f86e982) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Shaders/CelShadedLighting.cginc using Guid(12dd4b04962535b5593540ab5f86e982) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '093462ebb8046bebb6583e333501c768') in 0.011825 seconds 
+  Import took 0.015113 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 6.052674 seconds.
+  path: Assets/Shaders/CelShader.shader
+  artifactKey: Guid(5fa4b24ad6d41b6ddb8d7e66a202e34f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Shaders/CelShader.shader using Guid(5fa4b24ad6d41b6ddb8d7e66a202e34f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '79f2de0c67c54f86289c431c65ad32ed') in 0.002058 seconds 
+  Import took 0.006776 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000900 seconds.
+  path: Assets/Shaders/CelShader.shader
+  artifactKey: Guid(5fa4b24ad6d41b6ddb8d7e66a202e34f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Shaders/CelShader.shader using Guid(5fa4b24ad6d41b6ddb8d7e66a202e34f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '79f2de0c67c54f86289c431c65ad32ed') in 0.001448 seconds 
+  Import took 0.004614 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 41.440101 seconds.
+  path: Assets/Shaders/CelShader.shader
+  artifactKey: Guid(5fa4b24ad6d41b6ddb8d7e66a202e34f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Shaders/CelShader.shader using Guid(5fa4b24ad6d41b6ddb8d7e66a202e34f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '095eacb04d895171aee0dd24614a5a2e') in 0.000916 seconds 
+  Import took 0.003310 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000737 seconds.
+  path: Assets/Shaders/CelShader.shader
+  artifactKey: Guid(5fa4b24ad6d41b6ddb8d7e66a202e34f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Shaders/CelShader.shader using Guid(5fa4b24ad6d41b6ddb8d7e66a202e34f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '095eacb04d895171aee0dd24614a5a2e') in 0.001119 seconds 
+  Import took 0.004699 seconds .
+
