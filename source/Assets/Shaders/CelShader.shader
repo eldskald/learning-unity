@@ -15,7 +15,6 @@ Shader "Custom/CelShader" {
         // Specular highlight properties. Set specular to zero to turn off the
         // effect. The texture map uses the red channel for the specular value,
         // green for amount and blue for smoothness.
-        [Header(Specular Highlight)]
         _Specular ("Specular", Range(0, 1)) = 0.5
         _SpecularAmount ("Specular Amount", Range(0, 1)) = 0.5
         _SpecularSmooth ("Specular Smoothness", Range(0, 1)) = 0.05
@@ -24,21 +23,10 @@ Shader "Custom/CelShader" {
         // Rim highlight properties. Set rim to zero to turn off the effect.
         // The texture map uses the red channel for the rim value, green for
         // rim amount and blue for smoothness.
-        [Header(Rim Highlight)]
         _Rim ("Rim", Range(0, 1)) = 0.5
         _RimAmount ("Rim Amount", Range(0, 1)) = 0.2
         _RimSmooth ("Rim Smoothness", Range(0, 1)) = 0.05
         [NoScaleOffset] _RimMap ("Rim Map", 2D) = "white" {}
-
-        // Outline properties. Set thickness to zero to turn it off.
-        [Header(Outline)]
-        _OutlineThickness ("Outline Thickness", Float) = 2
-        _OutlineColor ("Outline Color", Color) = (0,0,0,1)
-
-        // Emission properties. Keep it at black to turn off the effect.
-        [Header(Emission)]
-        [HDR] _Emission ("Emission", Color) = (0,0,0,1)
-        [NoScaleOffset] _EmissionMap ("Emission Map", 2D) = "white" {}
 
         // Reflections properties. A reflectivity of zero means only ambient
         // light is added, while a reflectivity of one means only reflections
@@ -49,10 +37,25 @@ Shader "Custom/CelShader" {
         // to add reflection probes on the scene as well. Keep in mind they are
         // an imperfect approximation, so if you want a perfect and flat mirror,
         // there are better methods of doing so.
-        [Header(Reflections)]
         _Reflectivity ("Reflectivity", Range(0, 1)) = 0
         _Blurriness ("Blurriness", Range(0, 1)) = 0
-        [NoScaleOffset] _ReflectionsMap ("Reflectivity Map", 2D) = "white" {}
+        [NoScaleOffset] _ReflectionsMap ("Reflections Map", 2D) = "white" {}
+
+        // Outline properties.
+        _OutlineThickness ("Outline Thickness", Float) = 3
+        _OutlineColor ("Outline Color", Color) = (0,0,0,1)
+
+        // Emission properties.
+        [HDR] _Emission ("Emission", Color) = (0,0,0,1)
+        [NoScaleOffset] _EmissionMap ("Emission Map", 2D) = "white" {}
+
+        // Normal map properties.
+        [NoScaleOffset] [Normal] _BumpMap ("Normal Map", 2D) = "bump" {}
+        _BumpScale ("Bump Scale", Float) = 1
+
+        // Occlusion properties.
+        [NoScaleOffset] _OcclusionMap ("Occlusion Map", 2D) = "white" {}
+        _OcclusionScale ("Occlusion Scale", Range(0, 1)) = 1
     }
 
     SubShader {
@@ -70,6 +73,10 @@ Shader "Custom/CelShader" {
 
             #define FORWARD_BASE_PASS // Define to be read by the include file.
             #pragma multi_compile _ SHADOWS_SCREEN
+            #pragma shader_feature _REFLECTIONS_ENABLED
+            #pragma shader_feature _EMISSION_ENABLED
+            #pragma shader_feature _BUMPMAP_ENABLED
+            #pragma shader_feature _OCCLUSION_ENABLED
 
             #include "CelShadedLighting.cginc"
 
@@ -88,7 +95,9 @@ Shader "Custom/CelShader" {
             CGPROGRAM
 
             #pragma target 3.0
-            #pragma multi_compile_fwdadd
+
+            #pragma multi_compile_fwdadd_fullshadows
+            #pragma shader_feature _BUMPMAP_ENABLED
             
             #include "CelShadedLighting.cginc"
 
@@ -99,7 +108,7 @@ Shader "Custom/CelShader" {
         // processing one in order for the outlines to show up on reflections,
         // refractions and other possible things.
         Pass {
-            Tags { "ForceNoShadowCasting" = "True" }
+            Tags { "LightMode" = "Always" }
             
             Cull Front
             ZWrite Off
@@ -122,4 +131,7 @@ Shader "Custom/CelShader" {
         // https://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html
         UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
     }
+
+    // Assigning our custom GUI for this shader. It's on Assets/Scripts/CelShaderGUI.cs.
+    CustomEditor "CelShaderGUI"
 }

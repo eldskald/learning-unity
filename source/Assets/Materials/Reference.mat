@@ -7,16 +7,15 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TestMaterial
-  m_Shader: {fileID: 4800000, guid: b135ffbb334b83a43a549f4d7e9fdd5b, type: 3}
-  m_ShaderKeywords: _EMISSION_MAP _OUTLINETOGGLE_ON _OUTLINE_ENABLED
+  m_Name: Reference
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses:
-  - OutlinePass
+  disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -48,10 +47,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _NormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -60,55 +55,24 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _ReflectionsMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _RimMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SpecularMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Blurriness: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DiffuseSmooth: 0.02
     - _DstBlend: 0
-    - _EmissionEnabled: 0
-    - _EmissionToggle: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NormalMapToggle: 0
-    - _OcclusionScale: 1
     - _OcclusionStrength: 1
-    - _OutlineThickness: 3
-    - _OutlineToggle: 1
     - _Parallax: 0.02
-    - _ReflectionsEnabled: 0
-    - _ReflectionsToggle: 0
-    - _Reflectivity: 0
-    - _Rim: 0.5
-    - _RimAmount: 0.3
-    - _RimSmooth: 0.05
     - _SmoothnessTextureChannel: 0
-    - _Specular: 0.5
-    - _SpecularAmount: 0.5
     - _SpecularHighlights: 1
-    - _SpecularSmooth: 0.05
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.4862745, g: 0.1764706, b: 0.6117647, a: 1}
-    - _Emission: {r: 0, g: 0, b: 0, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []

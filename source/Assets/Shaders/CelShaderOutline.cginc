@@ -32,7 +32,7 @@ Interpolators vert (MeshData v) {
     // We multiply it by thickness over screen size to keep thickness constant
     // over distance.
     clipPos.xy += normalize(clipNormal.xy) / _ScreenParams.xy
-        * clipPos.w * _OutlineThickness * 2.0;
+        * clipPos.w * _OutlineThickness * 2;
     o.position = clipPos;
     return o;
 }
