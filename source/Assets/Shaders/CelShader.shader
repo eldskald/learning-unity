@@ -53,9 +53,30 @@ Shader "Custom/CelShader" {
         [NoScaleOffset] [Normal] _BumpMap ("Normal Map", 2D) = "bump" {}
         _BumpScale ("Bump Scale", Float) = 1
 
-        // Occlusion properties.
+        // Height map properties. Don't forget that this is a cel shader, which
+        // is supposed to minimize details. Given how lighting is mostly uniform
+        // throughout the surface, you might not see a lot of changes from using
+        // detailed height maps, but the effect is still heavy on the GPU, so use
+        // it with care. There are many techniques on how to do this. More details
+        // on the CelShadedLighting.cginc file where it's calculated.
+        [NoScaleOffset] _ParallaxMap ("Height Map", 2D) = "black" {}
+        _ParallaxScale ("Offset Scale", Range(0, 1)) = 0.5
+
+        // Occlusion properties. Again, don't forget that this is a cel shader.
+        // A traditional photo-realistic occlusion map from a texture might not
+        // look ideal. It will work and do it's thing, but a 2D cartoon style
+        // doesn't look like that. Use maps with more defined zones, much like
+        // the ones created by the diffuse of this shader, with either white or
+        // black zones, but not much grey. For exemple, you can use it to darken
+        // the interior of a barrel. But eh, it's your game, who am I to tell
+        // you how it should look like? Just my opinion on how to maximize this
+        // shader in particular.
         [NoScaleOffset] _OcclusionMap ("Occlusion Map", 2D) = "white" {}
         _OcclusionScale ("Occlusion Scale", Range(0, 1)) = 1
+
+        // Anisotropy properties.
+        [NoScaleOffset] _AnisoFlowchart ("Anisotropy Flowchart", 2D) = "bump" {}
+        _AnisoScale ("Anisotropy Scale", Range(0, 1)) = 0.5
     }
 
     SubShader {
@@ -76,7 +97,9 @@ Shader "Custom/CelShader" {
             #pragma shader_feature _REFLECTIONS_ENABLED
             #pragma shader_feature _EMISSION_ENABLED
             #pragma shader_feature _BUMPMAP_ENABLED
+            #pragma shader_feature _PARALLAX_ENABLED
             #pragma shader_feature _OCCLUSION_ENABLED
+            #pragma shader_feature _ANISOTROPY_ENABLED
 
             #include "CelShadedLighting.cginc"
 
@@ -98,6 +121,8 @@ Shader "Custom/CelShader" {
 
             #pragma multi_compile_fwdadd_fullshadows
             #pragma shader_feature _BUMPMAP_ENABLED
+            #pragma shader_feature _PARALLAX_ENABLED
+            #pragma shader_feature _ANISOTROPY_ENABLED
             
             #include "CelShadedLighting.cginc"
 
@@ -122,7 +147,7 @@ Shader "Custom/CelShader" {
             ENDCG
         }
 
-        // Unity's shadow built-in caster pass. If you want to understand it in detail,
+        // Unity's built-in shadow caster pass. If you want to understand it in detail,
         // I recommend Catlike's https://catlikecoding.com/unity/tutorials/rendering/
         // tutorial. It explains how shadows are rendered in detail, as well as makes
         // its own shadow caster pass for you to better understand it. Unity's own

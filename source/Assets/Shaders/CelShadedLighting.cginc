@@ -30,11 +30,15 @@ fixed4 _Emission;
 sampler2D _EmissionMap;
 sampler2D _BumpMap;
 half _BumpScale;
+sampler2D _ParallaxMap;
+half _ParallaxScale;
 sampler2D _OcclusionMap;
 half _OcclusionScale;
+sampler2D _AnisoFlowchart;
+half _AnisoScale;
 
-// Vertex function and associated structs. We don't change geometry, so the
-// vertex function just creates the interpolators and passes them on.
+// Vertex function and associated structs. We don't change geometry, so it
+// just creates the interpolators and passes them on.
 struct MeshData {
     float4 vertex : POSITION;
     float2 uv : TEXCOORD0;
@@ -47,9 +51,10 @@ struct Interpolators {
     float2 uv : TEXCOORD0;
     float3 normal : TEXCOORD1;
     float4 tangent : TEXCOORD2;
-    float3 worldPos : TEXCOORD3;
-    float3 worldViewDir : TEXCOORD4;
-    SHADOW_COORDS(5)
+    float3 binormal : TEXCOORD3;
+    float3 worldPos : TEXCOORD4;
+    float3 worldViewDir : TEXCOORD5;
+    SHADOW_COORDS(6)
 };
 
 Interpolators vert (MeshData i) {
@@ -58,6 +63,8 @@ Interpolators vert (MeshData i) {
     o.uv = TRANSFORM_TEX(i.uv, _MainTex);
     o.normal = UnityObjectToWorldNormal(i.normal);
     o.tangent = float4(UnityObjectToWorldDir(i.tangent.xyz), i.tangent.z);
+    o.binormal = cross(o.normal, o.tangent.xyz) *
+        o.tangent.w * unity_WorldTransformParams.w;
     o.worldPos = mul(unity_ObjectToWorld, i.vertex);
     o.worldViewDir = normalize(_WorldSpaceCameraPos - o.worldPos);
     TRANSFER_SHADOW(o)
@@ -82,43 +89,67 @@ struct Surface {
     half blurriness;
     fixed3 emission;
     fixed occlusion;
+    fixed3 anisoFlowchart;
+    half anisoScale;
 };
 
 Surface GetSurface(Interpolators i) {
     Surface s;
-    s.albedo = _Color.rgb * tex2D(_MainTex, i.uv).rgb;
-    s.alpha = _Color.a * tex2D(_MainTex, i.uv).a;
-    s.specular = _Specular * tex2D(_SpecularMap, i.uv).r;
-    s.specularAmount = _SpecularAmount * tex2D(_SpecularMap, i.uv).g;
-    s.specularSmooth = _SpecularSmooth * tex2D(_SpecularMap, i.uv).b;
-    s.rim = _Rim * tex2D(_RimMap, i.uv).r;
-    s.rimAmount = _RimAmount * tex2D(_RimMap, i.uv).g;
-    s.rimSmooth = _RimSmooth * tex2D(_RimMap, i.uv).b;
+    float2 uv = i.uv;
+
+    // Just like I did in the Godot version, I took the built in algorithm used
+    // by the engine for parallax. Unity's ParallaxOffset function is available
+    // on UnityCG.cginc and you can see it if you want, it's a much simpler version
+    // than Godot's deep parallax algorithm. I tried translating Godot's code but
+    // the compiler complained about the while loop, saying it wouldn't finish in
+    // a timely manner, so we're stuck with Unity's much simpler (yet useful) one.
+    // Catlike Coding has a very good tutorial with a different method as well, you
+    // can check it at https://catlikecoding.com/unity/tutorials/rendering/part-20/
+    #if defined(_PARALLAX_ENABLED)
+        float3 tangentViewDir = normalize(float3(
+            dot(i.worldViewDir, normalize(i.tangent.xyz)),
+            dot(i.worldViewDir, normalize(i.binormal)),
+            dot(i.worldViewDir, normalize(i.normal))));
+        half height = tex2D(_ParallaxMap, uv).r;
+        uv += ParallaxOffset(height, _ParallaxScale / 12.5, tangentViewDir);
+    #endif
+
+    s.albedo = _Color.rgb * tex2D(_MainTex, uv).rgb;
+    s.alpha = _Color.a * tex2D(_MainTex, uv).a;
+    s.specular = _Specular * tex2D(_SpecularMap, uv).r;
+    s.specularAmount = _SpecularAmount * tex2D(_SpecularMap, uv).g;
+    s.specularSmooth = _SpecularSmooth * tex2D(_SpecularMap, uv).b;
+    s.rim = _Rim * tex2D(_RimMap, uv).r;
+    s.rimAmount = _RimAmount * tex2D(_RimMap, uv).g;
+    s.rimSmooth = _RimSmooth * tex2D(_RimMap, uv).b;
 
     #if defined(_REFLECTIONS_ENABLED)
-        s.reflectivity = _Reflectivity * tex2D(_ReflectionsMap, i.uv).r;
-        s.blurriness = _Blurriness * tex2D(_ReflectionsMap, i.uv).g;
+        s.reflectivity = _Reflectivity * tex2D(_ReflectionsMap, uv).r;
+        s.blurriness = _Blurriness * tex2D(_ReflectionsMap, uv).g;
     #endif
 
     #if defined(_EMISSION_ENABLED)
-        s.emission = _Emission.rgb * tex2D(_EmissionMap, i.uv).rgb;
+        s.emission = _Emission.rgb * tex2D(_EmissionMap, uv).rgb;
     #endif
 
     #if defined(_BUMPMAP_ENABLED)
-        float3 binormal = cross(i.normal, i.tangent.xyz) *
-            i.tangent.w * unity_WorldTransformParams.w;
         fixed3 tangentNormal = UnpackScaleNormal(
-            tex2D(_BumpMap, i.uv), _BumpScale).xyz;
+            tex2D(_BumpMap, uv), _BumpScale).xyz;
         s.normal = normalize(
-            tangentNormal.x * i.tangent +
-            tangentNormal.y * binormal +
-            tangentNormal.z * i.normal);
+            tangentNormal.x * normalize(i.tangent.xyz) +
+            tangentNormal.y * normalize(i.binormal) +
+            tangentNormal.z * normalize(i.normal));
     #else
         s.normal = normalize(i.normal);
     #endif
 
     #if defined(_OCCLUSION_ENABLED)
-        s.occlusion = _OcclusionScale * tex2D(_OcclusionMap, i.uv).r;
+        s.occlusion = _OcclusionScale * tex2D(_OcclusionMap, uv).r;
+    #endif
+
+    #if defined(_ANISOTROPY_ENABLED)
+        s.anisoFlowchart = UnpackNormal(_AnisoFlowchart, uv).rgb;
+        s.anisoScale = tex2D(_AnisoFlowchart, uv).a * _AnisoScale;
     #endif
 
     return s;
@@ -164,10 +195,17 @@ half4 frag (Interpolators i) : SV_TARGET {
     // for glossiness and a smoothstep function to toonify. We do this math to
     // get glossiness to make changing specular blob size from the inspector smoother.
     // Most of the method is from Roystan's https://roystan.net/articles/toon-shader
-    // toon shader tutorial.
+    // toon shader tutorial. The anisotropic specular code is from this tutorial from
+    // https://wiki.unity3d.com/index.php/Anisotropic_Highlight_Shader by James O'Hare.
     half3 halfVector = normalize(i.worldViewDir + light.dir);
     half glossiness = pow(2, 8 * (1 - s.specularAmount));
-    half specIntensity = pow(dot(s.normal, halfVector), glossiness * glossiness);
+    half spec = dot(s.normal, halfVector);
+    #if defined(_ANISOTROPY_ENABLED)
+        half anisoDot = dot(normalize(s.normal + s.anisoFlowchart), halfVector);
+        half aniso = max(0, sin(radians(anisoDot) * 180));
+        lerp(spec, aniso, anisoScale);
+    #endif
+    half specIntensity = pow(spec, glossiness * glossiness);
     specIntensity = smoothstep(0.05, 0.05 + s.specularSmooth, specIntensity);
     half3 specular = light.color * s.specular * specIntensity * litness;
 
