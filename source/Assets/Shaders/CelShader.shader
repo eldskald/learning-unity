@@ -75,7 +75,7 @@ Shader "Custom/CelShader" {
         _OcclusionScale ("Occlusion Scale", Range(0, 1)) = 1
 
         // Anisotropy properties.
-        [NoScaleOffset] _AnisoFlowchart ("Anisotropy Flowchart", 2D) = "bump" {}
+        [NoScaleOffset] [Normal] _AnisoFlowchart ("Anisotropy Flowchart", 2D) = "bump" {}
         _AnisoScale ("Anisotropy Scale", Range(0, 1)) = 0.5
     }
 

@@ -134,7 +134,7 @@ Surface GetSurface(Interpolators i) {
 
     #if defined(_BUMPMAP_ENABLED)
         fixed3 tangentNormal = UnpackScaleNormal(
-            tex2D(_BumpMap, uv), _BumpScale).xyz;
+            tex2D(_BumpMap, uv), _BumpScale);
         s.normal = normalize(
             tangentNormal.x * normalize(i.tangent.xyz) +
             tangentNormal.y * normalize(i.binormal) +
@@ -148,7 +148,7 @@ Surface GetSurface(Interpolators i) {
     #endif
 
     #if defined(_ANISOTROPY_ENABLED)
-        s.anisoFlowchart = UnpackNormal(_AnisoFlowchart, uv).rgb;
+        s.anisoFlowchart = UnpackNormal(tex2D(_AnisoFlowchart, uv));
         s.anisoScale = tex2D(_AnisoFlowchart, uv).a * _AnisoScale;
     #endif
 
@@ -203,7 +203,7 @@ half4 frag (Interpolators i) : SV_TARGET {
     #if defined(_ANISOTROPY_ENABLED)
         half anisoDot = dot(normalize(s.normal + s.anisoFlowchart), halfVector);
         half aniso = max(0, sin(radians(anisoDot) * 180));
-        lerp(spec, aniso, anisoScale);
+        spec = lerp(spec, aniso, s.anisoScale);
     #endif
     half specIntensity = pow(spec, glossiness * glossiness);
     specIntensity = smoothstep(0.05, 0.05 + s.specularSmooth, specIntensity);
