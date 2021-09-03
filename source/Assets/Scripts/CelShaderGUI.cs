@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEditor;
 
 public class CelShaderGUI : ShaderGUI {
@@ -14,7 +15,12 @@ public class CelShaderGUI : ShaderGUI {
         this.editor = editor;
         this.properties = properties;
 
-        GroupLabel("Main Properties", false);
+        AddRenderMode();
+        if (showAlphaCutoff) {
+            AddAlphaCutoff();
+        }
+
+        GroupLabel("Main Properties");
 
         // Commenting out the smoothness because I won't set them on a per material
         // basis, I would rather set them on the script and have all values on each
@@ -83,6 +89,94 @@ public class CelShaderGUI : ShaderGUI {
         GUILayout.Label(label, EditorStyles.boldLabel);
     }
 
+    void RecordAction (string label) {
+        editor.RegisterPropertyChangeUndo(label);
+    }
+
+    // Stuff that deal and draws rendering settings of the material.
+    bool showAlphaCutoff;
+
+    enum RenderMode {
+        Opaque, Cutout, Fade, Transparent
+    }
+
+    struct RenderSettings {
+        public RenderQueue queue;
+        public string renderType;
+        public BlendMode srcBlend, dstBlend;
+        public bool zWrite;
+
+        public static RenderSettings[] modes = {
+            new RenderSettings() {
+                queue = RenderQueue.Geometry,
+                renderType = "Opaque",
+                srcBlend = BlendMode.One,
+                dstBlend = BlendMode.Zero,
+                zWrite = true
+            },
+            new RenderSettings() {
+                queue = RenderQueue.AlphaTest,
+                renderType = "TransparentCutout",
+                srcBlend = BlendMode.One,
+                dstBlend = BlendMode.Zero,
+                zWrite = true
+            },
+            new RenderSettings() {
+                queue = RenderQueue.Transparent,
+                renderType = "Transparent",
+                srcBlend = BlendMode.SrcAlpha,
+                dstBlend = BlendMode.OneMinusSrcAlpha,
+                zWrite = false
+            },
+            new RenderSettings() {
+                queue = RenderQueue.Transparent,
+                renderType = "Transparent",
+                srcBlend = BlendMode.One,
+                dstBlend = BlendMode.OneMinusSrcAlpha,
+                zWrite = false
+            }
+        };
+    }
+
+    void AddRenderMode () {
+        RenderMode mode = RenderMode.Opaque;
+        showAlphaCutoff = false;
+        if (target.IsKeywordEnabled("_RENDERING_CUTOUT")) {
+            mode = RenderMode.Cutout;
+            showAlphaCutoff = true;
+        }
+        else if (target.IsKeywordEnabled("_RENDERING_FADE")) {
+            mode = RenderMode.Fade;
+        }
+        else if (target.IsKeywordEnabled("_RENDERING_TRANSPARENT")) {
+            mode = RenderMode.Transparent;
+        }
+        EditorGUI.BeginChangeCheck();
+        mode = (RenderMode) EditorGUILayout.EnumPopup(
+            MakeLabel("Rendering Mode"), mode);
+        if (EditorGUI.EndChangeCheck()) {
+            RecordAction("Rendering Mode");
+            SetKeyword("_RENDERING_CUTOUT", mode == RenderMode.Cutout);
+            SetKeyword("_RENDERING_FADE", mode == RenderMode.Fade);
+            SetKeyword("_RENDERING_TRANSPARENT", mode == RenderMode.Transparent);
+            RenderSettings settings = RenderSettings.modes[(int)mode];
+            foreach (Material m in editor.targets) {
+                m.renderQueue = (int)settings.queue;
+                m.SetOverrideTag("RenderType", settings.renderType);
+                m.SetInt("_SrcBlend", (int)settings.srcBlend);
+                m.SetInt("_DstBlend", (int)settings.dstBlend);
+                m.SetInt("_ZWrite", settings.zWrite ? 1 : 0);
+            }
+        }
+    }
+
+    void AddAlphaCutoff () {
+        MaterialProperty cutoff = GetProperty("_AlphaCutoff");
+        EditorGUI.indentLevel += 2;
+        editor.ShaderProperty(cutoff, MakeLabel(cutoff));
+        EditorGUI.indentLevel -= 2;
+    }
+
     // Functions that draw each of the property sets. Also for convenience, makes it
     // easier to read each one when they're in separate blocks than in a wall of text
     // written on OnGUI().
@@ -96,8 +190,8 @@ public class CelShaderGUI : ShaderGUI {
         MaterialProperty color = GetProperty("_Color");
         MaterialProperty mainTex = GetProperty("_MainTex");
         editor.TexturePropertySingleLine(
-            MakeLabel(color, "Albedo color and texture. Tiles and offsets all other " +
-            "textures unless otherwise noted."), mainTex, color);
+            MakeLabel(color, "Albedo color and texture. Tiles and offsets all " +
+            "other textures unless otherwise noted."), mainTex, color);
         editor.TextureScaleOffsetProperty(mainTex);
     }
 

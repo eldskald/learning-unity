@@ -1,6 +1,13 @@
 Shader "Custom/CelShader" {
 
     Properties {
+
+        // Helper properties for the rendering modes.
+        _AlphaCutoff ("Alpha Cutoff", Range(0, 1)) = 0.5
+        [HideInInspector] _SrcBlend ("_SrcBlend", Float) = 1
+        [HideInInspector] _DstBlend ("_DstBlend", Float) = 0
+        [HideInInspector] _ZWrite ("_ZWrite", Float) = 1
+
         // Albedo. The albedo texture is the only one with tiling and offset.
         // Since other textures are usually aligned with it, all textures will
         // use this tiling and offset unless otherwise noted.
@@ -88,12 +95,17 @@ Shader "Custom/CelShader" {
         Pass {
             Tags { "LightMode" = "ForwardBase" }
 
+            Blend [_SrcBlend] [_DstBlend]
+            ZWrite [_ZWrite]
+
             CGPROGRAM
 
             #pragma target 3.0
 
             #define FORWARD_BASE_PASS // Define to be read by the include file.
             #pragma multi_compile _ SHADOWS_SCREEN
+            #pragma shader_feature _ _RENDERING_CUTOUT _RENDERING_FADE _RENDERING_TRANSPARENT
+
             #pragma shader_feature _REFLECTIONS_ENABLED
             #pragma shader_feature _EMISSION_ENABLED
             #pragma shader_feature _BUMPMAP_ENABLED
@@ -112,7 +124,7 @@ Shader "Custom/CelShader" {
         Pass {
             Tags { "LightMode" = "ForwardAdd" }
             
-            Blend One One
+            Blend [_SrcBlend] One
             ZWrite Off
 
             CGPROGRAM
@@ -120,6 +132,8 @@ Shader "Custom/CelShader" {
             #pragma target 3.0
 
             #pragma multi_compile_fwdadd_fullshadows
+            #pragma shader_feature _ _RENDERING_CUTOUT _RENDERING_FADE _RENDERING_TRANSPARENT
+
             #pragma shader_feature _BUMPMAP_ENABLED
             #pragma shader_feature _PARALLAX_ENABLED
             #pragma shader_feature _ANISOTROPY_ENABLED
@@ -136,7 +150,7 @@ Shader "Custom/CelShader" {
             Tags { "LightMode" = "Always" }
             
             Cull Front
-            ZWrite Off
+            ZWrite On
 
             CGPROGRAM
 

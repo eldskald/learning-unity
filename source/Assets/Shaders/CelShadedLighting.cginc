@@ -11,6 +11,7 @@
 #include "UnityPBSLighting.cginc"
 #include "AutoLight.cginc"
 
+half _AlphaCutoff;
 fixed4 _Color;
 sampler2D _MainTex;
 float4 _MainTex_ST;
@@ -116,6 +117,11 @@ Surface GetSurface(Interpolators i) {
 
     s.albedo = _Color.rgb * tex2D(_MainTex, uv).rgb;
     s.alpha = _Color.a * tex2D(_MainTex, uv).a;
+
+    #if defined(_RENDERING_TRANSPARENT)
+        s.albedo *= s.alpha;
+    #endif
+
     s.specular = _Specular * tex2D(_SpecularMap, uv).r;
     s.specularAmount = _SpecularAmount * tex2D(_SpecularMap, uv).g;
     s.specularSmooth = _SpecularSmooth * tex2D(_SpecularMap, uv).b;
@@ -183,6 +189,11 @@ LightData GetLight (Interpolators i) {
 // some very few changes in order to better translate it to Unity.
 half4 frag (Interpolators i) : SV_TARGET {
     Surface s = GetSurface(i);
+
+    #if defined(_RENDERING_CUTOUT)
+        clip(s.alpha - _AlphaCutoff);
+    #endif
+
     LightData light = GetLight(i);
     half lightDotNormal = DotClamped(s.normal, light.dir);
 
@@ -223,7 +234,11 @@ half4 frag (Interpolators i) : SV_TARGET {
     // Final fragment color.
     half4 col;
     col.rgb = diffuse + specular + rim;
-    col.a = s.alpha;
+    col.a = 1;
+
+    #if defined(_RENDERING_FADE) || defined(_RENDERING_TRANSPARENT)
+        col.a = s.alpha;
+    #endif
 
     // Checking to see if this is the base pass in order to add emission and
     // sample the environment data to add to the final color. Most of that code
