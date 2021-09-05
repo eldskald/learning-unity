@@ -1,4 +1,4 @@
-Shader "Custom/CelShader" {
+Shader "CelShaded/Transparent" {
 
     Properties {
 
@@ -141,6 +141,17 @@ Shader "Custom/CelShader" {
             #include "CelShadedLighting.cginc"
 
             ENDCG
+        }
+
+        // ZWrite pass. On transparent rendering modes, it blocks the outline mesh
+        // from rendering in front of the actual geometry, since it doesn't write to
+        // the Z Buffer. We can't have total control of which passes to turn on and
+        // off on the GUI script, so we are forced to have this pass on opaque mode
+        // or to make two different shader scripts, one for opaque without this pass
+        // and one for the rest with it.
+        Pass {
+            ZWrite On
+            ColorMask 0
         }
 
         // Outline pass. We're using the spatial approach instead of the post

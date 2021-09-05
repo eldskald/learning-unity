@@ -15,9 +15,12 @@ public class CelShaderGUI : ShaderGUI {
         this.editor = editor;
         this.properties = properties;
 
-        AddRenderMode();
-        if (showAlphaCutoff) {
-            AddAlphaCutoff();
+        if (target.shader.name == "CelShaded/Transparent") {
+            AddRenderMode();
+            if (showAlphaCutoff) {
+                AddAlphaCutoff();
+            }
+            LongSpace();
         }
 
         GroupLabel("Main Properties");
@@ -41,6 +44,7 @@ public class CelShaderGUI : ShaderGUI {
         ShortSpace();
         AddOutline();
 
+        LongSpace();
         GroupLabel("Additional Maps");
         AddEmission();
         AddNormalMap();
@@ -82,10 +86,11 @@ public class CelShaderGUI : ShaderGUI {
         GUILayout.Space(8);
     }
 
-    void GroupLabel (string label, bool addSpace = true) {
-        if (addSpace) {
-            GUILayout.Space(16);
-        }
+    void LongSpace () {
+        GUILayout.Space(16);
+    }
+
+    void GroupLabel (string label) {
         GUILayout.Label(label, EditorStyles.boldLabel);
     }
 
@@ -97,10 +102,11 @@ public class CelShaderGUI : ShaderGUI {
     bool showAlphaCutoff;
 
     enum RenderMode {
-        Opaque, Cutout, Fade, Transparent
+        Fade, Transparent, Cutout
     }
 
     struct RenderSettings {
+        public string shader;
         public RenderQueue queue;
         public string renderType;
         public BlendMode srcBlend, dstBlend;
@@ -108,20 +114,7 @@ public class CelShaderGUI : ShaderGUI {
 
         public static RenderSettings[] modes = {
             new RenderSettings() {
-                queue = RenderQueue.Geometry,
-                renderType = "Opaque",
-                srcBlend = BlendMode.One,
-                dstBlend = BlendMode.Zero,
-                zWrite = true
-            },
-            new RenderSettings() {
-                queue = RenderQueue.AlphaTest,
-                renderType = "TransparentCutout",
-                srcBlend = BlendMode.One,
-                dstBlend = BlendMode.Zero,
-                zWrite = true
-            },
-            new RenderSettings() {
+                shader = "CelShaded/Transparent",
                 queue = RenderQueue.Transparent,
                 renderType = "Transparent",
                 srcBlend = BlendMode.SrcAlpha,
@@ -129,27 +122,36 @@ public class CelShaderGUI : ShaderGUI {
                 zWrite = false
             },
             new RenderSettings() {
+                shader = "CelShaded/Transparent",
                 queue = RenderQueue.Transparent,
                 renderType = "Transparent",
                 srcBlend = BlendMode.One,
                 dstBlend = BlendMode.OneMinusSrcAlpha,
                 zWrite = false
+            },
+            new RenderSettings() {
+                shader = "CelShaded/Transparent",
+                queue = RenderQueue.AlphaTest,
+                renderType = "TransparentCutout",
+                srcBlend = BlendMode.One,
+                dstBlend = BlendMode.Zero,
+                zWrite = true
             }
         };
     }
 
     void AddRenderMode () {
-        RenderMode mode = RenderMode.Opaque;
+        RenderMode mode = RenderMode.Fade;
         showAlphaCutoff = false;
-        if (target.IsKeywordEnabled("_RENDERING_CUTOUT")) {
-            mode = RenderMode.Cutout;
-            showAlphaCutoff = true;
-        }
-        else if (target.IsKeywordEnabled("_RENDERING_FADE")) {
+        if (target.IsKeywordEnabled("_RENDERING_FADE")) {
             mode = RenderMode.Fade;
         }
         else if (target.IsKeywordEnabled("_RENDERING_TRANSPARENT")) {
             mode = RenderMode.Transparent;
+        }
+        else if (target.IsKeywordEnabled("_RENDERING_CUTOUT")) {
+            mode = RenderMode.Cutout;
+            showAlphaCutoff = true;
         }
         EditorGUI.BeginChangeCheck();
         mode = (RenderMode) EditorGUILayout.EnumPopup(
