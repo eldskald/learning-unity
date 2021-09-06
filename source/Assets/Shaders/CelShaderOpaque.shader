@@ -84,6 +84,15 @@ Shader "CelShaded/Opaque" {
         // Anisotropy properties.
         [NoScaleOffset] [Normal] _AnisoFlowchart ("Anisotropy Flowchart", 2D) = "bump" {}
         _AnisoScale ("Anisotropy Scale", Range(0, 1)) = 0.5
+
+        // Refraction properties. Only for the refraction mode. We are using the
+        // grab pass here, do don't put a lot of it on the screen, it is very
+        // intensive. You can create a less intense version by naming the grab pass,
+        // and in return, refractive materials won't show up behind one another. Also,
+        // since we can't disable the grab pass on a shader with code, we must have
+        // a different shader for just this effect.
+        [NoScaleOffset] _RefractionMap ("Refraction Map", 2D) = "white" {}
+        _RefractionScale ("Refraction Scale", Range(-16, 16)) = 0
     }
 
     SubShader {

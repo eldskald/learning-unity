@@ -38,6 +38,12 @@ half _OcclusionScale;
 sampler2D _AnisoFlowchart;
 half _AnisoScale;
 
+#if defined(_REFRACTION_ENABLED)
+    sampler2D _RefractionMap;
+    half _RefractionScale;
+    sampler2D _GrabTexture;
+#endif
+
 // Vertex function and associated structs. We don't change geometry, so it
 // just creates the interpolators and passes them on.
 struct MeshData {
@@ -55,7 +61,11 @@ struct Interpolators {
     float3 binormal : TEXCOORD3;
     float3 worldPos : TEXCOORD4;
     float3 worldViewDir : TEXCOORD5;
-    SHADOW_COORDS(6)
+    float4 screenUV : TEXCOORD6;
+
+    #if !defined(_REFRACTION_ENABLED)
+        SHADOW_COORDS(7)
+    #endif
 };
 
 Interpolators vert (MeshData i) {
@@ -68,7 +78,14 @@ Interpolators vert (MeshData i) {
         o.tangent.w * unity_WorldTransformParams.w;
     o.worldPos = mul(unity_ObjectToWorld, i.vertex);
     o.worldViewDir = normalize(_WorldSpaceCameraPos - o.worldPos);
-    TRANSFER_SHADOW(o)
+    o.screenUV = 0;
+
+    #if defined(_REFRACTION_ENABLED)
+        o.screenUV = ComputeGrabScreenPos(o.pos);
+    #else
+        TRANSFER_SHADOW(o)
+    #endif
+
     return o;
 }
 
@@ -86,12 +103,28 @@ struct Surface {
     half rim;
     half rimAmount;
     half rimSmooth;
-    half reflectivity;
-    half blurriness;
-    fixed3 emission;
-    fixed occlusion;
-    fixed3 anisoFlowchart;
-    half anisoScale;
+
+    #if defined(_REFLECTIONS_ENABLED)
+        half reflectivity;
+        half blurriness;
+    #endif
+
+    #if defined(_EMISSION_ENABLED)
+        fixed3 emission;
+    #endif
+
+    #if defined(_OCCLUSION_ENABLED)
+        fixed occlusion;
+    #endif
+
+    #if defined(_ANISOTROPY_ENABLED)
+        fixed3 anisoFlowchart;
+        half anisoScale;
+    #endif
+
+    #if defined(_REFRACTION_ENABLED)
+        half refraction;
+    #endif
 };
 
 Surface GetSurface(Interpolators i) {
@@ -118,7 +151,7 @@ Surface GetSurface(Interpolators i) {
     s.albedo = _Color.rgb * tex2D(_MainTex, uv).rgb;
     s.alpha = _Color.a * tex2D(_MainTex, uv).a;
 
-    #if defined(_RENDERING_TRANSPARENT)
+    #if defined(_RENDERING_TRANSPARENT) || defined(_REFRACTION_ENABLED)
         s.albedo *= s.alpha;
     #endif
 
@@ -158,6 +191,10 @@ Surface GetSurface(Interpolators i) {
         s.anisoScale = tex2D(_AnisoFlowchart, uv).a * _AnisoScale;
     #endif
 
+    #if defined(_REFRACTION_ENABLED)
+        s.refraction = _RefractionScale * tex2D(_RefractionMap, uv);
+    #endif
+
     return s;
 }
 
@@ -178,8 +215,14 @@ LightData GetLight (Interpolators i) {
         light.dir = _WorldSpaceLightPos0.xyz;
     #endif
     
-    UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
-    light.attenuation = attenuation;
+    #if !defined(_REFRACTION_ENABLED)
+        UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
+        light.attenuation = attenuation;
+    #else
+        UNITY_LIGHT_ATTENUATION(attenuation, 0, i.worldPos);
+        light.attenuation = attenuation;
+    #endif
+
     light.color = _LightColor0.rgb;
     return light;
 }
@@ -263,6 +306,13 @@ half4 frag (Interpolators i) : SV_TARGET {
 
         #if defined(_OCCLUSION_ENABLED)
             ambient *= s.occlusion;
+        #endif
+
+        #if defined(_REFRACTION_ENABLED)
+            float3 viewNormal = mul(unity_WorldToObject, float4(s.normal, 0));
+            viewNormal = normalize(mul(UNITY_MATRIX_MV, float4(viewNormal, 0)));
+            float4 offset = float4(-s.refraction * viewNormal.xy, 0, 0);
+            col.rgb += (1 - s.alpha) * tex2Dproj(_GrabTexture, i.screenUV + offset).rgb;
         #endif
 
         col.rgb += ambient;

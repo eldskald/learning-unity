@@ -1,4 +1,4 @@
-Shader "CelShaded/Transparent" {
+Shader "CelShaded/Refraction" {
 
     Properties {
 
@@ -97,23 +97,30 @@ Shader "CelShaded/Transparent" {
 
     SubShader {
         
+        Tags {
+            "RenderType" = "Transparent"
+            "Queue" = "Transparent+1"
+        }
+
+        GrabPass {}
+
         // Forward base pass. This one is called for the main light source on the
         // fragment and processes it. Since there is only one main light, it also
         // processes ambient light, reflections, emission and other things that
         // have to be processed only once.
         Pass {
-            Tags { "LightMode" = "ForwardBase" }
+            Tags {
+                "LightMode" = "ForwardBase"
+            }
 
-            Blend [_SrcBlend] [_DstBlend]
-            ZWrite [_ZWrite]
+            ZWrite Off
 
             CGPROGRAM
 
             #pragma target 3.0
 
             #define FORWARD_BASE_PASS // Define to be read by the include file.
-            #pragma multi_compile _ SHADOWS_SCREEN
-            #pragma shader_feature _ _RENDERING_CUTOUT _RENDERING_FADE _RENDERING_TRANSPARENT
+            #define _REFRACTION_ENABLED
 
             #pragma shader_feature _REFLECTIONS_ENABLED
             #pragma shader_feature _EMISSION_ENABLED
@@ -131,17 +138,17 @@ Shader "CelShaded/Transparent" {
         // fragment and processes it. We set it to additive blend mode in order
         // for it to add to the previous passes.
         Pass {
-            Tags { "LightMode" = "ForwardAdd" }
+            Tags {
+                "LightMode" = "ForwardAdd"
+            }
             
-            Blend [_SrcBlend] One
+            Blend One One
             ZWrite Off
 
             CGPROGRAM
 
             #pragma target 3.0
-
-            #pragma multi_compile_fwdadd_fullshadows
-            #pragma shader_feature _ _RENDERING_CUTOUT _RENDERING_FADE _RENDERING_TRANSPARENT
+            #pragma multi_compile_fwdadd
 
             #pragma shader_feature _BUMPMAP_ENABLED
             #pragma shader_feature _PARALLAX_ENABLED
@@ -167,7 +174,9 @@ Shader "CelShaded/Transparent" {
         // processing one in order for the outlines to show up on reflections,
         // refractions and other possible things.
         Pass {
-            Tags { "LightMode" = "Always" }
+            Tags {
+                "LightMode" = "Always"
+            }
             
             Cull Front
             ZWrite On
@@ -188,7 +197,7 @@ Shader "CelShaded/Transparent" {
         // documentation also explains how to quickly implement shadows without going
         // into detail on how they work on this page here:
         // https://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html
-        UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
+        // UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
     }
 
     // Assigning our custom GUI for this shader. It's on Assets/Scripts/CelShaderGUI.cs.

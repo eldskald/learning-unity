@@ -51,7 +51,12 @@ public class CelShaderGUI : ShaderGUI {
         AddHeightMap();
         AddOcclusion();
         AddAnisotropy();
-        
+
+        if (target.shader.name == "CelShaded/Refraction") {
+            LongSpace();
+            GroupLabel("Refraction");
+            AddRefraction();
+        }    
     }
 
     // Helper functions for convenience of writing and reading.
@@ -315,6 +320,14 @@ public class CelShaderGUI : ShaderGUI {
         if (EditorGUI.EndChangeCheck()) {
             SetKeyword("_ANISOTROPY_ENABLED", anisoFlowchart.textureValue);
         }
+    }
+
+    void AddRefraction () {
+        MaterialProperty refraction = GetProperty("_RefractionScale");
+        MaterialProperty refractionMap = GetProperty("_RefractionMap");
+        editor.TexturePropertySingleLine(
+            MakeLabel("Refraction", "Refraction map and scale. Albedo's alpha " +
+            "controls transparency amount."), refractionMap, refraction);
     }
 }
 
