@@ -51,6 +51,7 @@ public class CelShaderGUI : ShaderGUI {
         AddHeightMap();
         AddOcclusion();
         AddAnisotropy();
+        AddTransmission();
 
         if (target.shader.name == "CelShaded/Refraction") {
             LongSpace();
@@ -323,6 +324,24 @@ public class CelShaderGUI : ShaderGUI {
             anisoFlowchart, anisoScale);
         if (EditorGUI.EndChangeCheck()) {
             SetKeyword("_ANISOTROPY_ENABLED", anisoFlowchart.textureValue);
+        }
+    }
+
+    void AddTransmission () {
+        MaterialProperty transmission = GetProperty("_Transmission");
+        MaterialProperty transmissionMap = GetProperty("_TransmissionMap");
+        EditorGUI.BeginChangeCheck();
+        editor.TexturePropertySingleLine(
+            MakeLabel(transmission, "Transmission map and color. Don't forget to " +
+            "disable shadow casting on objects with this property."),
+            transmissionMap, transmission);
+        if (EditorGUI.EndChangeCheck()) {
+            bool enable = transmission.colorValue != Color.black ||
+                transmissionMap.textureValue;
+            SetKeyword("_TRANSMISSION_ENABLED", enable);
+
+            // Transmission only makes sense if you disable shadow casting.
+            target.SetShaderPassEnabled("ShadowCaster", !enable);
         }
     }
 

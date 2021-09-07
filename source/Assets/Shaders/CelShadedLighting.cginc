@@ -37,6 +37,8 @@ sampler2D _OcclusionMap;
 half _OcclusionScale;
 sampler2D _AnisoFlowchart;
 half _AnisoScale;
+fixed4 _Transmission;
+sampler2D _TransmissionMap;
 
 #if defined(_REFRACTION_ENABLED)
     sampler2D _RefractionMap;
@@ -62,10 +64,7 @@ struct Interpolators {
     float3 worldPos : TEXCOORD4;
     float3 worldViewDir : TEXCOORD5;
     float4 screenUV : TEXCOORD6;
-
-    #if !defined(_REFRACTION_ENABLED)
-        SHADOW_COORDS(7)
-    #endif
+    SHADOW_COORDS(7)
 };
 
 Interpolators vert (MeshData i) {
@@ -79,11 +78,10 @@ Interpolators vert (MeshData i) {
     o.worldPos = mul(unity_ObjectToWorld, i.vertex);
     o.worldViewDir = normalize(_WorldSpaceCameraPos - o.worldPos);
     o.screenUV = 0;
+    TRANSFER_SHADOW(o)
 
     #if defined(_REFRACTION_ENABLED)
         o.screenUV = ComputeGrabScreenPos(o.pos);
-    #else
-        TRANSFER_SHADOW(o)
     #endif
 
     return o;
@@ -96,7 +94,7 @@ Interpolators vert (MeshData i) {
 struct Surface {
     fixed3 albedo;
     fixed alpha;
-    fixed3 normal;
+    float3 normal;
     half specular;
     half specularAmount;
     half specularSmooth;
@@ -120,6 +118,10 @@ struct Surface {
     #if defined(_ANISOTROPY_ENABLED)
         fixed3 anisoFlowchart;
         half anisoScale;
+    #endif
+
+    #if defined(_TRANSMISSION_ENABLED)
+        fixed3 transmission;
     #endif
 
     #if defined(_REFRACTION_ENABLED)
@@ -191,6 +193,10 @@ Surface GetSurface(Interpolators i) {
         s.anisoScale = tex2D(_AnisoFlowchart, uv).a * _AnisoScale;
     #endif
 
+    #if defined(_TRANSMISSION_ENABLED)
+        s.transmission = _Transmission.rgb * tex2D(_TransmissionMap, uv).rgb;
+    #endif
+
     #if defined(_REFRACTION_ENABLED)
         s.refraction = _RefractionScale * tex2D(_RefractionMap, uv);
     #endif
@@ -214,15 +220,9 @@ LightData GetLight (Interpolators i) {
     #else
         light.dir = _WorldSpaceLightPos0.xyz;
     #endif
-    
-    #if !defined(_REFRACTION_ENABLED)
-        UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
-        light.attenuation = attenuation;
-    #else
-        UNITY_LIGHT_ATTENUATION(attenuation, 0, i.worldPos);
-        light.attenuation = attenuation;
-    #endif
 
+    UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldViewDir);
+    light.attenuation = attenuation;
     light.color = _LightColor0.rgb;
     return light;
 }
@@ -241,9 +241,17 @@ half4 frag (Interpolators i) : SV_TARGET {
     half lightDotNormal = DotClamped(s.normal, light.dir);
 
     // Calculating diffuse. We use a smoothstep function to toonify the transition
-    // between lit and unlit zones using the diffuse smoothness property.
+    // between lit and unlit zones using the diffuse smoothness property. The
+    // transmission code is directly from my Godot's version of this shader at
+    // https://godotshaders.com/shader/complete-toon-shader/ which is basically some
+    // math on the dot product to make the light reach the back of the objects. Don't
+    // forget to disable shadows cast by the object, or else it will shade it's own
+    // back with its shadow and ruin the effect.
     half litness = smoothstep(0, _DiffuseSmooth, lightDotNormal) * light.attenuation;
     half3 diffuse = s.albedo * light.color * litness;
+    #if defined(_TRANSMISSION_ENABLED)
+        diffuse += s.albedo * light.color * s.transmission * (light.attenuation - litness);
+    #endif
 
     // Specular blob. Toonified Blinn-Phon's specular code, with specular amount
     // for glossiness and a smoothstep function to toonify. We do this math to

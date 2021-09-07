@@ -85,6 +85,10 @@ Shader "CelShaded/Refraction" {
         [NoScaleOffset] [Normal] _AnisoFlowchart ("Anisotropy Flowchart", 2D) = "bump" {}
         _AnisoScale ("Anisotropy Scale", Range(0, 1)) = 0.5
 
+        // Transmission properties.
+        _Transmission ("Transmission", Color) = (0,0,0,1)
+        _TransmissionMap ("Transmission Map", 2D) = "white" {}
+
         // Refraction properties. Only for the refraction mode. We are using the
         // grab pass here, do don't put a lot of it on the screen, it is very
         // intensive. You can create a less intense version by naming the grab pass,
@@ -127,6 +131,7 @@ Shader "CelShaded/Refraction" {
             #pragma shader_feature _PARALLAX_ENABLED
             #pragma shader_feature _OCCLUSION_ENABLED
             #pragma shader_feature _ANISOTROPY_ENABLED
+            #pragma shader_feature _TRANSMISSION_ENABLED
 
             #include "CelShadedLighting.cginc"
 
@@ -150,6 +155,7 @@ Shader "CelShaded/Refraction" {
             #pragma shader_feature _BUMPMAP_ENABLED
             #pragma shader_feature _PARALLAX_ENABLED
             #pragma shader_feature _ANISOTROPY_ENABLED
+            #pragma shader_feature _TRANSMISSION_ENABLED
             
             #include "CelShadedLighting.cginc"
 

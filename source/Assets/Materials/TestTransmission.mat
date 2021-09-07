@@ -7,15 +7,16 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TestRefraction
-  m_Shader: {fileID: 4800000, guid: 15160fbf25b5624a3be3f2b2d46dc4f8, type: 3}
-  m_ShaderKeywords: _REFRACTION_ENABLED
+  m_Name: TestTransmission
+  m_Shader: {fileID: 4800000, guid: b135ffbb334b83a43a549f4d7e9fdd5b, type: 3}
+  m_ShaderKeywords: _TRANSMISSION_ENABLED
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - SHADOWCASTER
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -99,12 +100,12 @@ Material:
     - _Parallax: 0.02
     - _ParallaxScale: 0.5
     - _Reflectivity: 0
-    - _RefractionScale: 0.03
-    - _Rim: 0.4
-    - _RimAmount: 0.3
+    - _RefractionScale: 0
+    - _Rim: 0.5
+    - _RimAmount: 0.2
     - _RimSmooth: 0.05
     - _SmoothnessTextureChannel: 0
-    - _Specular: 0.4
+    - _Specular: 0.5
     - _SpecularAmount: 0.5
     - _SpecularHighlights: 1
     - _SpecularSmooth: 0.05
@@ -112,9 +113,9 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.5471698, g: 0.41895092, b: 0.24519402, a: 0.5019608}
+    - _Color: {r: 0.16540584, g: 0.36200055, b: 0.5943396, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Transmission: {r: 0, g: 0, b: 0, a: 1}
+    - _Transmission: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
