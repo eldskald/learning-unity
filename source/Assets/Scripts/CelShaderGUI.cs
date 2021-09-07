@@ -332,7 +332,7 @@ public class CelShaderGUI : ShaderGUI {
         MaterialProperty transmissionMap = GetProperty("_TransmissionMap");
         EditorGUI.BeginChangeCheck();
         editor.TexturePropertySingleLine(
-            MakeLabel(transmission, "Transmission map and color. Don't forget to " +
+            MakeLabel(transmission, "Translucency map and color. Don't forget to " +
             "disable shadow casting on objects with this property."),
             transmissionMap, transmission);
         if (EditorGUI.EndChangeCheck()) {

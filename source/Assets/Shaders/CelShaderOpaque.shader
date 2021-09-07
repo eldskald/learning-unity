@@ -85,9 +85,11 @@ Shader "CelShaded/Opaque" {
         [NoScaleOffset] [Normal] _AnisoFlowchart ("Anisotropy Flowchart", 2D) = "bump" {}
         _AnisoScale ("Anisotropy Scale", Range(0, 1)) = 0.5
 
-        // Transmission properties.
-        _Transmission ("Transmission", Color) = (0,0,0,1)
-        _TransmissionMap ("Transmission Map", 2D) = "white" {}
+        // Translucency properties. This is a very basic type of subsurface scattering,
+        // very lightweight and works really well with cel shading. This effect is called
+        // transmission in Godot.
+        _Transmission ("Translucency", Color) = (0,0,0,1)
+        _TransmissionMap ("Translucency Map", 2D) = "white" {}
 
         // Refraction properties. Only for the refraction mode. We are using the
         // grab pass here, do don't put a lot of it on the screen, it is very
