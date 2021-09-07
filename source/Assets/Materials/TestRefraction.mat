@@ -99,7 +99,7 @@ Material:
     - _Parallax: 0.02
     - _ParallaxScale: 0.5
     - _Reflectivity: 0
-    - _RefractionScale: 0.03
+    - _RefractionScale: 0.05
     - _Rim: 0.4
     - _RimAmount: 0.3
     - _RimSmooth: 0.05

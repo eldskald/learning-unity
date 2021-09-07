@@ -103,7 +103,7 @@ Shader "CelShaded/Refraction" {
         
         Tags {
             "RenderType" = "Transparent"
-            "Queue" = "Transparent+1"
+            "Queue" = "Transparent"
         }
 
         GrabPass {}
