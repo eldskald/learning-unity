@@ -109,10 +109,9 @@ Shader "CelShaded/Refraction" {
         // processes ambient light, reflections, emission and other things that
         // have to be processed only once.
         Pass {
-            Tags {
-                "LightMode" = "ForwardBase"
-            }
+            Tags { "LightMode" = "ForwardBase" }
 
+            Blend One Zero
             ZWrite Off
 
             CGPROGRAM
@@ -138,9 +137,7 @@ Shader "CelShaded/Refraction" {
         // fragment and processes it. We set it to additive blend mode in order
         // for it to add to the previous passes.
         Pass {
-            Tags {
-                "LightMode" = "ForwardAdd"
-            }
+            Tags { "LightMode" = "ForwardAdd" }
             
             Blend One One
             ZWrite Off
@@ -174,9 +171,7 @@ Shader "CelShaded/Refraction" {
         // processing one in order for the outlines to show up on reflections,
         // refractions and other possible things.
         Pass {
-            Tags {
-                "LightMode" = "Always"
-            }
+            Tags { "LightMode" = "Always" }
             
             Cull Front
             ZWrite On

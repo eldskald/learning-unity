@@ -254,7 +254,11 @@ public class CelShaderGUI : ShaderGUI {
         MaterialProperty outlineThickness = GetProperty("_OutlineThickness");
         EditorGUI.BeginChangeCheck();
         editor.ShaderProperty(outlineThickness, MakeLabel(outlineThickness));
-        if (EditorGUI.EndChangeCheck()) {
+
+        // Deactivating all "Always" passes also deactivates GrabPass, refracting objects
+        // without outlines are still rendering their geometry three times. If you plan
+        // on having those, make a separate shader file without the outline passes.
+        if (EditorGUI.EndChangeCheck() && target.shader.name != "CelShaded/Refraction") {
             target.SetShaderPassEnabled("Always", outlineThickness.floatValue > 0f);
         }
         MaterialProperty outlineColor = GetProperty("_OutlineColor");
