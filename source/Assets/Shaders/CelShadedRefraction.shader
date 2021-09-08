@@ -124,7 +124,8 @@ Shader "CelShaded/Refraction" {
 
             #pragma target 3.0
 
-            #define FORWARD_BASE_PASS // Define to be read by the include file.
+            #pragma multi_compile _ SHADOWS_SCREEN
+            #pragma multi_compile_fog
             #define _REFRACTION_ENABLED
 
             #pragma shader_feature _REFLECTIONS_ENABLED
@@ -152,7 +153,8 @@ Shader "CelShaded/Refraction" {
             CGPROGRAM
 
             #pragma target 3.0
-            #pragma multi_compile_fwdadd
+            #pragma multi_compile_fwdadd_fullshadows
+            #pragma multi_compile_fog
 
             #pragma shader_feature _BUMPMAP_ENABLED
             #pragma shader_feature _PARALLAX_ENABLED
@@ -187,6 +189,7 @@ Shader "CelShaded/Refraction" {
             CGPROGRAM
 
             #pragma target 3.0
+            #pragma multi_compile_fog
 
             #include "CelShaderOutline.cginc"
 

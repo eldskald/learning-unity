@@ -65,6 +65,7 @@ struct Interpolators {
     float3 worldViewDir : TEXCOORD5;
     float4 screenUV : TEXCOORD6;
     SHADOW_COORDS(7)
+    UNITY_FOG_COORDS(8)
 };
 
 Interpolators vert (MeshData i) {
@@ -72,13 +73,14 @@ Interpolators vert (MeshData i) {
     o.pos = UnityObjectToClipPos(i.vertex);
     o.uv = TRANSFORM_TEX(i.uv, _MainTex);
     o.normal = UnityObjectToWorldNormal(i.normal);
-    o.tangent = float4(UnityObjectToWorldDir(i.tangent.xyz), i.tangent.z);
+    o.tangent = float4(UnityObjectToWorldDir(i.tangent.xyz), i.tangent.w);
     o.binormal = cross(o.normal, o.tangent.xyz) *
         o.tangent.w * unity_WorldTransformParams.w;
     o.worldPos = mul(unity_ObjectToWorld, i.vertex);
     o.worldViewDir = normalize(_WorldSpaceCameraPos - o.worldPos);
     o.screenUV = 0;
     TRANSFER_SHADOW(o)
+    UNITY_TRANSFER_FOG(o, o.pos);
 
     #if defined(_REFRACTION_ENABLED)
         o.screenUV = ComputeGrabScreenPos(o.pos);
@@ -291,11 +293,17 @@ half4 frag (Interpolators i) : SV_TARGET {
         col.a = s.alpha;
     #endif
 
+    // Apply fog. We're using Unity's built in fog tool. If you want to learn more
+    // about how Unity does it or just about how fog works and what it is overall,
+    // Catlike Coding's https://catlikecoding.com/unity/tutorials/rendering/part-14/
+    // tutorial on fog is really in depth and worth a read.
+    UNITY_APPLY_FOG(i.fogCoord, col);
+
     // Checking to see if this is the base pass in order to add emission and
     // sample the environment data to add to the final color. Most of that code
     // was made by following https://catlikecoding.com/unity/tutorials/rendering/
     // rendering tutorial by Catlike Coding.
-    #if defined(FORWARD_BASE_PASS)
+    #if defined(UNITY_PASS_FORWARDBASE)
         half3 ambient = ShadeSH9(float4(s.normal, 1)) * s.albedo;
 
         #if defined(_REFLECTIONS_ENABLED)

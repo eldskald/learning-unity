@@ -114,8 +114,8 @@ Shader "CelShaded/Opaque" {
 
             #pragma target 3.0
 
-            #define FORWARD_BASE_PASS // Define to be read by the include file.
             #pragma multi_compile _ SHADOWS_SCREEN
+            #pragma multi_compile_fog
 
             #pragma shader_feature _REFLECTIONS_ENABLED
             #pragma shader_feature _EMISSION_ENABLED
@@ -144,6 +144,7 @@ Shader "CelShaded/Opaque" {
             #pragma target 3.0
 
             #pragma multi_compile_fwdadd_fullshadows
+            #pragma multi_compile_fog
 
             #pragma shader_feature _BUMPMAP_ENABLED
             #pragma shader_feature _PARALLAX_ENABLED
@@ -167,6 +168,7 @@ Shader "CelShaded/Opaque" {
             CGPROGRAM
 
             #pragma target 3.0
+            #pragma multi_compile_fog
 
             #include "CelShaderOutline.cginc"
 

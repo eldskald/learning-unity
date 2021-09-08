@@ -18,7 +18,8 @@ struct MeshData {
 };
 
 struct Interpolators {
-    float4 position : SV_POSITION;
+    float4 pos : SV_POSITION;
+    UNITY_FOG_COORDS(0)
 };
 
 Interpolators vert (MeshData v) {
@@ -33,12 +34,18 @@ Interpolators vert (MeshData v) {
     // over distance.
     clipPos.xy += normalize(clipNormal.xy) / _ScreenParams.xy
         * clipPos.w * _OutlineThickness * 2;
-    o.position = clipPos;
+    o.pos = clipPos;
+
+    // Pass on fog information.
+    UNITY_TRANSFER_FOG(o, o.pos);
+
     return o;
 }
 
 fixed4 frag (Interpolators i) : SV_TARGET {
-    return _OutlineColor;
+    fixed4 col = _OutlineColor;
+    UNITY_APPLY_FOG(i.fogCoord, col);
+    return col;
 }
 
 #endif
