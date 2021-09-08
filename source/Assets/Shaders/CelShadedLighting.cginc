@@ -293,12 +293,6 @@ half4 frag (Interpolators i) : SV_TARGET {
         col.a = s.alpha;
     #endif
 
-    // Apply fog. We're using Unity's built in fog tool. If you want to learn more
-    // about how Unity does it or just about how fog works and what it is overall,
-    // Catlike Coding's https://catlikecoding.com/unity/tutorials/rendering/part-14/
-    // tutorial on fog is really in depth and worth a read.
-    UNITY_APPLY_FOG(i.fogCoord, col);
-
     // Checking to see if this is the base pass in order to add emission and
     // sample the environment data to add to the final color. Most of that code
     // was made by following https://catlikecoding.com/unity/tutorials/rendering/
@@ -333,6 +327,12 @@ half4 frag (Interpolators i) : SV_TARGET {
 
         col.rgb += ambient;
     #endif
+
+    // Apply fog. We're using Unity's built in fog tool. If you want to learn more
+    // about how Unity does it or just about how fog works and what it is overall,
+    // Catlike Coding's https://catlikecoding.com/unity/tutorials/rendering/part-14/
+    // tutorial on fog is really in depth and worth a read.
+    UNITY_APPLY_FOG(i.fogCoord, col);
 
     return col;
 }
