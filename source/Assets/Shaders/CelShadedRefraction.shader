@@ -125,6 +125,7 @@ Shader "CelShaded/Refraction" {
             #pragma target 3.0
 
             #pragma multi_compile _ SHADOWS_SCREEN
+            #pragma multi_compile _ VERTEXLIGHT_ON
             #pragma multi_compile_fog
             #define _REFRACTION_ENABLED
 

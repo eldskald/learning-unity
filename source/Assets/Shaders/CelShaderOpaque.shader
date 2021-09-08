@@ -115,6 +115,7 @@ Shader "CelShaded/Opaque" {
             #pragma target 3.0
 
             #pragma multi_compile _ SHADOWS_SCREEN
+            #pragma multi_compile _ VERTEXLIGHT_ON
             #pragma multi_compile_fog
 
             #pragma shader_feature _REFLECTIONS_ENABLED

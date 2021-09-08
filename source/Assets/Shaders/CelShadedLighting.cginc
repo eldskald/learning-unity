@@ -46,8 +46,8 @@ sampler2D _TransmissionMap;
     sampler2D _GrabTexture;
 #endif
 
-// Vertex function and associated structs. We don't change geometry, so it
-// just creates the interpolators and passes them on.
+// Structs for the vertex function. MeshData is the usual appdata, Interpolators is
+// the usual v2f.
 struct MeshData {
     float4 vertex : POSITION;
     float2 uv : TEXCOORD0;
@@ -63,27 +63,86 @@ struct Interpolators {
     float3 binormal : TEXCOORD3;
     float3 worldPos : TEXCOORD4;
     float3 worldViewDir : TEXCOORD5;
-    float4 screenUV : TEXCOORD6;
-    SHADOW_COORDS(7)
-    UNITY_FOG_COORDS(8)
+
+    UNITY_SHADOW_COORDS(6)
+    UNITY_FOG_COORDS(7)
+
+    #if defined(_REFRACTION_ENABLED)
+        float4 screenUV : TEXCOORD8;
+    #endif
+
+    #if defined(VERTEXLIGHT_ON)
+        float3 vertexLightColor : TEXCOORD9;
+    #endif
 };
 
-Interpolators vert (MeshData i) {
+// Vertex lights processor. We can't really toonify these, they'll depend a lot on
+// poly count. If you're going for low poly, lights set to vertex might completely
+// mess up the toon look so I would advise you not to use them, but I'm including
+// their code here just in case you ever need it. They don't do specular or rim
+// lighting. Try having high poly counts and a high diffuse smoothness value to
+// make these look less jarring if you ever have to use them.
+void GetVertexLightColor (inout Interpolators i) {
+    #if defined(VERTEXLIGHT_ON)
+        float3 lightPos0 = float3(
+            unity_4LightPosX0.x, unity_4LightPosY0.x, unity_4LightPosZ0.x);
+        float3 lightPos1 = float3(
+            unity_4LightPosX0.y, unity_4LightPosY0.y, unity_4LightPosZ0.y);
+        float3 lightPos2 = float3(
+            unity_4LightPosX0.z, unity_4LightPosY0.z, unity_4LightPosZ0.z);
+        float3 lightPos3 = float3(
+            unity_4LightPosX0.w, unity_4LightPosY0.w, unity_4LightPosZ0.w);
+        
+        float3 lightVec0 = lightPos0 - i.worldPos;
+        float3 lightVec1 = lightPos1 - i.worldPos;
+        float3 lightVec2 = lightPos2 - i.worldPos;
+        float3 lightVec3 = lightPos3 - i.worldPos;
+
+        float3 lightDir0 = normalize(lightVec0);
+        float3 lightDir1 = normalize(lightVec1);
+        float3 lightDir2 = normalize(lightVec2);
+        float3 lightDir3 = normalize(lightVec3);
+
+        half nDotL0 = dot(i.normal, lightDir0) > 0 ? 1 : 0;
+        half nDotL1 = dot(i.normal, lightDir1) > 0 ? 1 : 0;
+        half nDotL2 = dot(i.normal, lightDir2) > 0 ? 1 : 0;
+        half nDotL3 = dot(i.normal, lightDir3) > 0 ? 1 : 0;
+
+        half attenuation0 = 1 / (1 + dot(lightVec0, lightVec0) * unity_4LightAtten0.x);
+        half attenuation1 = 1 / (1 + dot(lightVec1, lightVec1) * unity_4LightAtten0.y);
+        half attenuation2 = 1 / (1 + dot(lightVec2, lightVec2) * unity_4LightAtten0.z);
+        half attenuation3 = 1 / (1 + dot(lightVec3, lightVec3) * unity_4LightAtten0.w);
+
+        i.vertexLightColor =
+            unity_LightColor[0].rgb * nDotL0 * attenuation0 +
+            unity_LightColor[1].rgb * nDotL1 * attenuation1 +
+            unity_LightColor[2].rgb * nDotL2 * attenuation2 +
+            unity_LightColor[3].rgb * nDotL3 * attenuation3;
+    #endif
+}
+
+// Vertex function. We don't change geometry, so it just creates the interpolators
+// and passes them on.
+Interpolators vert (MeshData v) {
     Interpolators o;
-    o.pos = UnityObjectToClipPos(i.vertex);
-    o.uv = TRANSFORM_TEX(i.uv, _MainTex);
-    o.normal = UnityObjectToWorldNormal(i.normal);
-    o.tangent = float4(UnityObjectToWorldDir(i.tangent.xyz), i.tangent.w);
+    o.pos = UnityObjectToClipPos(v.vertex);
+    o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+    o.normal = UnityObjectToWorldNormal(v.normal);
+    o.tangent = float4(UnityObjectToWorldDir(v.tangent.xyz), v.tangent.w);
     o.binormal = cross(o.normal, o.tangent.xyz) *
         o.tangent.w * unity_WorldTransformParams.w;
-    o.worldPos = mul(unity_ObjectToWorld, i.vertex);
+    o.worldPos = mul(unity_ObjectToWorld, v.vertex);
     o.worldViewDir = normalize(_WorldSpaceCameraPos - o.worldPos);
-    o.screenUV = 0;
-    TRANSFER_SHADOW(o)
+
+    UNITY_TRANSFER_SHADOW(o, v.uv)
     UNITY_TRANSFER_FOG(o, o.pos);
 
     #if defined(_REFRACTION_ENABLED)
         o.screenUV = ComputeGrabScreenPos(o.pos);
+    #endif
+
+    #if defined(VERTEXLIGHT_ON)
+        GetVertexLightColor(o);
     #endif
 
     return o;
@@ -284,7 +343,7 @@ half4 frag (Interpolators i) : SV_TARGET {
         viewDotNormal);
     half3 rim = light.color * s.rim * rimIntensity * litness;
 
-    // Final fragment color.
+    // Final color incluenced by scene lights.
     half4 col;
     col.rgb = diffuse + specular + rim;
     col.a = 1;
@@ -323,6 +382,10 @@ half4 frag (Interpolators i) : SV_TARGET {
             viewNormal = normalize(mul(UNITY_MATRIX_MV, float4(viewNormal, 0)));
             float4 offset = float4(-s.refraction * viewNormal.xy, 0, 0);
             col.rgb += (1 - s.alpha) * tex2Dproj(_GrabTexture, i.screenUV + offset).rgb;
+        #endif
+
+        #if defined(VERTEXLIGHT_ON)
+            col.rgb += i.vertexLightColor * s.albedo;
         #endif
 
         col.rgb += ambient;
