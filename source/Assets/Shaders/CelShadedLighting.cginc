@@ -51,6 +51,7 @@ sampler2D _TransmissionMap;
 struct MeshData {
     float4 vertex : POSITION;
     float2 uv : TEXCOORD0;
+    float2 uv1 : TEXCOORD1;
     float4 normal : NORMAL;
     float4 tangent : TANGENT;
 };
@@ -76,6 +77,10 @@ struct Interpolators {
 
     #if defined(VERTEXLIGHT_ON)
         float3 vertexLightColor : TEXCOORD9;
+    #endif
+
+    #if defined(LIGHTMAP_ON)
+        float2 lightmapUV : TEXCOORD9;
     #endif
 };
 
@@ -116,13 +121,15 @@ float3 GetVertexLightColor (float3 worldPos, float3 normal) {
 // and passes them on.
 Interpolators vert (MeshData v) {
     Interpolators o;
+    UNITY_INITIALIZE_OUTPUT(Interpolators, o);
+
     o.pos = UnityObjectToClipPos(v.vertex);
     o.uv = TRANSFORM_TEX(v.uv, _MainTex);
     o.worldPos = mul(unity_ObjectToWorld, v.vertex);
     o.worldViewDir = normalize(_WorldSpaceCameraPos - o.worldPos);
     o.normal = UnityObjectToWorldNormal(v.normal);
     
-    UNITY_TRANSFER_SHADOW(o, o.uv)
+    UNITY_TRANSFER_SHADOW(o, v.uv1)
     UNITY_TRANSFER_FOG(o, o.pos);
 
     #if defined(_BUMPMAP_ENABLED) || defined(_PARALLAX_ENABLED)
@@ -137,6 +144,10 @@ Interpolators vert (MeshData v) {
 
     #if defined(VERTEXLIGHT_ON)
         o.vertexLightColor = GetVertexLightColor(o.worldPos, o.normal);
+    #endif
+
+    #if defined(LIGHTMAP_ON)
+        i.lightmapUV = v.uv1 * unity_LightmapST.xy + unity_LightmapST.zw;
     #endif
 
     return o;
@@ -276,7 +287,7 @@ LightData GetLight (Interpolators i) {
         light.dir = _WorldSpaceLightPos0.xyz;
     #endif
 
-    UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldViewDir);
+    UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
     light.attenuation = attenuation;
     light.color = _LightColor0.rgb;
     return light;
@@ -351,7 +362,13 @@ half4 frag (Interpolators i) : SV_TARGET {
     // was made by following https://catlikecoding.com/unity/tutorials/rendering/
     // rendering tutorial by Catlike Coding.
     #if defined(UNITY_PASS_FORWARDBASE)
-        half3 ambient = ShadeSH9(float4(s.normal, 1)) * s.albedo;
+        half3 ambient = 0;
+
+        #if defined(LIGHTMAP_ON)
+            ambient = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lightmapUV));
+        #else
+            ambient = ShadeSH9(float4(s.normal, 1)) * s.albedo;
+        #endif
 
         #if defined(_REFLECTIONS_ENABLED)
             float3 reflexDir = reflect(-i.worldViewDir, s.normal);
