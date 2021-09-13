@@ -272,10 +272,15 @@ void Set4VertexLights (inout Interpolators i) {
     #endif
 }
 
+// Read from diffuse gradient. Used on diffuse, specular and rim.
+half DiffuseValue (LightData light, Surface s) {
+    return tex2D(_DiffuseGradient, DotClamped(s.normal, light.dir)).x;
+}
+
 // Diffuse light. Directly from my Godot version at
 // https://godotshaders.com/shader/complete-toon-shader/
 half3 GetDiffuse (LightData light, Surface s) {
-    float3 r = tex2D(_DiffuseGradient, DotClamped(s.normal, light.dir)).xxx;
+    float r = DiffuseValue(light, s);
 
     #if defined(_TRANSMISSION_ENABLED)
         r = r + (1 - r) * s.transmission;
@@ -299,22 +304,20 @@ half3 GetSpecular (LightData light, Surface s, float3 viewDir) {
         spec = lerp(spec, aniso, s.anisoScale);
     #endif
 
-    half r = pow(spec, glossiness * glossiness);
+    half r = pow(spec, glossiness * glossiness) * DiffuseValue(light, s);
     r = smoothstep(0.05, 0.05 + s.specularSmooth, r);
-    return light.color * s.specular * r * light.attenuation;
+    return light.color * s.specular * light.attenuation * r;
 }
 
 // Fresnel effect. From my Godot shader too, and the original is also from
 // Roystan's https://roystan.net/articles/toon-shader tutorial.
 half3 GetRim (LightData light, Surface s, float3 viewDir) {
-    half viewDotNormal = 1 - DotClamped(viewDir, s.normal);
-    half lightDotNormal = DotClamped(light.dir, s.normal);
-    half rimThreshold = pow((1 - s.rimAmount), lightDotNormal);
-    half rimIntensity = smoothstep(
-        rimThreshold - s.rimSmooth / 2,
-        rimThreshold + s.rimSmooth / 2,
-        viewDotNormal);
-    return light.color * s.rim * rimIntensity * light.attenuation;
+    half vDotN = DotClamped(viewDir, s.normal);
+    half lDotN = DotClamped(light.dir, s.normal);
+    half rimThreshold = pow((1 - s.rimAmount), lDotN);
+    half r = smoothstep(rimThreshold - s.rimSmooth / 2, 
+        rimThreshold + s.rimSmooth / 2, 1 - vDotN) * DiffuseValue(light, s);
+    return light.color * s.rim * light.attenuation * r;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
