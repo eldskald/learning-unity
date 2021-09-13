@@ -34,6 +34,9 @@ public class CelShaderGUI : ShaderGUI {
         // AddDiffuseSmooth();
         // ShortSpace();
 
+        AddDiffuseGradient();
+        ShortSpace();
+
         AddAlbedo();
         ShortSpace();
         AddSpecular();
@@ -179,7 +182,7 @@ public class CelShaderGUI : ShaderGUI {
     }
 
     void AddAlphaCutoff () {
-        MaterialProperty cutoff = GetProperty("_AlphaCutoff");
+        MaterialProperty cutoff = GetProperty("_Cutoff");
         EditorGUI.indentLevel += 2;
         editor.ShaderProperty(cutoff, MakeLabel(cutoff));
         EditorGUI.indentLevel -= 2;
@@ -192,6 +195,24 @@ public class CelShaderGUI : ShaderGUI {
         MaterialProperty diffuseSmooth = GetProperty("_DiffuseSmooth");
         editor.ShaderProperty(
             diffuseSmooth, MakeLabel(diffuseSmooth, "Lit area's edge sharpness."));
+    }
+
+    Gradient diffuseGradient = new Gradient();
+
+    void AddDiffuseGradient () {
+        MaterialProperty diffuseTexture = GetProperty("_DiffuseGradient");
+        EditorGUI.BeginChangeCheck();
+        diffuseGradient = EditorGUILayout.GradientField(
+            MakeLabel(diffuseTexture, "Diffuse gradient texture."), diffuseGradient);
+        if (EditorGUI.EndChangeCheck()) {
+            Texture2D tex = new Texture2D(256, 1);
+            tex.wrapMode = TextureWrapMode.Clamp;
+            for (int i = 0; i < 256; i++) {
+                tex.SetPixel(i, 0, diffuseGradient.Evaluate(i / (float) 256));
+            }
+            tex.Apply();
+            target.SetTexture(diffuseTexture.name, tex);
+        }
     }
 
     void AddAlbedo () {
