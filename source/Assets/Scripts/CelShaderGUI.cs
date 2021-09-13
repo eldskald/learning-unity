@@ -10,30 +10,22 @@ public class CelShaderGUI : ShaderGUI {
     private MaterialEditor editor;
     private MaterialProperty[] properties;
 
-    public override void OnGUI (MaterialEditor editor, MaterialProperty[] properties) {
+    public override void OnGUI (
+        MaterialEditor editor, MaterialProperty[] properties
+    ) {
         this.target = editor.target as Material;
         this.editor = editor;
         this.properties = properties;
 
-        if (target.shader.name == "CelShaded/Transparent") {
-            AddRenderMode();
-            if (showAlphaCutoff) {
-                AddAlphaCutoff();
-            }
-            LongSpace();
+        AddRenderMode();
+        if (showAlphaCutoff) {
+            AddAlphaCutoff();
         }
+        LongSpace();
 
         GroupLabel("Main Properties");
-
-        // Commenting out the smoothnesses because I won't set them on a per
-        // material basis, I would rather set them on the script and have all
-        // values on each material change accordingly. Leaving it out makes
-        // the GUI cleaner. To add them, scroll down to AddSpecular() and
-        // AddRim() functions below and uncomment the comments.
-
         AddDiffuseGradient();
         ShortSpace();
-
         AddAlbedo();
         ShortSpace();
         AddSpecular();
@@ -84,7 +76,7 @@ public class CelShaderGUI : ShaderGUI {
 
     static GUIContent MakeLabel (
         MaterialProperty property, string tooltip = null
-        ) {
+    ) {
         staticLabel.text = property.displayName;
         staticLabel.tooltip = tooltip;
         return staticLabel;
@@ -110,7 +102,7 @@ public class CelShaderGUI : ShaderGUI {
     bool showAlphaCutoff;
 
     enum RenderMode {
-        Fade, Transparent, Cutout
+        Opaque, Cutout, Fade, Transparent, Refraction
     }
 
     struct RenderSettings {
@@ -121,6 +113,22 @@ public class CelShaderGUI : ShaderGUI {
         public bool zWrite;
 
         public static RenderSettings[] modes = {
+            new RenderSettings() {
+                shader = "CelShaded/Opaque",
+                queue = RenderQueue.Geometry,
+                renderType = "Opaque",
+                srcBlend = BlendMode.One,
+                dstBlend = BlendMode.Zero,
+                zWrite = true
+            },
+            new RenderSettings() {
+                shader = "CelShaded/Transparent",
+                queue = RenderQueue.AlphaTest,
+                renderType = "TransparentCutout",
+                srcBlend = BlendMode.One,
+                dstBlend = BlendMode.Zero,
+                zWrite = true
+            },
             new RenderSettings() {
                 shader = "CelShaded/Transparent",
                 queue = RenderQueue.Transparent,
@@ -138,28 +146,34 @@ public class CelShaderGUI : ShaderGUI {
                 zWrite = false
             },
             new RenderSettings() {
-                shader = "CelShaded/Transparent",
-                queue = RenderQueue.AlphaTest,
-                renderType = "TransparentCutout",
+                shader = "CelShaded/Refraction",
+                queue = RenderQueue.Transparent,
+                renderType = "Transparent",
                 srcBlend = BlendMode.One,
-                dstBlend = BlendMode.Zero,
-                zWrite = true
+                dstBlend = BlendMode.OneMinusSrcAlpha,
+                zWrite = false
             }
         };
     }
 
     void AddRenderMode () {
-        RenderMode mode = RenderMode.Fade;
+        RenderMode mode = RenderMode.Opaque;
         showAlphaCutoff = false;
-        if (target.IsKeywordEnabled("_RENDERING_FADE")) {
+        if (target.shader == Shader.Find("CelShaded/Opaque")) {
+            mode = RenderMode.Opaque;
+        }
+        else if (target.IsKeywordEnabled("_RENDERING_CUTOUT")) {
+            mode = RenderMode.Cutout;
+            showAlphaCutoff = true;
+        }
+        else if (target.IsKeywordEnabled("_RENDERING_FADE")) {
             mode = RenderMode.Fade;
         }
         else if (target.IsKeywordEnabled("_RENDERING_TRANSPARENT")) {
             mode = RenderMode.Transparent;
         }
-        else if (target.IsKeywordEnabled("_RENDERING_CUTOUT")) {
-            mode = RenderMode.Cutout;
-            showAlphaCutoff = true;
+        else if (target.shader == Shader.Find("CelShaded/Refraction")) {
+            mode = RenderMode.Refraction;
         }
         EditorGUI.BeginChangeCheck();
         mode = (RenderMode) EditorGUILayout.EnumPopup(
@@ -171,6 +185,7 @@ public class CelShaderGUI : ShaderGUI {
             SetKeyword("_RENDERING_TRANSPARENT", mode == RenderMode.Transparent);
             RenderSettings settings = RenderSettings.modes[(int)mode];
             foreach (Material m in editor.targets) {
+                m.shader = Shader.Find(settings.shader);
                 m.renderQueue = (int)settings.queue;
                 m.SetOverrideTag("RenderType", settings.renderType);
                 m.SetInt("_SrcBlend", (int)settings.srcBlend);
@@ -196,24 +211,6 @@ public class CelShaderGUI : ShaderGUI {
             MakeLabel(diffuseGradient, "Diffuse gradient texture,"),
             diffuseGradient);
     }
-
-    // Gradient diffuseGradient = new Gradient();
-
-    // void AddDiffuseGradient () {
-    //     MaterialProperty diffuseTexture = GetProperty("_DiffuseGradient");
-    //     EditorGUI.BeginChangeCheck();
-    //     diffuseGradient = EditorGUILayout.GradientField(
-    //         MakeLabel(diffuseTexture, "Diffuse gradient texture."), diffuseGradient);
-    //     if (EditorGUI.EndChangeCheck()) {
-    //         Texture2D tex = new Texture2D(256, 1);
-    //         tex.wrapMode = TextureWrapMode.Clamp;
-    //         for (int i = 0; i < 256; i++) {
-    //             tex.SetPixel(i, 0, diffuseGradient.Evaluate(i / (float) 256));
-    //         }
-    //         tex.Apply();
-    //         target.SetTexture(diffuseTexture.name, tex);
-    //     }
-    // }
 
     void AddAlbedo () {
         MaterialProperty color = GetProperty("_Color");

@@ -186,6 +186,7 @@ Shader "CelShaded/Refraction" {
             Tags { "LightMode" = "Always" }
             
             Cull Front
+            Blend SrcAlpha OneMinusSrcAlpha
             ZWrite On
 
             CGPROGRAM

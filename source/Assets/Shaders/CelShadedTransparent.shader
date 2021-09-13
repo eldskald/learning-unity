@@ -183,6 +183,7 @@ Shader "CelShaded/Transparent" {
             Tags { "LightMode" = "Always" }
             
             Cull Front
+            Blend SrcAlpha OneMinusSrcAlpha
             ZWrite On
 
             CGPROGRAM

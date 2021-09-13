@@ -10,12 +10,12 @@ Material:
   m_Name: TestMaterial
   m_Shader: {fileID: 4800000, guid: b135ffbb334b83a43a549f4d7e9fdd5b, type: 3}
   m_ShaderKeywords: _EMISSION_ENABLED _EMISSION_MAP _OUTLINETOGGLE_ON _OUTLINE_ENABLED
-    _RENDERING_FADE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2000
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses:
   - OutlinePass
   m_SavedProperties:
@@ -98,7 +98,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DiffuseSmooth: 0.02
-    - _DstBlend: 10
+    - _DstBlend: 0
     - _EmissionEnabled: 0
     - _EmissionToggle: 0
     - _GlossMapScale: 1
@@ -117,7 +117,7 @@ Material:
     - _ReflectionsEnabled: 0
     - _ReflectionsToggle: 0
     - _Reflectivity: 0
-    - _RefractionScale: 0
+    - _RefractionScale: 0.05
     - _Rim: 0.5
     - _RimAmount: 0.3
     - _RimSmooth: 0.05
@@ -126,9 +126,9 @@ Material:
     - _SpecularAmount: 0.5
     - _SpecularHighlights: 1
     - _SpecularSmooth: 0.05
-    - _SrcBlend: 5
+    - _SrcBlend: 1
     - _UVSec: 0
-    - _ZWrite: 0
+    - _ZWrite: 1
     m_Colors:
     - _Color: {r: 0.10588236, g: 0.6039216, b: 0.5548126, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 1}

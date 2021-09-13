@@ -106,7 +106,7 @@ Material:
     - _Reflectivity: 0
     - _RefractionScale: 0
     - _Rim: 0.5
-    - _RimAmount: 0.2
+    - _RimAmount: 0.3
     - _RimSmooth: 0.05
     - _SmoothnessTextureChannel: 0
     - _Specular: 0.5
