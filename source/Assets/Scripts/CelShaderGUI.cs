@@ -25,14 +25,11 @@ public class CelShaderGUI : ShaderGUI {
 
         GroupLabel("Main Properties");
 
-        // Commenting out the smoothness because I won't set them on a per material
-        // basis, I would rather set them on the script and have all values on each
-        // material change accordingly. Leaving it out makes the GUI cleaner.
-        // Leaving it here if I ever change my mind, or if you want to add them.
-        // Specular and rim smoothnesses are also commented out.
-        
-        // AddDiffuseSmooth();
-        // ShortSpace();
+        // Commenting out the smoothnesses because I won't set them on a per
+        // material basis, I would rather set them on the script and have all
+        // values on each material change accordingly. Leaving it out makes
+        // the GUI cleaner. To add them, scroll down to AddSpecular() and
+        // AddRim() functions below and uncomment the comments.
 
         AddDiffuseGradient();
         ShortSpace();
@@ -46,8 +43,8 @@ public class CelShaderGUI : ShaderGUI {
         AddReflections();
         ShortSpace();
         AddOutline();
-
         LongSpace();
+        
         GroupLabel("Additional Maps");
         AddEmission();
         AddNormalMap();
@@ -85,7 +82,9 @@ public class CelShaderGUI : ShaderGUI {
         return staticLabel;
     }
 
-    static GUIContent MakeLabel (MaterialProperty property, string tooltip = null) {
+    static GUIContent MakeLabel (
+        MaterialProperty property, string tooltip = null
+        ) {
         staticLabel.text = property.displayName;
         staticLabel.tooltip = tooltip;
         return staticLabel;
@@ -191,29 +190,30 @@ public class CelShaderGUI : ShaderGUI {
     // Functions that draw each of the property sets. Also for convenience, makes it
     // easier to read each one when they're in separate blocks than in a wall of text
     // written on OnGUI().
-    void AddDiffuseSmooth () {
-        MaterialProperty diffuseSmooth = GetProperty("_DiffuseSmooth");
-        editor.ShaderProperty(
-            diffuseSmooth, MakeLabel(diffuseSmooth, "Lit area's edge sharpness."));
-    }
-
-    Gradient diffuseGradient = new Gradient();
-
     void AddDiffuseGradient () {
-        MaterialProperty diffuseTexture = GetProperty("_DiffuseGradient");
-        EditorGUI.BeginChangeCheck();
-        diffuseGradient = EditorGUILayout.GradientField(
-            MakeLabel(diffuseTexture, "Diffuse gradient texture."), diffuseGradient);
-        if (EditorGUI.EndChangeCheck()) {
-            Texture2D tex = new Texture2D(256, 1);
-            tex.wrapMode = TextureWrapMode.Clamp;
-            for (int i = 0; i < 256; i++) {
-                tex.SetPixel(i, 0, diffuseGradient.Evaluate(i / (float) 256));
-            }
-            tex.Apply();
-            target.SetTexture(diffuseTexture.name, tex);
-        }
+        MaterialProperty diffuseGradient = GetProperty("_DiffuseGradient");
+        editor.TexturePropertySingleLine(
+            MakeLabel(diffuseGradient, "Diffuse gradient texture,"),
+            diffuseGradient);
     }
+
+    // Gradient diffuseGradient = new Gradient();
+
+    // void AddDiffuseGradient () {
+    //     MaterialProperty diffuseTexture = GetProperty("_DiffuseGradient");
+    //     EditorGUI.BeginChangeCheck();
+    //     diffuseGradient = EditorGUILayout.GradientField(
+    //         MakeLabel(diffuseTexture, "Diffuse gradient texture."), diffuseGradient);
+    //     if (EditorGUI.EndChangeCheck()) {
+    //         Texture2D tex = new Texture2D(256, 1);
+    //         tex.wrapMode = TextureWrapMode.Clamp;
+    //         for (int i = 0; i < 256; i++) {
+    //             tex.SetPixel(i, 0, diffuseGradient.Evaluate(i / (float) 256));
+    //         }
+    //         tex.Apply();
+    //         target.SetTexture(diffuseTexture.name, tex);
+    //     }
+    // }
 
     void AddAlbedo () {
         MaterialProperty color = GetProperty("_Color");
