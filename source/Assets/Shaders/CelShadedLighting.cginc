@@ -200,7 +200,7 @@ Surface GetSurface(Interpolators i) {
     #endif
 
     #if defined(_REFRACTION_ENABLED)
-        s.refraction = _RefractionScale * tex2D(_RefractionMap, uv);
+        s.refraction = _RefractionScale * tex2D(_RefractionMap, uv) / 10;
     #endif
 
     return s;
@@ -356,7 +356,7 @@ Interpolators vert (MeshData v) {
     #endif
 
     #if defined(LIGHTMAP_ON)
-        i.lightmapUV = v.uv1 * unity_LightmapST.xy + unity_LightmapST.zw;
+        o.lightmapUV = v.uv1 * unity_LightmapST.xy + unity_LightmapST.zw;
     #endif
 
     return o;
@@ -385,11 +385,7 @@ half4 frag (Interpolators i) : SV_TARGET {
     half3 rim = GetRim(light, s, i.worldViewDir);
     half4 col;
     col.rgb = diffuse + specular + rim;
-    col.a = 1;
-
-    #if defined(_RENDERING_FADE) || defined(_RENDERING_TRANSPARENT)
-        col.a = s.alpha;
-    #endif
+    col.a = s.alpha;
 
     // Checking to see if this is the base pass in order to add emission and
     // sample the environment data to add to the final color. I made that by

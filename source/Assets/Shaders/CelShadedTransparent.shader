@@ -98,7 +98,7 @@ Shader "CelShaded/Transparent" {
         // Since we can't disable the grab pass on a shader with code, we must
         // have a different shader for just this effect.
         [NoScaleOffset] _RefractionMap ("Refraction Map", 2D) = "white" {}
-        _RefractionScale ("Refraction Scale", Range(-16, 16)) = 0
+        _RefractionScale ("Refraction Scale", Range(-1, 1)) = 0.5
     }
 
     SubShader {
@@ -172,6 +172,8 @@ Shader "CelShaded/Transparent" {
         // or to make two different shader scripts, one for opaque without
         // this pass and one for the rest with it.
         Pass {
+            Tags { "LightMode" = "Always" }
+
             ZWrite On
             ColorMask 0
         }
@@ -192,6 +194,27 @@ Shader "CelShaded/Transparent" {
             #pragma multi_compile_fog
 
             #include "CelShaderOutline.cginc"
+
+            ENDCG
+        }
+
+        // Shadow caster pass. This pass renders to the shadow map textures.
+        // Unity has its built-in shadow caster, but I did a custom one in
+        // order to include semi transparent shadows. All done by following
+        // Catlike's https://catlikecoding.com/unity/tutorials/rendering/
+        // tutorials on shadows and semi transparent shadows.
+        Pass {
+            Tags { "LightMode" = "ShadowCaster" }
+
+            CGPROGRAM
+
+            #pragma target 3.0
+
+            #pragma multi_compile_shadowcaster
+
+            #pragma shader_feature _ _DITHER_SHADOWS _CUTOUT_SHADOWS
+
+            #include "ShadowCaster.cginc"
 
             ENDCG
         }

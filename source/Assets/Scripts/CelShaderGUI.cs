@@ -18,9 +18,15 @@ public class CelShaderGUI : ShaderGUI {
         this.properties = properties;
 
         AddRenderMode();
+        if (showShadowsMode) {
+            AddShadowsMode();
+        }
         if (showAlphaCutoff) {
             AddAlphaCutoff();
         }
+        if (target.shader.name == "CelShaded/Refraction") {
+            AddRefraction();
+        }    
         LongSpace();
 
         GroupLabel("Main Properties");
@@ -44,12 +50,6 @@ public class CelShaderGUI : ShaderGUI {
         AddOcclusion();
         AddAnisotropy();
         AddTransmission();
-
-        if (target.shader.name == "CelShaded/Refraction") {
-            LongSpace();
-            GroupLabel("Refraction");
-            AddRefraction();
-        }    
     }
 
     // Helper functions for convenience of writing and reading.
@@ -100,6 +100,7 @@ public class CelShaderGUI : ShaderGUI {
 
     // Stuff that deal and draws rendering settings of the material.
     bool showAlphaCutoff;
+    bool showShadowsMode;
 
     enum RenderMode {
         Opaque, Cutout, Fade, Transparent, Refraction
@@ -150,7 +151,7 @@ public class CelShaderGUI : ShaderGUI {
                 queue = RenderQueue.Transparent,
                 renderType = "Transparent",
                 srcBlend = BlendMode.One,
-                dstBlend = BlendMode.OneMinusSrcAlpha,
+                dstBlend = BlendMode.Zero,
                 zWrite = false
             }
         };
@@ -159,8 +160,10 @@ public class CelShaderGUI : ShaderGUI {
     void AddRenderMode () {
         RenderMode mode = RenderMode.Opaque;
         showAlphaCutoff = false;
+        showShadowsMode = true;
         if (target.shader == Shader.Find("CelShaded/Opaque")) {
             mode = RenderMode.Opaque;
+            showShadowsMode = false;
         }
         else if (target.IsKeywordEnabled("_RENDERING_CUTOUT")) {
             mode = RenderMode.Cutout;
@@ -182,7 +185,8 @@ public class CelShaderGUI : ShaderGUI {
             RecordAction("Rendering Mode");
             SetKeyword("_RENDERING_CUTOUT", mode == RenderMode.Cutout);
             SetKeyword("_RENDERING_FADE", mode == RenderMode.Fade);
-            SetKeyword("_RENDERING_TRANSPARENT", mode == RenderMode.Transparent);
+            SetKeyword("_RENDERING_TRANSPARENT",
+                mode == RenderMode.Transparent);
             RenderSettings settings = RenderSettings.modes[(int)mode];
             foreach (Material m in editor.targets) {
                 m.shader = Shader.Find(settings.shader);
@@ -195,6 +199,26 @@ public class CelShaderGUI : ShaderGUI {
         }
     }
 
+    enum ShadowsMode {
+        Dither, Cutout
+    }
+
+    void AddShadowsMode () {
+        ShadowsMode mode = ShadowsMode.Dither;
+        if (target.IsKeywordEnabled("_CUTOUT_SHADOWS")) {
+            mode = ShadowsMode.Cutout;
+            showAlphaCutoff = true;
+        }
+        CheckShadowsMode(mode);
+        EditorGUI.BeginChangeCheck();
+        mode = (ShadowsMode) EditorGUILayout.EnumPopup(
+            MakeLabel("Shadows Mode"), mode);
+        if (EditorGUI.EndChangeCheck()) {
+            RecordAction("Shadows Mode");
+            CheckShadowsMode(mode);
+        }
+    }
+
     void AddAlphaCutoff () {
         MaterialProperty cutoff = GetProperty("_Cutoff");
         EditorGUI.indentLevel += 2;
@@ -202,9 +226,9 @@ public class CelShaderGUI : ShaderGUI {
         EditorGUI.indentLevel -= 2;
     }
 
-    // Functions that draw each of the property sets. Also for convenience, makes it
-    // easier to read each one when they're in separate blocks than in a wall of text
-    // written on OnGUI().
+    // Functions that draw each of the property sets. Also for convenience,
+    // makes it easier to read each one when they're in separate blocks than
+    // in a wall of text written on OnGUI().
     void AddDiffuseGradient () {
         MaterialProperty diffuseGradient = GetProperty("_DiffuseGradient");
         editor.TexturePropertySingleLine(
@@ -216,41 +240,43 @@ public class CelShaderGUI : ShaderGUI {
         MaterialProperty color = GetProperty("_Color");
         MaterialProperty mainTex = GetProperty("_MainTex");
         editor.TexturePropertySingleLine(
-            MakeLabel(color, "Albedo color and texture. Tiles and offsets all " +
+            MakeLabel(color, "Albedo color and texture. Tiles and offsets " +
             "other textures unless otherwise noted."), mainTex, color);
         editor.TextureScaleOffsetProperty(mainTex);
     }
 
     void AddSpecular () {
         MaterialProperty spec = GetProperty("_Specular");
-        editor.ShaderProperty(
-            spec, MakeLabel(spec, "Specular blob strength. Set to 0 to turn off."));
+        editor.ShaderProperty(spec,
+            MakeLabel(spec, "Specular blob strength. Set to 0 to turn off."));
         MaterialProperty specAmount = GetProperty("_SpecularAmount");
         editor.ShaderProperty(
             specAmount, MakeLabel(specAmount, "Specular blob size."));
         // MaterialProperty specSmooth = GetProperty("_SpecularSmooth");
-        // editor.ShaderProperty(
-        //     specSmooth, MakeLabel(specSmooth, "Specular blob's edge sharpness."));
+        // editor.ShaderProperty(specSmooth
+        //     MakeLabel(specSmooth, "Specular blob's edge sharpness."));
         MaterialProperty specMap = GetProperty("_SpecularMap");
         editor.TexturePropertySingleLine(
-            MakeLabel(specMap, "Specular map. Red is specular strength, green is " +
-            "specular amount and red is specular smoothness."), specMap);
+            MakeLabel(specMap, "Specular map. Red is specular strength, " +
+            "green is specular amount and red is specular smoothness."),
+            specMap);
     }
 
     void AddRim () {
         MaterialProperty rim = GetProperty("_Rim");
-        editor.ShaderProperty(
-            rim, MakeLabel(rim, "Rim reflection strength. Set to 0 to turn off."));
+        editor.ShaderProperty(rim,
+            MakeLabel(rim, "Rim reflection strength. Set to 0 to turn off."));
         MaterialProperty rimAmount = GetProperty("_RimAmount");
         editor.ShaderProperty(
-            rimAmount, MakeLabel(rimAmount, "Rim reflection size."));    
+            rimAmount, MakeLabel(rimAmount, "Rim reflection size."));
         // MaterialProperty rimSmooth = GetProperty("_RimSmooth");
         // editor.ShaderProperty(
-        //     rimSmooth, MakeLabel(rimSmooth, "Rim reflection's edge sharpness."));
+        //     rimSmooth, MakeLabel(
+        //         rimSmooth, "Rim reflection's edge sharpness."));
         MaterialProperty rimMap = GetProperty("_RimMap");
         editor.TexturePropertySingleLine(
-            MakeLabel(rimMap, "Rim map. Red is rim strength, green is rim amount " +
-            "and red is rim smoothness."), rimMap);
+            MakeLabel(rimMap, "Rim map. Red is rim strength, green is " +
+            "rim amount and red is rim smoothness."), rimMap);
     }
 
     void AddReflections () {
@@ -264,21 +290,18 @@ public class CelShaderGUI : ShaderGUI {
         editor.ShaderProperty(blurriness, MakeLabel(blurriness));
         MaterialProperty reflMap = GetProperty("_ReflectionsMap");
         editor.TexturePropertySingleLine(
-            MakeLabel(reflMap, "Reflections map. Red is reflectivity and green " +
-            "is blurriness. Don't forget to set up reflection probes to reflect" +
-            "other meshes beside the skybox."), reflMap);
+            MakeLabel(reflMap, "Reflections map. Red is reflectivity " +
+            "and green is blurriness. Don't forget to set up reflection" +
+            "probes to reflect other meshes beside the skybox."), reflMap);
     }
 
     void AddOutline () {
+        CheckOutline();
         MaterialProperty outlineThickness = GetProperty("_OutlineThickness");
         EditorGUI.BeginChangeCheck();
         editor.ShaderProperty(outlineThickness, MakeLabel(outlineThickness));
-
-        // Deactivating all "Always" passes also deactivates GrabPass, refracting objects
-        // without outlines are still rendering their geometry three times. If you plan
-        // on having those, make a separate shader file without the outline passes.
-        if (EditorGUI.EndChangeCheck() && target.shader.name != "CelShaded/Refraction") {
-            target.SetShaderPassEnabled("Always", outlineThickness.floatValue > 0f);
+        if (EditorGUI.EndChangeCheck()) {
+            CheckOutline();
         }
         MaterialProperty outlineColor = GetProperty("_OutlineColor");
         editor.ShaderProperty(outlineColor, MakeLabel(outlineColor));
@@ -293,7 +316,8 @@ public class CelShaderGUI : ShaderGUI {
             emissionMap, emission);
         if (EditorGUI.EndChangeCheck()) {
             SetKeyword("_EMISSION_ENABLED",
-                emission.colorValue != Color.black || emissionMap.textureValue);
+                emission.colorValue != Color.black ||
+                emissionMap.textureValue);
         }
     }
 
@@ -350,16 +374,13 @@ public class CelShaderGUI : ShaderGUI {
         MaterialProperty transmissionMap = GetProperty("_TransmissionMap");
         EditorGUI.BeginChangeCheck();
         editor.TexturePropertySingleLine(
-            MakeLabel(transmission, "Translucency map and color. Don't forget to " +
-            "disable shadow casting on objects with this property."),
-            transmissionMap, transmission);
+            MakeLabel(transmission, "Translucency map and color. " +
+            "Don't forget to disable shadow casting on objects " +
+            "with this property."), transmissionMap, transmission);
         if (EditorGUI.EndChangeCheck()) {
             bool enable = transmission.colorValue != Color.black ||
                 transmissionMap.textureValue;
             SetKeyword("_TRANSMISSION_ENABLED", enable);
-
-            // Transmission only makes sense if you disable shadow casting.
-            target.SetShaderPassEnabled("ShadowCaster", !enable);
         }
     }
 
@@ -367,9 +388,26 @@ public class CelShaderGUI : ShaderGUI {
         MaterialProperty refraction = GetProperty("_RefractionScale");
         MaterialProperty refractionMap = GetProperty("_RefractionMap");
         editor.TexturePropertySingleLine(
-            MakeLabel("Refraction", "Refraction map and scale. Albedo's alpha " +
-            "controls transparency amount."), refractionMap, refraction);
+            MakeLabel("Refraction", "Refraction map and scale. " +
+            "Albedo's alpha controls transparency amount."),
+            refractionMap, refraction);
+    }
+
+    // Last helper functions, to set up some keywords and passes when
+    // the shader changes.
+    void CheckShadowsMode (ShadowsMode mode) {
+        SetKeyword("_DITHER_SHADOWS", mode == ShadowsMode.Dither);
+        SetKeyword("_CUTOUT_SHADOWS", mode == ShadowsMode.Cutout);
+    }
+
+    void CheckOutline () {
+        MaterialProperty outlineThickness = GetProperty("_OutlineThickness");
+        if (target.shader.name != "CelShaded/Refraction") {
+            target.SetShaderPassEnabled(
+                "Always", outlineThickness.floatValue > 0f);
+        }
+        else {    // Deactivating all "Always" passes includes GrabPass.
+            target.SetShaderPassEnabled("Always", true);
+        }
     }
 }
-
-
