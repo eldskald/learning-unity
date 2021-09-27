@@ -4,23 +4,20 @@
 #pragma vertex vert
 #pragma fragment frag
 
-#include "UnityPBSLighting.cginc"
-#include "AutoLight.cginc"
+#include "CelShaderStructs.cginc"
+#include "CelShaderLightHandler.cginc"
 
 half _Cutoff;
 fixed4 _Color;
 sampler2D _MainTex;
 float4 _MainTex_ST;
-half _DiffuseSmooth;
 sampler2D _DiffuseGradient;
-half _Specular;
+fixed4 _SpecularColor;
 half _SpecularAmount;
-half _SpecularSmooth;
-sampler2D _SpecularMap;
-half _Rim;
-half _RimAmount;
-half _RimSmooth;
-sampler2D _RimMap;
+sampler2D _SpecularTex;
+fixed4 _FresnelColor;
+half _FresnelAmount;
+sampler2D _FresnelTex;
 half _Reflectivity;
 half _Blurriness;
 sampler2D _ReflectionsMap;
@@ -34,7 +31,7 @@ sampler2D _OcclusionMap;
 half _OcclusionScale;
 sampler2D _AnisoFlowchart;
 half _AnisoScale;
-fixed4 _Transmission;
+half _Transmission;
 sampler2D _TransmissionMap;
 sampler2D _RefractionMap;
 half _RefractionScale;
@@ -43,46 +40,43 @@ sampler2D _GrabTexture;
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Structs for the vertex and fragment functions. MeshData is the usual      //
-// appdata and Interpolators is the usual v2f.                               //
+// Vertex function. We don't change geometry, so we just calculate the       //
+// usual interpolation stuff.                                                //
 ///////////////////////////////////////////////////////////////////////////////
 
-struct MeshData {
-    float4 vertex : POSITION;
-    float2 uv : TEXCOORD0;
-    float2 uv1 : TEXCOORD1;
-    float4 normal : NORMAL;
-    float4 tangent : TANGENT;
-};
+Interpolators vert (VertexData v) {
+    Interpolators o;
+    UNITY_INITIALIZE_OUTPUT(Interpolators, o);
 
-struct Interpolators {
-    float4 pos : SV_POSITION;
-    float2 uv : TEXCOORD0;
-    float3 worldPos : TEXCOORD1;
-    float3 worldViewDir : TEXCOORD2;
-    float3 normal : TEXCOORD3;
-
-    UNITY_SHADOW_COORDS(4)
-    UNITY_FOG_COORDS(5)
+    o.pos = UnityObjectToClipPos(v.vertex);
+    o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+    o.worldPos = mul(unity_ObjectToWorld, v.vertex);
+    o.worldViewDir = normalize(_WorldSpaceCameraPos - o.worldPos);
+    o.normal = UnityObjectToWorldNormal(v.normal);
+    
+    UNITY_TRANSFER_SHADOW(o, v.uv1)
+    UNITY_TRANSFER_FOG(o, o.pos);
 
     #if defined(_BUMPMAP_ENABLED) || defined(_PARALLAX_ENABLED)
-        float4 tangent : TEXCOORD6;
-        float3 binormal : TEXCOORD7;
+        o.tangent = float4(UnityObjectToWorldDir(v.tangent.xyz), v.tangent.w);
+        o.binormal = cross(o.normal, o.tangent.xyz) *
+            o.tangent.w * unity_WorldTransformParams.w;
     #endif
 
     #if defined(_REFRACTION_ENABLED)
-        float4 screenUV : TEXCOORD8;
-    #endif
-
-    #if defined(LIGHTMAP_ON)
-        float2 lightmapUV : TEXCOORD9;
+        o.screenUV = ComputeScreenPos(o.pos);
     #endif
 
     #if defined(VERTEXLIGHT_ON)
-        float4x4 vertexLightColor : TEXCOORD9;
-        float4x4 vertexLightPos : TEXCOORD13;
+        Set4VertexLights(o);
     #endif
-};
+
+    #if defined(LIGHTMAP_ON)
+        o.lightmapUV = v.uv1 * unity_LightmapST.xy + unity_LightmapST.zw;
+    #endif
+
+    return o;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -93,46 +87,10 @@ struct Interpolators {
 // all the data from the material properties to be used by fragment.         //
 ///////////////////////////////////////////////////////////////////////////////
 
-struct Surface {
-    fixed3 albedo;
-    fixed alpha;
-    float3 normal;
-    half specular;
-    half specularAmount;
-    half specularSmooth;
-    half rim;
-    half rimAmount;
-    half rimSmooth;
-
-    #if defined(_REFLECTIONS_ENABLED)
-        half reflectivity;
-        half blurriness;
-    #endif
-
-    #if defined(_EMISSION_ENABLED)
-        fixed3 emission;
-    #endif
-
-    #if defined(_OCCLUSION_ENABLED)
-        fixed occlusion;
-    #endif
-
-    #if defined(_ANISOTROPY_ENABLED)
-        fixed3 anisoFlowchart;
-        half anisoScale;
-    #endif
-
-    #if defined(_TRANSMISSION_ENABLED)
-        fixed3 transmission;
-    #endif
-
-    #if defined(_REFRACTION_ENABLED)
-        half refraction;
-    #endif
-};
-
 Surface GetSurface(Interpolators i) {
     Surface s;
+    UNITY_INITIALIZE_OUTPUT(Surface, s);
+
     float2 uv = i.uv;
 
     // Just like I did in the Godot version, I took the built-in algorithm in
@@ -159,12 +117,10 @@ Surface GetSurface(Interpolators i) {
         s.albedo *= s.alpha;
     #endif
 
-    s.specular = _Specular * tex2D(_SpecularMap, uv).r;
-    s.specularAmount = _SpecularAmount * tex2D(_SpecularMap, uv).g;
-    s.specularSmooth = _SpecularSmooth * tex2D(_SpecularMap, uv).b;
-    s.rim = _Rim * tex2D(_RimMap, uv).r;
-    s.rimAmount = _RimAmount * tex2D(_RimMap, uv).g;
-    s.rimSmooth = _RimSmooth * tex2D(_RimMap, uv).b;
+    s.specularColor = _SpecularColor * tex2D(_SpecularTex, uv).rgb;
+    s.specularAmount = _SpecularAmount * tex2D(_SpecularTex, uv).a;
+    s.fresnelColor = _FresnelColor * tex2D(_FresnelTex, uv).rgb;
+    s.fresnelAmount = _FresnelAmount * tex2D(_FresnelTex, uv).a;
 
     #if defined(_REFLECTIONS_ENABLED)
         s.reflectivity = _Reflectivity * tex2D(_ReflectionsMap, uv).r;
@@ -196,7 +152,7 @@ Surface GetSurface(Interpolators i) {
     #endif
 
     #if defined(_TRANSMISSION_ENABLED)
-        s.transmission = _Transmission.rgb * tex2D(_TransmissionMap, uv).rgb;
+        s.transmission = _Transmission * tex2D(_TransmissionMap, uv).r;
     #endif
 
     #if defined(_REFRACTION_ENABLED)
@@ -211,187 +167,35 @@ Surface GetSurface(Interpolators i) {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Light handler functions. They get data from light sources and translate   //
-// them for the fragment function to use.                                    //
-///////////////////////////////////////////////////////////////////////////////
-
-struct LightData {
-    float3 dir;
-    fixed3 color;
-    half attenuation;
-};
-
-LightData GetLight (Interpolators i) {
-    LightData light;
-
-    #if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
-        light.dir = normalize(_WorldSpaceLightPos0.xyz - i.worldPos);
-    #else
-        light.dir = _WorldSpaceLightPos0.xyz;
-    #endif
-
-    UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
-    light.attenuation = attenuation;
-    light.color = _LightColor0.rgb;
-    return light;
-}
-
-void Set4VertexLights (inout Interpolators i) {
-    #if defined(VERTEXLIGHT_ON)
-        float3 lightPos0 = float3(
-            unity_4LightPosX0.x, unity_4LightPosY0.x, unity_4LightPosZ0.x);
-        lightPos0 -= i.worldPos;
-        i.vertexLightColor._m03 = 1 /
-            (1 + dot(lightPos0, lightPos0) * unity_4LightAtten0.x);
-        i.vertexLightColor._m00_m01_m02 = unity_LightColor[0].rgb;
-        i.vertexLightPos._m00_m01_m02 = lightPos0;
-
-        float3 lightPos1 = float3(
-            unity_4LightPosX0.y, unity_4LightPosY0.y, unity_4LightPosZ0.y);
-        lightPos1 -= i.worldPos;
-        i.vertexLightColor._m13 = 1 /
-            (1 + dot(lightPos1, lightPos1) * unity_4LightAtten0.y);
-        i.vertexLightColor._m10_m11_m12 = unity_LightColor[1].rgb;
-        i.vertexLightPos._m10_m11_m12 = lightPos1;
-
-        float3 lightPos2 = float3(
-            unity_4LightPosX0.z, unity_4LightPosY0.z, unity_4LightPosZ0.z);
-        lightPos2 -= i.worldPos;
-        i.vertexLightColor._m23 = 1 /
-            (1 + dot(lightPos2, lightPos2) * unity_4LightAtten0.z);
-        i.vertexLightColor._m20_m21_m22 = unity_LightColor[2].rgb;
-        i.vertexLightPos._m20_m21_m22 = lightPos2;
-
-        float3 lightPos3 = float3(
-            unity_4LightPosX0.w, unity_4LightPosY0.w, unity_4LightPosZ0.w);
-        lightPos3 -= i.worldPos;
-        i.vertexLightColor._m33 = 1 /
-            (1 + dot(lightPos3, lightPos3) * unity_4LightAtten0.w);
-        i.vertexLightColor._m30_m31_m32 = unity_LightColor[3].rgb;
-        i.vertexLightPos._m30_m31_m32 = lightPos3;
-    #endif
-}
-
-// Read from diffuse gradient. Used on diffuse, specular and rim.
-half DiffuseValue (LightData light, Surface s) {
-    return tex2D(_DiffuseGradient, DotClamped(s.normal, light.dir)).x;
-}
-
-// Diffuse light. Directly from my Godot version at
-// https://godotshaders.com/shader/complete-toon-shader/
-half3 GetDiffuse (LightData light, Surface s) {
-    float r = DiffuseValue(light, s);
-
-    #if defined(_TRANSMISSION_ENABLED)
-        r = r + (1 - r) * s.transmission;
-    #endif
-
-    return s.albedo * light.color * light.attenuation * r;
-}
-
-// Specular blob. Also directly from my Godot shader, but a the basis is
-// from Roystan's https://roystan.net/articles/toon-shader and the anisotropy
-// is from https://wiki.unity3d.com/index.php/Anisotropic_Highlight_Shader by
-// James O'Hare. It's basically a toonified Blinn-Phong algorithm.
-half3 GetSpecular (LightData light, Surface s, float3 viewDir) {
-    float3 h = normalize(viewDir + light.dir);
-    half glossiness = pow(2, 8 * (1 - s.specularAmount));
-    half spec = dot(s.normal, h);
-
-    #if defined(_ANISOTROPY_ENABLED)
-        half anisoDot = dot(normalize(s.normal + s.anisoFlowchart), h);
-        half aniso = max(0, sin(radians(anisoDot) * 180));
-        spec = lerp(spec, aniso, s.anisoScale);
-    #endif
-
-    half r = pow(spec, glossiness * glossiness) * DiffuseValue(light, s);
-    r = smoothstep(0.05, 0.05 + s.specularSmooth, r);
-    return light.color * s.specular * light.attenuation * r;
-}
-
-// Fresnel effect. From my Godot shader too, and the original is also from
-// Roystan's https://roystan.net/articles/toon-shader tutorial.
-half3 GetRim (LightData light, Surface s, float3 viewDir) {
-    half vDotN = DotClamped(viewDir, s.normal);
-    half lDotN = DotClamped(light.dir, s.normal);
-    half rimThreshold = pow((1 - s.rimAmount), lDotN);
-    half r = smoothstep(rimThreshold - s.rimSmooth / 2, 
-        rimThreshold + s.rimSmooth / 2, 1 - vDotN) * DiffuseValue(light, s);
-    return light.color * s.rim * light.attenuation * r;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Vertex function.                                                          //
-///////////////////////////////////////////////////////////////////////////////
-
-Interpolators vert (MeshData v) {
-    Interpolators o;
-    UNITY_INITIALIZE_OUTPUT(Interpolators, o);
-
-    o.pos = UnityObjectToClipPos(v.vertex);
-    o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-    o.worldPos = mul(unity_ObjectToWorld, v.vertex);
-    o.worldViewDir = normalize(_WorldSpaceCameraPos - o.worldPos);
-    o.normal = UnityObjectToWorldNormal(v.normal);
-    
-    UNITY_TRANSFER_SHADOW(o, v.uv1)
-    UNITY_TRANSFER_FOG(o, o.pos);
-
-    #if defined(_BUMPMAP_ENABLED) || defined(_PARALLAX_ENABLED)
-        o.tangent = float4(UnityObjectToWorldDir(v.tangent.xyz), v.tangent.w);
-        o.binormal = cross(o.normal, o.tangent.xyz) *
-            o.tangent.w * unity_WorldTransformParams.w;
-    #endif
-
-    #if defined(_REFRACTION_ENABLED)
-        o.screenUV = ComputeGrabScreenPos(o.pos);
-    #endif
-
-    #if defined(VERTEXLIGHT_ON)
-        Set4VertexLights(o);
-    #endif
-
-    #if defined(LIGHTMAP_ON)
-        o.lightmapUV = v.uv1 * unity_LightmapST.xy + unity_LightmapST.zw;
-    #endif
-
-    return o;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-
-
-///////////////////////////////////////////////////////////////////////////////
 // Fragment. This is basically the light function from my Godot version at   //
 // https://godotshaders.com/shader/complete-toon-shader/ adapted to Unity,   //
 // with the inclusion of ambient light, emission, reflections and etc.       //
 ///////////////////////////////////////////////////////////////////////////////
 
-half4 frag (Interpolators i) : SV_TARGET {
+FragOutput frag (Interpolators i) {
+    FragOutput o;
+    UNITY_INITIALIZE_OUTPUT(FragOutput, o);
+
     Surface s = GetSurface(i);
-    LightData light = GetLight(i);
+    UnityLight light = GetLight(i);
 
     #if defined(_RENDERING_CUTOUT)
         clip(s.alpha - _Cutoff);
     #endif
 
-    half3 diffuse = GetDiffuse(light, s);
-    half3 specular = GetSpecular(light, s, i.worldViewDir);
-    half3 rim = GetRim(light, s, i.worldViewDir);
+    half3 diffuse = GetDiffuse(light, s, _DiffuseGradient);
+    half3 specular = GetSpecular(light, s, i.worldViewDir, _DiffuseGradient);
+    half3 fresnel = GetFresnel(light, s, i.worldViewDir, _DiffuseGradient);
     half4 col;
-    col.rgb = diffuse + specular + rim;
+    col.rgb = diffuse + specular + fresnel;
     col.a = s.alpha;
 
     // Checking to see if this is the base pass in order to add emission and
     // sample the environment data to add to the final color. I made that by
     // following this https://catlikecoding.com/unity/tutorials/rendering/
     // tutorial by Catlike Coding.
-    #if defined(UNITY_PASS_FORWARDBASE)
+    #if defined(UNITY_PASS_FORWARDBASE) || defined(DEFERRED_PASS)
+        half3 additional = 0;
         half3 ambient = 0;
 
         // This is a somewhat non traditional way of implementing vertex
@@ -400,40 +204,40 @@ half4 frag (Interpolators i) : SV_TARGET {
         // fragment in order to toonify them. Heavier than traditional vertex
         // lights, but still lighter than normal per fragment light.
         #if defined(VERTEXLIGHT_ON)
-            LightData vertexLight0;
+            UnityLight vertexLight0;
             vertexLight0.color = i.vertexLightColor._m00_m01_m02;
             vertexLight0.dir = normalize(i.vertexLightPos._m00_m01_m02);
             vertexLight0.attenuation = i.vertexLightColor._m03;
 
-            LightData vertexLight1;
+            UnityLight vertexLight1;
             vertexLight1.color = i.vertexLightColor._m10_m11_m12;
             vertexLight1.dir = normalize(i.vertexLightPos._m10_m11_m12);
             vertexLight1.attenuation = i.vertexLightColor._m13;
 
-            LightData vertexLight2;
+            UnityLight vertexLight2;
             vertexLight2.color = i.vertexLightColor._m20_m21_m22;
             vertexLight2.dir = normalize(i.vertexLightPos._m20_m21_m22);
             vertexLight2.attenuation = i.vertexLightColor._m23;
 
-            LightData vertexLight3;
+            UnityLight vertexLight3;
             vertexLight3.color = i.vertexLightColor._m30_m31_m32;
             vertexLight3.dir = normalize(i.vertexLightPos._m30_m31_m32);
             vertexLight3.attenuation = i.vertexLightColor._m33;
 
-            col.rgb += GetDiffuse(vertexLight0, s);
-            col.rgb += GetDiffuse(vertexLight1, s);
-            col.rgb += GetDiffuse(vertexLight2, s);
-            col.rgb += GetDiffuse(vertexLight3, s);
+            additional += GetDiffuse(vertexLight0, s);
+            additional += GetDiffuse(vertexLight1, s);
+            additional += GetDiffuse(vertexLight2, s);
+            additional += GetDiffuse(vertexLight3, s);
 
-            col.rgb += GetSpecular(vertexLight0, s, i.worldViewDir);
-            col.rgb += GetSpecular(vertexLight1, s, i.worldViewDir);
-            col.rgb += GetSpecular(vertexLight2, s, i.worldViewDir);
-            col.rgb += GetSpecular(vertexLight3, s, i.worldViewDir);
+            additional += GetSpecular(vertexLight0, s, i.worldViewDir);
+            additional += GetSpecular(vertexLight1, s, i.worldViewDir);
+            additional += GetSpecular(vertexLight2, s, i.worldViewDir);
+            additional += GetSpecular(vertexLight3, s, i.worldViewDir);
 
-            col.rgb += GetRim(vertexLight0, s, i.worldViewDir);
-            col.rgb += GetRim(vertexLight1, s, i.worldViewDir);
-            col.rgb += GetRim(vertexLight2, s, i.worldViewDir);
-            col.rgb += GetRim(vertexLight3, s, i.worldViewDir);
+            additional += GetRim(vertexLight0, s, i.worldViewDir);
+            additional += GetRim(vertexLight1, s, i.worldViewDir);
+            additional += GetRim(vertexLight2, s, i.worldViewDir);
+            additional += GetRim(vertexLight3, s, i.worldViewDir);
         #endif
 
         #if defined(LIGHTMAP_ON)
@@ -451,12 +255,12 @@ half4 frag (Interpolators i) : SV_TARGET {
                 unity_SpecCube0, reflexDir,
                 roughness * UNITY_SPECCUBE_LOD_STEPS);
             half3 reflex = DecodeHDR(envSample, unity_SpecCube0_HDR);
-            col.rgb += reflex * s.reflectivity;
+            additional += reflex * s.reflectivity;
             ambient *= (1 - s.reflectivity);
         #endif
 
         #if defined(_EMISSION_ENABLED)
-            col.rgb += + s.emission;
+            additional += + s.emission;
         #endif
 
         #if defined(_OCCLUSION_ENABLED)
@@ -470,11 +274,12 @@ half4 frag (Interpolators i) : SV_TARGET {
             float3 viewN = mul(unity_WorldToObject, float4(s.normal, 0));
             viewN = normalize(mul(UNITY_MATRIX_MV, float4(viewN, 0)));
             float4 offset = float4(-s.refraction * viewN.xy, 0, 0);
-            col.rgb += (1 - s.alpha) *
+            additional += (1 - s.alpha) *
                 tex2Dproj(_GrabTexture, i.screenUV + offset).rgb;
         #endif
 
-        col.rgb += ambient;
+        additional += ambient;
+        col.rgb += additional;
     #endif
 
     // Apply fog. We're using Unity's built in fog tool. If you want to learn
@@ -483,7 +288,29 @@ half4 frag (Interpolators i) : SV_TARGET {
     // on fog, it's really in depth and worth a read.
     UNITY_APPLY_FOG(i.fogCoord, col);
 
-    return col;
+    // Filling the G-Buffers for deferred mode. We can't pass both specular
+    // and fresnel colors at the same time, and we also need to pass amounts
+    // too, so instead we only pass the red channels of both colors and assume
+    // they're grayscale. We pass the amounts on the remaining channels of the
+    // second buffer, normally used to pass the specular color.
+    #if defined(DEFERRED_PASS)
+        o.gBuffer0 = float4(s.albedo, 1);
+        o.gBuffer1 = float4(
+            s.specularColor.r, s.specularAmount,
+            s.fresnelColor.r, s.fresnelAmount);
+        o.gBuffer2 = float4(s.normal, 1);
+        o.gBuffer3 = float4(additional, 1);
+
+        #if defined(_TRANSMISSION_ENABLED)
+            o.gBuffer0.a = s.transmission.r;
+        #endif
+    #else
+        o.color = col;
+    #endif
+
+    return o;
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 #endif

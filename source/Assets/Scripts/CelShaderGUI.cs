@@ -36,7 +36,7 @@ public class CelShaderGUI : ShaderGUI {
         ShortSpace();
         AddSpecular();
         ShortSpace();
-        AddRim();
+        AddFresnel();
         ShortSpace();
         AddReflections();
         ShortSpace();
@@ -232,7 +232,7 @@ public class CelShaderGUI : ShaderGUI {
     void AddDiffuseGradient () {
         MaterialProperty diffuseGradient = GetProperty("_DiffuseGradient");
         editor.TexturePropertySingleLine(
-            MakeLabel(diffuseGradient, "Diffuse gradient texture,"),
+            MakeLabel(diffuseGradient, "Diffuse gradient texture."),
             diffuseGradient);
     }
 
@@ -246,37 +246,25 @@ public class CelShaderGUI : ShaderGUI {
     }
 
     void AddSpecular () {
-        MaterialProperty spec = GetProperty("_Specular");
-        editor.ShaderProperty(spec,
-            MakeLabel(spec, "Specular blob strength. Set to 0 to turn off."));
+        MaterialProperty specColor = GetProperty("_SpecularColor");
         MaterialProperty specAmount = GetProperty("_SpecularAmount");
+        MaterialProperty specTex = GetProperty("_SpecularTex");
+        editor.TexturePropertySingleLine(
+            MakeLabel(specColor, "Specular color. RGB is color, A is amount."),
+            specTex, specColor);
         editor.ShaderProperty(
             specAmount, MakeLabel(specAmount, "Specular blob size."));
-        // MaterialProperty specSmooth = GetProperty("_SpecularSmooth");
-        // editor.ShaderProperty(specSmooth
-        //     MakeLabel(specSmooth, "Specular blob's edge sharpness."));
-        MaterialProperty specMap = GetProperty("_SpecularMap");
-        editor.TexturePropertySingleLine(
-            MakeLabel(specMap, "Specular map. Red is specular strength, " +
-            "green is specular amount and red is specular smoothness."),
-            specMap);
     }
 
-    void AddRim () {
-        MaterialProperty rim = GetProperty("_Rim");
-        editor.ShaderProperty(rim,
-            MakeLabel(rim, "Rim reflection strength. Set to 0 to turn off."));
-        MaterialProperty rimAmount = GetProperty("_RimAmount");
-        editor.ShaderProperty(
-            rimAmount, MakeLabel(rimAmount, "Rim reflection size."));
-        // MaterialProperty rimSmooth = GetProperty("_RimSmooth");
-        // editor.ShaderProperty(
-        //     rimSmooth, MakeLabel(
-        //         rimSmooth, "Rim reflection's edge sharpness."));
-        MaterialProperty rimMap = GetProperty("_RimMap");
+    void AddFresnel () {
+        MaterialProperty fresColor = GetProperty("_FresnelColor");
+        MaterialProperty fresAmount = GetProperty("_FresnelAmount");
+        MaterialProperty fresTex = GetProperty("_FresnelTex");
         editor.TexturePropertySingleLine(
-            MakeLabel(rimMap, "Rim map. Red is rim strength, green is " +
-            "rim amount and red is rim smoothness."), rimMap);
+            MakeLabel(fresColor, "Fresnel color. RGB is color, A is amount."),
+            fresTex, fresColor);
+        editor.ShaderProperty(
+            fresAmount, MakeLabel(fresAmount, "Fresnel effect size."));
     }
 
     void AddReflections () {
@@ -374,11 +362,11 @@ public class CelShaderGUI : ShaderGUI {
         MaterialProperty transmissionMap = GetProperty("_TransmissionMap");
         EditorGUI.BeginChangeCheck();
         editor.TexturePropertySingleLine(
-            MakeLabel(transmission, "Translucency map and color. " +
+            MakeLabel(transmission, "Translucency map and value. " +
             "Don't forget to disable shadow casting on objects " +
             "with this property."), transmissionMap, transmission);
         if (EditorGUI.EndChangeCheck()) {
-            bool enable = transmission.colorValue != Color.black ||
+            bool enable = transmission.floatValue > 0f ||
                 transmissionMap.textureValue;
             SetKeyword("_TRANSMISSION_ENABLED", enable);
         }

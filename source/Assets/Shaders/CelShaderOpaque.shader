@@ -20,21 +20,19 @@ Shader "CelShaded/Opaque" {
         // in detail. I would say this texture is the most important one.
         [NoScaleOffset] _DiffuseGradient ("Diffuse Gradient", 2D) = "white" {}
 
-        // Specular highlight properties. Set specular to zero to turn off the
-        // effect. The texture map uses the red channel for the specular value,
-        // green for amount and blue for smoothness.
-        _Specular ("Specular", Range(0, 1)) = 0.5
+        // Specular blob properties. Set color to black to turn off the
+        // effect. The texture is like an albedo texture for specular color,
+        // using the alpha channel for the amount value.
+        _SpecularColor ("Specular Color", Color) = (0.5, 0.5, 0.5, 1)
         _SpecularAmount ("Specular Amount", Range(0, 1)) = 0.5
-        _SpecularSmooth ("Specular Smoothness", Range(0, 1)) = 0.05
-        [NoScaleOffset] _SpecularMap ("Specular Map", 2D) = "white" {}
+        [NoScaleOffset] _SpecularTex ("Specular Texture", 2D) = "white" {}
         
-        // Rim highlight properties. Set rim to zero to turn off the effect.
-        // The texture map uses the red channel for the rim value, green for
-        // rim amount and blue for smoothness.
-        _Rim ("Rim", Range(0, 1)) = 0.5
-        _RimAmount ("Rim Amount", Range(0, 1)) = 0.2
-        _RimSmooth ("Rim Smoothness", Range(0, 1)) = 0.05
-        [NoScaleOffset] _RimMap ("Rim Map", 2D) = "white" {}
+        // Fresnel effect properties. Set color to zero to turn off the
+        // effect. The texture is like an albedo texture for Fresnel color,
+        // using the alpha channel for the amount value.
+        _FresnelColor ("Fresnel Color", Color) = (0.5, 0.5, 0.5, 1)
+        _FresnelAmount ("Fresnel Amount", Range(0, 1)) = 0.2
+        [NoScaleOffset] _FresnelTex ("Fresnel Texture", 2D) = "white" {}
 
         // Reflections properties. A reflectivity of zero means only ambient
         // light is added, while a reflectivity of one means only reflections
@@ -88,7 +86,7 @@ Shader "CelShaded/Opaque" {
         // Translucency properties. This is a very basic type of subsurface
         // scattering, very lightweight and works really well with cel shading.
         // This effect is called transmission in Godot.
-        _Transmission ("Translucency", Color) = (0,0,0,1)
+        _Transmission ("Translucency", Range(0, 1)) = 0
         _TransmissionMap ("Translucency Map", 2D) = "white" {}
 
         // Refraction properties. We are using the grab pass here, so don't
@@ -153,6 +151,34 @@ Shader "CelShaded/Opaque" {
             #pragma shader_feature _ANISOTROPY_ENABLED
             #pragma shader_feature _TRANSMISSION_ENABLED
             
+            #include "CelShadedLighting.cginc"
+
+            ENDCG
+        }
+
+        // Deferred pass. Cel shading is usually at its best with just a few
+        // lights on the scene, but just for completeness sake and in case we
+        // need it, it's here.
+        Pass {
+            Tags { "LightMode" = "Deferred" }
+
+            CGPROGRAM
+
+            #pragma target 3.0
+		    #pragma exclude_renderers nomrt
+
+            #pragma multi_compile_fog
+
+            #pragma shader_feature _REFLECTIONS_ENABLED
+            #pragma shader_feature _EMISSION_ENABLED
+            #pragma shader_feature _BUMPMAP_ENABLED
+            #pragma shader_feature _PARALLAX_ENABLED
+            #pragma shader_feature _OCCLUSION_ENABLED
+            #pragma shader_feature _ANISOTROPY_ENABLED
+            #pragma shader_feature _TRANSMISSION_ENABLED
+
+            #define DEFERRED_PASS
+
             #include "CelShadedLighting.cginc"
 
             ENDCG
