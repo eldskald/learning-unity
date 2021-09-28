@@ -64,7 +64,7 @@ Interpolators vert (VertexData v) {
     #endif
 
     #if defined(_REFRACTION_ENABLED)
-        o.screenUV = ComputeScreenPos(o.pos);
+        o.screenUV = ComputeGrabScreenPos(o.pos);
     #endif
 
     #if defined(VERTEXLIGHT_ON)
@@ -183,9 +183,9 @@ FragOutput frag (Interpolators i) {
         clip(s.alpha - _Cutoff);
     #endif
 
-    half3 diffuse = GetDiffuse(light, s, _DiffuseGradient);
-    half3 specular = GetSpecular(light, s, i.worldViewDir, _DiffuseGradient);
-    half3 fresnel = GetFresnel(light, s, i.worldViewDir, _DiffuseGradient);
+    half3 diffuse = GetDiffuse(light, s);
+    half3 specular = GetSpecular(light, s, i.worldViewDir);
+    half3 fresnel = GetFresnel(light, s, i.worldViewDir);
     half4 col;
     col.rgb = diffuse + specular + fresnel;
     col.a = s.alpha;
@@ -256,7 +256,6 @@ FragOutput frag (Interpolators i) {
                 roughness * UNITY_SPECCUBE_LOD_STEPS);
             half3 reflex = DecodeHDR(envSample, unity_SpecCube0_HDR);
             additional += reflex * s.reflectivity;
-            ambient *= (1 - s.reflectivity);
         #endif
 
         #if defined(_EMISSION_ENABLED)

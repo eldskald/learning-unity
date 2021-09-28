@@ -17,7 +17,7 @@ Shader "Custom/DeferredShading" {
 
 			#define DEFERRED_LIGHT_PASS
 			
-			#include "DefferedInclude.cginc"
+			#include "DeferredInclude.cginc"
 
 			ENDCG
 		}

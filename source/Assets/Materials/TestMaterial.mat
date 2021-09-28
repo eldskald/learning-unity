@@ -109,7 +109,7 @@ Material:
     - _DstBlend: 0
     - _EmissionEnabled: 0
     - _EmissionToggle: 0
-    - _FresnelAmount: 0.2
+    - _FresnelAmount: 0.3
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1

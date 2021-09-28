@@ -14,12 +14,6 @@ Shader "CelShaded/Opaque" {
         _Color ("Albedo", Color) = (1,1,1,1)
         _MainTex ("Albedo Texture", 2D) = "white" {}
 
-        // Diffuse curve, used to toonify and create shade bands, or even
-        // un-toonify as well. I go into more detail on how to use it on my
-        // video at https://youtu.be/Y3tT_-GTXKg where I explain each feature
-        // in detail. I would say this texture is the most important one.
-        [NoScaleOffset] _DiffuseGradient ("Diffuse Gradient", 2D) = "white" {}
-
         // Specular blob properties. Set color to black to turn off the
         // effect. The texture is like an albedo texture for specular color,
         // using the alpha channel for the amount value.
@@ -80,7 +74,7 @@ Shader "CelShaded/Opaque" {
 
         // Anisotropy properties.
         [NoScaleOffset] [Normal]
-            _AnisoFlowchart ("Anisotropy Flowchart", 2D) = "bump" {}
+            _AnisoFlowchart ("Aniso. Flowchart", 2D) = "bump" {}
         _AnisoScale ("Anisotropy Scale", Range(0, 1)) = 0.5
 
         // Translucency properties. This is a very basic type of subsurface

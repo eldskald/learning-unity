@@ -12,7 +12,7 @@ public class GradientCreatorGUI : Editor {
     };
 
     public override void OnInspectorGUI () {
-        GradientCreator creator = (GradientCreator)target;
+        GradientCreator creator = target as GradientCreator;
 
         GUILayout.Label("Gradient Creator", EditorStyles.boldLabel);
         GUILayout.Space(16);
@@ -28,7 +28,7 @@ public class GradientCreatorGUI : Editor {
         if (EditorGUILayout.DropdownButton(buttonLabel, FocusType.Passive)) {
             Texture2D tex = new Texture2D(creator.resolution, 1);
             tex.wrapMode = TextureWrapMode.Clamp;
-            for (int i = 0; i < 256; i++) {
+            for (int i = 0; i < creator.resolution; i++) {
                 tex.SetPixel(i, 0, creator.gradient.Evaluate(
                     i / (float)creator.resolution));
             }

@@ -5,9 +5,10 @@
 #include "AutoLight.cginc"
 #include "CelShaderStructs.cginc"
 
-static const float SPECULAR_SMOOTHNESS = 0.05;
-static const float FRESNEL_SMOOTHNESS = 0.05;
-static const float DIFFUSE_SMOOTHNESS = 0.05;
+// Global variables, set by the Cel Shader Settings tool.
+uniform sampler2D _DiffuseTexture;
+uniform float _SpecularSmooth;
+uniform float _FresnelSmooth;
 
 
 
@@ -67,29 +68,12 @@ void Set4VertexLights (inout Interpolators i) {
 }
 
 // Read from diffuse gradient. Used on diffuse, specular and rim.
-half DiffuseCurve (UnityLight light, Surface s, sampler2D grad) {
-    return tex2D(grad, dot(s.normal, light.dir)).x;
-}
-
-// For when you don't want to read from a diffuse gradient, this function
-// uses a smoothstep function with the DIFFUSE_SMOOTHNESS constant instead.
-// The other functions will have two versions for both of these cases too.
-half DiffuseCurve (UnityLight l, Surface s) {
-    return smoothstep(0, DIFFUSE_SMOOTHNESS, dot(s.normal, l.dir));
+half DiffuseCurve (UnityLight light, Surface s) {
+    return tex2D(_DiffuseTexture, dot(s.normal, light.dir)).x;
 }
 
 // Diffuse light. Directly from my Godot version at
 // https://godotshaders.com/shader/complete-toon-shader/
-half3 GetDiffuse (UnityLight light, Surface s, sampler2D grad) {
-    float value = DiffuseCurve(light, s, grad);
-
-    #if defined(_TRANSMISSION_ENABLED)
-        value = value + (1 - value) * s.transmission;
-    #endif
-
-    return s.albedo * light.color * value;
-}
-
 half3 GetDiffuse (UnityLight light, Surface s) {
     float value = DiffuseCurve(light, s);
 
@@ -104,7 +88,7 @@ half3 GetDiffuse (UnityLight light, Surface s) {
 // Roystan's https://roystan.net/articles/toon-shader and the anisotropy is
 // from https://wiki.unity3d.com/index.php/Anisotropic_Highlight_Shader by
 // James O'Hare. It's basically a toonified Blinn-Phong algorithm.
-half SpecularValue (UnityLight light, Surface s, float3 viewDir) {
+half3 GetSpecular (UnityLight light, Surface s, float3 viewDir) {
     float3 h = normalize(viewDir + light.dir);
     half glossiness = pow(2, 8 * (1 - s.specularAmount));
     half spec = dot(s.normal, h);
@@ -116,41 +100,21 @@ half SpecularValue (UnityLight light, Surface s, float3 viewDir) {
     #endif
 
     half r = pow(spec, glossiness * glossiness);
-    r = smoothstep(0.05, 0.05 + SPECULAR_SMOOTHNESS, r);
-    return r;
-}
-
-half3 GetSpecular (UnityLight l, Surface s, float3 viewDir, sampler2D grad) {
-    half value = SpecularValue(l, s, viewDir);
-    return l.color * s.specularColor * value * DiffuseCurve(l, s, grad);
-}
-
-half3 GetSpecular (UnityLight l, Surface s, float3 viewDir) {
-    half value = SpecularValue(l, s, viewDir);
-    return l.color * s.specularColor * value * DiffuseCurve(l, s);
+    r = smoothstep(0.05, 0.05 + _SpecularSmooth, r);
+    return light.color * s.specularColor * r * DiffuseCurve(light, s);
 }
 
 // Fresnel effect. From my Godot shader, and the original is also from
 // Roystan's https://roystan.net/articles/toon-shader tutorial.
-half FresnelValue (UnityLight light, Surface s, float3 viewDir) {
+half3 GetFresnel (UnityLight light, Surface s, float3 viewDir) {
     half vDotN = dot(viewDir, s.normal);
     half lDotN = dot(light.dir, s.normal);
     half threshold = pow((1 - s.fresnelAmount), lDotN);
     half r = smoothstep(
-        threshold - FRESNEL_SMOOTHNESS / 2,
-        threshold + FRESNEL_SMOOTHNESS / 2,
+        threshold - _FresnelSmooth / 2,
+        threshold + _FresnelSmooth / 2,
         1 - vDotN);
-    return r;
-}
-
-half3 GetFresnel (UnityLight l, Surface s, float3 viewDir, sampler2D grad) {
-    half value = FresnelValue (l, s, viewDir);
-    return l.color * s.fresnelColor * value * DiffuseCurve(l, s, grad);
-}
-
-half3 GetFresnel (UnityLight l, Surface s, float3 viewDir) {
-    half value = FresnelValue (l, s, viewDir);
-    return l.color * s.fresnelColor * value * DiffuseCurve(l, s);
+    return light.color * s.fresnelColor * r * DiffuseCurve(light, s);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

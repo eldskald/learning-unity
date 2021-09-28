@@ -30,14 +30,9 @@ public class CelShaderGUI : ShaderGUI {
         LongSpace();
 
         GroupLabel("Main Properties");
-        AddDiffuseGradient();
-        ShortSpace();
         AddAlbedo();
-        ShortSpace();
         AddSpecular();
-        ShortSpace();
         AddFresnel();
-        ShortSpace();
         AddReflections();
         ShortSpace();
         AddOutline();
@@ -50,6 +45,8 @@ public class CelShaderGUI : ShaderGUI {
         AddOcclusion();
         AddAnisotropy();
         AddTransmission();
+        ShortSpace();
+        AddTilingAndOffset();
     }
 
     // Helper functions for convenience of writing and reading.
@@ -229,19 +226,15 @@ public class CelShaderGUI : ShaderGUI {
     // Functions that draw each of the property sets. Also for convenience,
     // makes it easier to read each one when they're in separate blocks than
     // in a wall of text written on OnGUI().
-    void AddDiffuseGradient () {
-        MaterialProperty diffuseGradient = GetProperty("_DiffuseGradient");
-        editor.TexturePropertySingleLine(
-            MakeLabel(diffuseGradient, "Diffuse gradient texture."),
-            diffuseGradient);
-    }
-
     void AddAlbedo () {
         MaterialProperty color = GetProperty("_Color");
         MaterialProperty mainTex = GetProperty("_MainTex");
         editor.TexturePropertySingleLine(
-            MakeLabel(color, "Albedo color and texture. Tiles and offsets " +
-            "other textures unless otherwise noted."), mainTex, color);
+            MakeLabel(color, "Albedo color and texture."), mainTex, color);
+    }
+
+    void AddTilingAndOffset () {
+        MaterialProperty mainTex = GetProperty("_MainTex");
         editor.TextureScaleOffsetProperty(mainTex);
     }
 
@@ -250,10 +243,9 @@ public class CelShaderGUI : ShaderGUI {
         MaterialProperty specAmount = GetProperty("_SpecularAmount");
         MaterialProperty specTex = GetProperty("_SpecularTex");
         editor.TexturePropertySingleLine(
-            MakeLabel(specColor, "Specular color. RGB is color, A is amount."),
-            specTex, specColor);
-        editor.ShaderProperty(
-            specAmount, MakeLabel(specAmount, "Specular blob size."));
+            MakeLabel("Specular Blob", "Specular color and amount. " +
+            "RGB is color, A is amount. Set to black to turn off."),
+            specTex, specColor, specAmount);
     }
 
     void AddFresnel () {
@@ -261,26 +253,23 @@ public class CelShaderGUI : ShaderGUI {
         MaterialProperty fresAmount = GetProperty("_FresnelAmount");
         MaterialProperty fresTex = GetProperty("_FresnelTex");
         editor.TexturePropertySingleLine(
-            MakeLabel(fresColor, "Fresnel color. RGB is color, A is amount."),
-            fresTex, fresColor);
-        editor.ShaderProperty(
-            fresAmount, MakeLabel(fresAmount, "Fresnel effect size."));
+            MakeLabel("Fresnel Effect", "Fresnel color and amount. " +
+            "RGB is color, A is amount. Set to black to turn off."),
+            fresTex, fresColor, fresAmount);
     }
 
     void AddReflections () {
         MaterialProperty reflectivity = GetProperty("_Reflectivity");
+        MaterialProperty blurriness = GetProperty("_Blurriness");
+        MaterialProperty reflMap = GetProperty("_ReflectionsMap");
         EditorGUI.BeginChangeCheck();
-        editor.ShaderProperty(reflectivity, MakeLabel(reflectivity));
+        editor.TexturePropertySingleLine(
+            MakeLabel("Reflections", "Reflections map. R and first " +
+            "slider are reflectivity, G and second are blurriness."),
+            reflMap, reflectivity, blurriness);
         if (EditorGUI.EndChangeCheck()) {
             SetKeyword("_REFLECTIONS_ENABLED", reflectivity.floatValue > 0f);
         }
-        MaterialProperty blurriness = GetProperty("_Blurriness");
-        editor.ShaderProperty(blurriness, MakeLabel(blurriness));
-        MaterialProperty reflMap = GetProperty("_ReflectionsMap");
-        editor.TexturePropertySingleLine(
-            MakeLabel(reflMap, "Reflections map. Red is reflectivity " +
-            "and green is blurriness. Don't forget to set up reflection" +
-            "probes to reflect other meshes beside the skybox."), reflMap);
     }
 
     void AddOutline () {
