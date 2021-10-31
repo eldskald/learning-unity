@@ -5,7 +5,15 @@
 #include "AutoLight.cginc"
 #include "CelShaderStructs.cginc"
 
-// Global variables, set by the Cel Shader Settings tool.
+#if defined(DEFERRED_LIGHT_PASS)
+    float4 _LightColor, _LightDir, _LightPos;
+#endif
+
+// Global variables, set by the Cel Shader Settings tool. The diffuse
+// texture is a gradient used to toonify and create shade bands, or even
+// un-toonify as well. I go into more detail on how to use it on my
+// video at https://youtu.be/Y3tT_-GTXKg where I explain each feature
+// in detail. I would say this texture is the most important one.
 uniform sampler2D _DiffuseTexture;
 uniform float _SpecularSmooth;
 uniform float _FresnelSmooth;
@@ -30,6 +38,15 @@ UnityLight GetLight (Interpolators i) {
     light.color = _LightColor0.rgb * attenuation;
     return light;
 }
+
+#if defined(DEFERRED_LIGHT_PASS)
+    UnityLight GetDeferredLight () {
+        UnityLight light;
+        light.color = _LightColor.rgb;
+        light.dir = -_LightDir;
+        return light;
+    }
+#endif
 
 void Set4VertexLights (inout Interpolators i) {
     #if defined(VERTEXLIGHT_ON)

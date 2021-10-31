@@ -161,35 +161,6 @@ Shader "CelShaded/Refraction" {
             ENDCG
         }
 
-        // Deferred pass. Cel shading is usually at its best with just a few
-        // lights on the scene, but just for completeness sake and in case we
-        // need it, it's here.
-        Pass {
-            Tags { "LightMode" = "Deferred" }
-
-            CGPROGRAM
-
-            #pragma target 3.0
-		    #pragma exclude_renderers nomrt
-
-            #pragma multi_compile_fog
-
-            #pragma shader_feature _REFLECTIONS_ENABLED
-            #pragma shader_feature _EMISSION_ENABLED
-            #pragma shader_feature _BUMPMAP_ENABLED
-            #pragma shader_feature _PARALLAX_ENABLED
-            #pragma shader_feature _OCCLUSION_ENABLED
-            #pragma shader_feature _ANISOTROPY_ENABLED
-            #pragma shader_feature _TRANSMISSION_ENABLED
-
-            #define DEFERRED_PASS
-            #define _REFRACTION_ENABLED
-
-            #include "CelShadedLighting.cginc"
-
-            ENDCG
-        }
-
         // ZWrite pass. On transparent rendering modes, it blocks the
         // outline mesh from rendering in front of the actual geometry.
         // We can't have total control of which passes to turn on and off on

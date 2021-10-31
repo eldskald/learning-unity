@@ -50,17 +50,6 @@ struct Interpolators {
     #endif
 };
 
-struct FragOutput {
-    #if defined(DEFERRED_PASS)
-        float4 gBuffer0 : SV_TARGET0;
-        float4 gBuffer1 : SV_TARGET1;
-        float4 gBuffer2 : SV_TARGET2;
-        float4 gBuffer3 : SV_TARGET3;
-    #else
-        float4 color : SV_TARGET;
-    #endif
-};
-
 struct Surface {
     fixed3 albedo;
     fixed alpha;

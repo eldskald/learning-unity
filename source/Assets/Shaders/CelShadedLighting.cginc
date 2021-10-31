@@ -172,10 +172,7 @@ Surface GetSurface(Interpolators i) {
 // with the inclusion of ambient light, emission, reflections and etc.       //
 ///////////////////////////////////////////////////////////////////////////////
 
-FragOutput frag (Interpolators i) {
-    FragOutput o;
-    UNITY_INITIALIZE_OUTPUT(FragOutput, o);
-
+float4 frag (Interpolators i) : SV_TARGET {
     Surface s = GetSurface(i);
     UnityLight light = GetLight(i);
 
@@ -281,33 +278,13 @@ FragOutput frag (Interpolators i) {
         col.rgb += additional;
     #endif
 
-    // Apply fog. We're using Unity's built in fog tool. If you want to learn
+    // Apply fog with Unity's built in fog tool. If you want to learn
     // how Unity does it or how fog itself works, check Catlike Coding's
-    // https://catlikecoding.com/unity/tutorials/rendering/part-14/ tutorial
-    // on fog, it's really in depth and worth a read.
+    // https://catlikecoding.com/unity/tutorials/rendering/part-14/
+    // tutorial on fog, it's really in depth and worth a read.
     UNITY_APPLY_FOG(i.fogCoord, col);
 
-    // Filling the G-Buffers for deferred mode. We can't pass both specular
-    // and fresnel colors at the same time, and we also need to pass amounts
-    // too, so instead we only pass the red channels of both colors and assume
-    // they're grayscale. We pass the amounts on the remaining channels of the
-    // second buffer, normally used to pass the specular color.
-    #if defined(DEFERRED_PASS)
-        o.gBuffer0 = float4(s.albedo, 1);
-        o.gBuffer1 = float4(
-            s.specularColor.r, s.specularAmount,
-            s.fresnelColor.r, s.fresnelAmount);
-        o.gBuffer2 = float4(s.normal, 1);
-        o.gBuffer3 = float4(additional, 1);
-
-        #if defined(_TRANSMISSION_ENABLED)
-            o.gBuffer0.a = s.transmission.r;
-        #endif
-    #else
-        o.color = col;
-    #endif
-
-    return o;
+    return col;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
