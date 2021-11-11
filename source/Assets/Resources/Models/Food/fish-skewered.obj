@@ -1,6 +1,6 @@
-# Blender v2.83.4 OBJ File: 'skewered-fish.blend'
+# Blender v2.93.5 OBJ File: 'fish-skewered.blend'
 # www.blender.org
-mtllib skewered-fish.mtl
+mtllib fish-skewered.mtl
 o FishBody_Sphere
 v 0.000000 0.549669 -0.028763
 v 0.000000 0.385653 -0.024131
