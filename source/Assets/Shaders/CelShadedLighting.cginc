@@ -4,6 +4,18 @@
 #pragma vertex vert
 #pragma fragment frag
 
+#if !defined(LIGHTMAP_ON) && defined(SHADOWS_SCREEN)
+	#if defined(SHADOWS_SHADOWMASK) && !defined(UNITY_NO_SCREENSPACE_SHADOWS)
+		#define ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS 1
+	#endif
+#endif
+
+#if defined(LIGHTMAP_ON) && defined(SHADOWS_SCREEN)
+	#if defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK)
+		#define SUBTRACTIVE_LIGHTING 1
+	#endif
+#endif
+
 #include "CelShaderStructs.cginc"
 #include "CelShaderLightHandler.cginc"
 
@@ -71,7 +83,7 @@ Interpolators vert (VertexData v) {
         Set4VertexLights(o);
     #endif
 
-    #if defined(LIGHTMAP_ON)
+    #if defined(LIGHTMAP_ON) || ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
         o.lightmapUV = v.uv1 * unity_LightmapST.xy + unity_LightmapST.zw;
     #endif
 
@@ -191,7 +203,7 @@ float4 frag (Interpolators i) : SV_TARGET {
     // sample the environment data to add to the final color. I made that by
     // following this https://catlikecoding.com/unity/tutorials/rendering/
     // tutorial by Catlike Coding.
-    #if defined(UNITY_PASS_FORWARDBASE) || defined(DEFERRED_PASS)
+    #if defined(UNITY_PASS_FORWARDBASE)
         half3 additional = 0;
         half3 ambient = 0;
 

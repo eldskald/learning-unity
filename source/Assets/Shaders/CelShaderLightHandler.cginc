@@ -5,10 +5,6 @@
 #include "AutoLight.cginc"
 #include "CelShaderStructs.cginc"
 
-#if defined(DEFERRED_LIGHT_PASS)
-    float4 _LightColor, _LightDir, _LightPos;
-#endif
-
 // Global variables, set by the Cel Shader Settings tool. The diffuse
 // texture is a gradient used to toonify and create shade bands, or even
 // un-toonify as well. I go into more detail on how to use it on my
@@ -25,28 +21,45 @@ uniform float _FresnelSmooth;
 // them for the fragment function to use.                                    //
 ///////////////////////////////////////////////////////////////////////////////
 
+// FadeShadows(), GetLight() and Set4VertexLights() functions handle light
+// information. All done by following Catlike Coding's rendering tutorial.
+float FadeShadows (Interpolators i, float attenuation) {
+	#if HANDLE_SHADOWS_BLENDING_IN_GI || ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
+        #if ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
+			attenuation = SHADOW_ATTENUATION(i);
+		#endif
+		float viewZ =
+			dot(_WorldSpaceCameraPos - i.worldPos, UNITY_MATRIX_V[2].xyz);
+		float shadowFadeDistance =
+			UnityComputeShadowFadeDistance(i.worldPos, viewZ);
+		float shadowFade = UnityComputeShadowFade(shadowFadeDistance);
+        float bakedAttenuation =
+			UnitySampleBakedOcclusion(i.lightmapUV, i.worldPos);
+        attenuation = UnityMixRealtimeAndBakedShadows(
+			attenuation, bakedAttenuation, shadowFade);
+	#endif
+	return attenuation;
+}
+
 UnityLight GetLight (Interpolators i) {
     UnityLight light;
 
-    #if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
-        light.dir = normalize(_WorldSpaceLightPos0.xyz - i.worldPos);
-    #else
-        light.dir = _WorldSpaceLightPos0.xyz;
+    #if SUBTRACTIVE_LIGHTING
+		light.dir = float3(0, 1, 0);
+		light.color = 0;
+	#else
+        #if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
+            light.dir = normalize(_WorldSpaceLightPos0.xyz - i.worldPos);
+        #else
+            light.dir = _WorldSpaceLightPos0.xyz;
+        #endif
+        UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
+        attenuation = FadeShadows(i, attenuation);
+        light.color = _LightColor0.rgb * attenuation;
     #endif
 
-    UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
-    light.color = _LightColor0.rgb * attenuation;
     return light;
 }
-
-#if defined(DEFERRED_LIGHT_PASS)
-    UnityLight GetDeferredLight () {
-        UnityLight light;
-        light.color = _LightColor.rgb;
-        light.dir = -_LightDir;
-        return light;
-    }
-#endif
 
 void Set4VertexLights (inout Interpolators i) {
     #if defined(VERTEXLIGHT_ON)

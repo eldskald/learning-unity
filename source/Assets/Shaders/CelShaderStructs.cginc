@@ -40,7 +40,7 @@ struct Interpolators {
         float4 screenUV : TEXCOORD8;
     #endif
 
-    #if defined(LIGHTMAP_ON)
+    #if defined(LIGHTMAP_ON) || ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
         float2 lightmapUV : TEXCOORD9;
     #endif
 
