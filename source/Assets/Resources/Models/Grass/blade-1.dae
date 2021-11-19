@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <asset>
+    <contributor>
+      <author>Blender User</author>
+      <authoring_tool>Blender 2.93.6 commit date:2021-11-16, commit time:14:54, hash:c842a90e2fa1</authoring_tool>
+    </contributor>
+    <created>2021-11-19T03:15:16</created>
+    <modified>2021-11-19T03:15:16</modified>
+    <unit name="meter" meter="1"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_effects>
+    <effect id="Grass-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <diffuse>
+              <color sid="diffuse">0.03551444 0.09083729 0.0349991 1</color>
+            </diffuse>
+            <index_of_refraction>
+              <float sid="ior">1.45</float>
+            </index_of_refraction>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_images/>
+  <library_materials>
+    <material id="Grass-material" name="Grass">
+      <instance_effect url="#Grass-effect"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Cylinder_001-mesh" name="Cylinder.001">
+      <mesh>
+        <source id="Cylinder_001-mesh-positions">
+          <float_array id="Cylinder_001-mesh-positions-array" count="75">0 0.00999999 -0.003119111 0.00999999 0 -0.003119111 0 -0.00999999 -0.003119111 -0.00999999 0 -0.003119111 0 0.0081923 0.01688081 -0.002012729 0.006384551 0.03498953 -0.004872262 0.004576861 0.05494505 -0.01053589 0.002769172 0.07468223 -0.008050143 0 0.0759027 -4.28976e-4 0 0.05604273 0.004337131 0 0.03565418 0.0081923 0 0.01688081 -0.01053589 -0.002769172 0.07468223 -0.004872262 -0.004576861 0.05494505 -0.002012729 -0.006384551 0.03498953 0 -0.0081923 0.01688081 -0.0130217 0 0.07346177 -0.009315609 0 0.05384737 -0.00836265 0 0.03432494 -0.0081923 0 0.01688081 -0.01929736 0 0.09233665 -0.0189712 5.35274e-4 0.09176713 -0.01945167 0 0.09153121 -0.0189712 -5.35274e-4 0.09176713 -0.01849073 0 0.09200304</float_array>
+          <technique_common>
+            <accessor source="#Cylinder_001-mesh-positions-array" count="25" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Cylinder_001-mesh-normals">
+          <float_array id="Cylinder_001-mesh-normals-array" count="75">-0.001861631 0.9945779 0.1039776 0.9563422 0 0.2922496 0.01016294 0.9956973 0.09210771 -0.1504273 0.9363481 0.3172127 -0.4802542 0 0.8771294 0.6747179 0 0.7380757 -0.001861631 -0.9945779 0.1039776 -0.1504273 -0.9363481 0.3172127 -0.9661828 0 -0.2578583 -0.9934713 0 -0.1140819 0 0.9959416 0.09000188 0.9898266 0 0.1422801 0.9959416 0 0.09000188 0.02160739 0.9951633 0.0958296 0.9762417 0 0.2166848 -0.004059016 0.9954072 0.0956465 -0.9991784 0 0.04052865 -0.9959416 0 0.09000188 -0.9932917 0 -0.1156353 -0.9995911 0 -0.02859634 0.02160739 -0.9951633 0.0958296 0 -0.9959416 0.09000188 -0.004059016 -0.9954072 0.0956465 0.01016294 -0.9956973 0.09210771 0.8914659 0 0.4530881</float_array>
+          <technique_common>
+            <accessor source="#Cylinder_001-mesh-normals-array" count="25" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Cylinder_001-mesh-map-0">
+          <float_array id="Cylinder_001-mesh-map-0-array" count="264">1 0.8 0.75 0.6 1 0.6 0.7187511 0.9 0.4375021 1 0.5937511 0.9 0.5 0.8 0.5937511 0.9 0.4687511 0.9 0.25 0.8 0.4687511 0.9 0.3437511 0.9 1 0 0.75 0.2 0.75 0 1 0.1999999 0.75 0.4 0.75 0.2 1 0.6 0.75 0.4 1 0.4 0.25 0.1999999 0 0 0.25 0 0.25 0.1999999 0 0.4 0 0.2 0.25 0.6 0 0.4 0.25 0.4 0.25 0.8 0 0.6 0.25 0.6 0.5 0.2 0.25 0 0.5 0 0.5 0.4 0.25 0.1999999 0.5 0.2 0.5 0.4 0.25 0.6 0.25 0.4 0.5 0.6 0.25 0.8 0.25 0.6 0.75 0.2 0.5 0 0.75 0 0.75 0.4 0.5 0.2 0.75 0.2 0.75 0.4 0.5 0.6 0.5 0.4 0.75 0.6 0.5 0.8 0.5 0.6 0.218751 0.9 0.25 0.8 0.3437511 0.9 0.4375021 1 0.218751 0.9 0.3437511 0.9 0.4375021 1 0.3437511 0.9 0.4687511 0.9 0.4375021 1 0.4687511 0.9 0.5937511 0.9 1 0.8 0.5937511 0.9 0.75 0.8 1 0.8 0.75 0.8 0.75 0.6 0.5 0.8 0.75 0.8 0.5937511 0.9 0.25 0.8 0.5 0.8 0.4687511 0.9 1 0 1 0.1999999 0.75 0.2 1 0.1999999 1 0.4 0.75 0.4 1 0.6 0.75 0.6 0.75 0.4 0.25 0.1999999 0 0.2 0 0 0.25 0.1999999 0.25 0.4 0 0.4 0.25 0.6 0 0.6 0 0.4 0.25 0.8 0 0.8 0 0.6 0.5 0.2 0.25 0.1999999 0.25 0 0.5 0.4 0.25 0.4 0.25 0.1999999 0.5 0.4 0.5 0.6 0.25 0.6 0.5 0.6 0.5 0.8 0.25 0.8 0.75 0.2 0.5 0.2 0.5 0 0.75 0.4 0.5 0.4 0.5 0.2 0.75 0.4 0.75 0.6 0.5 0.6 0.75 0.6 0.75 0.8 0.5 0.8 0.218751 0.9 0 0.8 0.25 0.8 1 0.8 0.7187511 0.9 0.5937511 0.9</float_array>
+          <technique_common>
+            <accessor source="#Cylinder_001-mesh-map-0-array" count="132" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Cylinder_001-mesh-vertices">
+          <input semantic="POSITION" source="#Cylinder_001-mesh-positions"/>
+        </vertices>
+        <triangles material="Grass-material" count="44">
+          <input semantic="VERTEX" source="#Cylinder_001-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Cylinder_001-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Cylinder_001-mesh-map-0" offset="2" set="0"/>
+          <p>7 0 0 9 1 1 6 2 2 21 3 3 20 4 4 24 5 5 12 6 6 24 5 7 23 7 8 16 8 9 23 7 10 22 9 11 0 10 12 11 11 13 1 12 14 4 13 15 10 14 16 11 11 17 6 2 18 10 14 19 5 15 20 19 16 21 0 10 22 3 17 23 19 16 24 5 15 25 4 13 26 17 18 27 5 15 28 18 19 29 16 8 30 6 2 31 17 18 32 15 20 33 3 17 34 2 21 35 14 22 36 19 16 37 15 20 38 14 22 39 17 18 40 18 19 41 13 23 42 16 8 43 17 18 44 11 11 45 2 21 46 1 12 47 10 14 48 15 20 49 11 11 50 10 14 51 13 23 52 14 22 53 9 1 54 12 6 55 13 23 56 21 3 57 16 8 58 22 9 59 20 4 60 21 3 61 22 9 62 20 4 63 22 9 64 23 7 65 20 4 66 23 7 67 24 5 68 7 0 69 24 5 70 8 24 71 7 0 72 8 24 73 9 1 74 12 6 75 8 24 76 24 5 77 16 8 78 12 6 79 23 7 80 0 10 81 4 13 82 11 11 83 4 13 84 5 15 85 10 14 86 6 2 87 9 1 88 10 14 89 19 16 90 4 13 91 0 10 92 19 16 93 18 19 94 5 15 95 17 18 96 6 2 97 5 15 98 16 8 99 7 0 100 6 2 101 15 20 102 19 16 103 3 17 104 14 22 105 18 19 106 19 16 107 14 22 108 13 23 109 17 18 110 13 23 111 12 6 112 16 8 113 11 11 114 15 20 115 2 21 116 10 14 117 14 22 118 15 20 119 10 14 120 9 1 121 13 23 122 9 1 123 8 24 124 12 6 125 21 3 126 7 0 127 16 8 128 7 0 129 21 3 130 24 5 131</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Cylinder" name="Cylinder" type="NODE">
+        <matrix sid="transform">4 0 0 0 0 4 0 0 0 0 4 0 0 0 0 1</matrix>
+        <instance_geometry url="#Cylinder_001-mesh" name="Cylinder">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="Grass-material" target="#Grass-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>
