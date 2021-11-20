@@ -7,14 +7,15 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: metal-iron
-  m_Shader: {fileID: 4800000, guid: b135ffbb334b83a43a549f4d7e9fdd5b, type: 3}
-  m_ShaderKeywords: 
+  m_Name: glass-1
+  m_Shader: {fileID: 4800000, guid: d390289d6c5d19f879cc70b578fcbf9f, type: 3}
+  m_ShaderKeywords: _DITHER_SHADOWS _RENDERING_TRANSPARENT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 3000
+  stringTagMap:
+    RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -85,8 +86,8 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DstBlend: 0
-    - _FresnelAmount: 0.25
+    - _DstBlend: 10
+    - _FresnelAmount: 0.3
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -100,17 +101,17 @@ Material:
     - _Reflectivity: 0
     - _RefractionScale: 0.5
     - _SmoothnessTextureChannel: 0
-    - _SpecularAmount: 0.4
+    - _SpecularAmount: 0.5
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Transmission: 0
     - _UVSec: 0
-    - _ZWrite: 1
+    - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 0.15294118, g: 0.13333334, b: 0.12156863, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 0.101960786}
     - _Emission: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.32941177, g: 0.22745098, b: 0.16470589, a: 1}
+    - _FresnelColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecularColor: {r: 0.32599998, g: 0.22494, b: 0.16430399, a: 1}
+    - _SpecularColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_BuildTextureStacks: []

@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: metal-iron
+  m_Name: metal-copper
   m_Shader: {fileID: 4800000, guid: b135ffbb334b83a43a549f4d7e9fdd5b, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -107,10 +107,10 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.15294118, g: 0.13333334, b: 0.12156863, a: 1}
+    - _Color: {r: 0.4339623, g: 0.23310125, b: 0.11258457, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.32941177, g: 0.22745098, b: 0.16470589, a: 1}
+    - _FresnelColor: {r: 0.7882353, g: 0.42745098, b: 0.20784314, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecularColor: {r: 0.32599998, g: 0.22494, b: 0.16430399, a: 1}
+    - _SpecularColor: {r: 0.78699994, g: 0.42540535, b: 0.20561257, a: 1}
   m_BuildTextureStacks: []
