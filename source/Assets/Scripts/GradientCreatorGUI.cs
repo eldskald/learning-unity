@@ -7,10 +7,6 @@ using UnityEditor;
 [CustomEditor (typeof(GradientCreator))]
 public class GradientCreatorGUI : Editor {
 
-    GUIContent buttonLabel = new GUIContent() {
-        text = "Save"
-    };
-
     public override void OnInspectorGUI () {
         GradientCreator creator = target as GradientCreator;
 
@@ -25,7 +21,7 @@ public class GradientCreatorGUI : Editor {
             "File Path", creator.filePath);
         GUILayout.Space(16);
 
-        if (EditorGUILayout.DropdownButton(buttonLabel, FocusType.Passive)) {
+        if (GUILayout.Button("Save")) {
             Texture2D tex = new Texture2D(creator.resolution, 1);
             tex.wrapMode = TextureWrapMode.Clamp;
             for (int i = 0; i < creator.resolution; i++) {
@@ -34,7 +30,7 @@ public class GradientCreatorGUI : Editor {
             }
             tex.Apply();
             byte[] data = tex.EncodeToPNG();
-            File.WriteAllBytes (string.Format ("{0}/{1}",
+            File.WriteAllBytes(string.Format("{0}/{1}",
                 Application.dataPath, creator.filePath), data);
         }
     }
