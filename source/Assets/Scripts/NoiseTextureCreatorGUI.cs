@@ -9,7 +9,15 @@ using OpenSimplexNoise;
 public class NoiseTextureCreatorGUI : Editor {
 
     Texture2D UpdateTexture (NoiseTextureCreator creator) {
-        OpenSimplex2S noiseGen = new OpenSimplex2S(creator.seed);
+
+        // First, we use the seed given by the user to generate the seeds
+        // for each octave. We use another open simplex in order for the
+        // same seeds to generate the same textures every time.
+        System.Random pseudoRNG = new System.Random(creator.seed);
+        OpenSimplex2S[] noiseGen = new OpenSimplex2S[creator.octaves];
+        for (int i = 0; i < creator.octaves; i++) {
+            noiseGen[i] = new OpenSimplex2S(pseudoRNG.Next(-100000, 100000));
+        }
 
         // We start the code by filling a 2D array with the sample values
         // stored in each pixel. We do this because we need all the values
@@ -33,7 +41,7 @@ public class NoiseTextureCreatorGUI : Editor {
                     double ny = creator.scale * Mathf.Cos(iAngle) / frequency;
                     double nz = creator.scale * Mathf.Sin(jAngle) / frequency;
                     double nw = creator.scale * Mathf.Cos(jAngle) / frequency;
-                    double noise = noiseGen.Noise4D(nx, ny, nz, nw);
+                    double noise = noiseGen[k].Noise4D(nx, ny, nz, nw);
                     sample += (float)noise * amplitude;
 
                     amplitude *= creator.persistance;
@@ -72,13 +80,35 @@ public class NoiseTextureCreatorGUI : Editor {
         NoiseTextureCreator creator = target as NoiseTextureCreator;
 
         GUILayout.Label("Noise Texture Creator", EditorStyles.boldLabel);
-        GUILayout.Space(16);
-        DrawDefaultInspector();
-        GUILayout.Space(16);
 
-        if (GUILayout.Button("Save")) {
-            Texture2D tex = UpdateTexture(creator);
-            byte[] data = tex.EncodeToPNG();
+        // UpdateTexture(creator);
+        EditorGUI.DrawPreviewTexture(
+            new Rect(16, 32, 192, 192), creator.noiseTexture);
+        GUILayout.Space(224);
+
+        EditorGUI.BeginChangeCheck();
+        creator.resolution = EditorGUILayout.Vector2IntField(
+            "Resolution", creator.resolution);
+        creator.scale = EditorGUILayout.FloatField(
+            "Scale", creator.scale);
+        creator.seed = EditorGUILayout.IntField(
+            "Seed", creator.seed);
+        creator.octaves = EditorGUILayout.IntSlider(
+            "Octaves", creator.octaves, 1, 9);
+        creator.persistance = EditorGUILayout.Slider(
+            "Persistance", creator.persistance, 0, 1);
+        creator.lacunarity = EditorGUILayout.Slider(
+            "Lacunarity", creator.lacunarity, 0.1f, 4.0f);
+        if (EditorGUI.EndChangeCheck()) {
+            creator.noiseTexture = UpdateTexture(creator);
+        }
+
+        creator.filePath = EditorGUILayout.TextField(
+            "File Path", creator.filePath);
+        GUILayout.Space(32);
+
+        if (GUILayout.Button("Save Texture")) {
+            byte[] data = creator.noiseTexture.EncodeToPNG();
             File.WriteAllBytes(string.Format("{0}/{1}",
                 Application.dataPath, creator.filePath), data);
         }

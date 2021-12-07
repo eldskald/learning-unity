@@ -43,10 +43,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7e2953811b49559cae388e90350f871, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolution: {x: 256, y: 256}
-  scale: 2
-  seed: 0
+  resolution: {x: 128, y: 128}
+  scale: 1
+  seed: 1
   octaves: 4
   persistance: 0.5
   lacunarity: 2
   filePath: Resources/Textures/Noise/Noise0.png
+  noiseTexture: {fileID: 0}

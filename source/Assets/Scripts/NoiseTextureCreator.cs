@@ -17,5 +17,6 @@ public class NoiseTextureCreator : MonoBehaviour {
     public float lacunarity = 2.0f;
 
     public string filePath = "Resources/Textures/Noise/Noise0.png";
+    public Texture2D noiseTexture;
 }
 
