@@ -81,7 +81,9 @@ public class NoiseTextureCreatorGUI : Editor {
 
         GUILayout.Label("Noise Texture Creator", EditorStyles.boldLabel);
 
-        // UpdateTexture(creator);
+        if (!creator.noiseTexture) {
+            creator.noiseTexture = UpdateTexture(creator);
+        }
         EditorGUI.DrawPreviewTexture(
             new Rect(16, 32, 192, 192), creator.noiseTexture);
         GUILayout.Space(224);

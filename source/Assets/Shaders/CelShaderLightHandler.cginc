@@ -44,20 +44,15 @@ float FadeShadows (Interpolators i, float attenuation) {
 UnityLight GetLight (Interpolators i) {
     UnityLight light;
 
-    #if SUBTRACTIVE_LIGHTING
-		light.dir = float3(0, 1, 0);
-		light.color = 0;
-	#else
-        #if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
-            light.dir = normalize(_WorldSpaceLightPos0.xyz - i.worldPos);
-        #else
-            light.dir = _WorldSpaceLightPos0.xyz;
-        #endif
-        UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
-        attenuation = FadeShadows(i, attenuation);
-        light.color = _LightColor0.rgb * attenuation;
+    #if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
+        light.dir = normalize(_WorldSpaceLightPos0.xyz - i.worldPos);
+    #else
+        light.dir = _WorldSpaceLightPos0.xyz;
     #endif
 
+    UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
+    attenuation = FadeShadows(i, attenuation);
+    light.color = _LightColor0.rgb * attenuation;
     return light;
 }
 
@@ -95,6 +90,54 @@ void Set4VertexLights (inout Interpolators i) {
         i.vertexLightColor._m30_m31_m32 = unity_LightColor[3].rgb;
         i.vertexLightPos._m30_m31_m32 = lightPos3;
     #endif
+}
+
+UnityLight GetVertexLight0 (Interpolators i) {
+    UnityLight vertexLight0;
+
+    #if defined(VERTEXLIGHT_ON)
+        vertexLight0.color = i.vertexLightColor._m00_m01_m02;
+        vertexLight0.color *= i.vertexLightColor._m03;
+        vertexLight0.dir = normalize(i.vertexLightPos._m00_m01_m02);
+    #endif
+
+    return vertexLight0;
+}
+
+UnityLight GetVertexLight1 (Interpolators i) {
+    UnityLight vertexLight1;
+
+    #if defined(VERTEXLIGHT_ON)
+        vertexLight1.color = i.vertexLightColor._m10_m11_m12;
+        vertexLight1.color *= i.vertexLightColor._m13;
+        vertexLight1.dir = normalize(i.vertexLightPos._m10_m11_m12);
+    #endif
+
+    return vertexLight1;
+}
+
+UnityLight GetVertexLight2 (Interpolators i) {
+    UnityLight vertexLight2;
+
+    #if defined(VERTEXLIGHT_ON)
+        vertexLight2.color = i.vertexLightColor._m20_m21_m22;
+        vertexLight2.color *= i.vertexLightColor._m23;
+        vertexLight2.dir = normalize(i.vertexLightPos._m20_m21_m22);
+    #endif
+
+    return vertexLight2;
+}
+
+UnityLight GetVertexLight3 (Interpolators i) {
+    UnityLight vertexLight3;
+
+    #if defined(VERTEXLIGHT_ON)
+        vertexLight3.color = i.vertexLightColor._m30_m31_m32;
+        vertexLight3.color *= i.vertexLightColor._m33;
+        vertexLight3.dir = normalize(i.vertexLightPos._m30_m31_m32);
+    #endif
+
+    return vertexLight3;
 }
 
 // Read from diffuse gradient. Used on diffuse, specular and rim.

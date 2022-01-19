@@ -94,6 +94,7 @@ Material:
     - _Mode: 0
     - _OcclusionScale: 1
     - _OcclusionStrength: 1
+    - _OutlineDisable: 0
     - _OutlineThickness: 3
     - _Parallax: 0.02
     - _ParallaxScale: 0.5

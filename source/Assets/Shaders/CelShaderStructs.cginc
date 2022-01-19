@@ -17,7 +17,7 @@ struct VertexData {
     float4 vertex : POSITION;
     float2 uv : TEXCOORD0;
     float2 uv1 : TEXCOORD1;
-    float4 normal : NORMAL;
+    float3 normal : NORMAL;
     float4 tangent : TANGENT;
 };
 
@@ -25,28 +25,27 @@ struct Interpolators {
     float4 pos : SV_POSITION;
     float2 uv : TEXCOORD0;
     float3 worldPos : TEXCOORD1;
-    float3 worldViewDir : TEXCOORD2;
-    float3 normal : TEXCOORD3;
+    float3 normal : TEXCOORD2;
 
-    UNITY_SHADOW_COORDS(4)
-    UNITY_FOG_COORDS(5)
+    UNITY_SHADOW_COORDS(3)
+    UNITY_FOG_COORDS(4)
 
     #if defined(_BUMPMAP_ENABLED) || defined(_PARALLAX_ENABLED)
-        float4 tangent : TEXCOORD6;
-        float3 binormal : TEXCOORD7;
+        float3 tangent : TEXCOORD5;
+        float3 binormal : TEXCOORD6;
     #endif
 
-    #if defined(_REFRACTION_ENABLED) || defined(DEFERRED_LIGHT_PASS)
-        float4 screenUV : TEXCOORD8;
+    #if defined(DEFERRED_LIGHT_PASS) || defined(_SCREEN_UV_INCLUDED)
+        float4 screenUV : TEXCOORD7;
     #endif
 
     #if defined(LIGHTMAP_ON) || ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
-        float2 lightmapUV : TEXCOORD9;
+        float2 lightmapUV : TEXCOORD8;
     #endif
 
     #if defined(VERTEXLIGHT_ON)
-        float4x4 vertexLightColor : TEXCOORD9;
-        float4x4 vertexLightPos : TEXCOORD13;
+        float4x4 vertexLightColor : TEXCOORD8;
+        float4x4 vertexLightPos : TEXCOORD12;
     #endif
 };
 
@@ -80,11 +79,19 @@ struct Surface {
     #if defined(_TRANSMISSION_ENABLED)
         half transmission;
     #endif
-
-    #if defined(_REFRACTION_ENABLED)
-        half refraction;
-    #endif
 };
+
+// This auxiliary function is here to keep interpolated unit vectors with
+// unit length. Call at the beginning of every fragment function, or don't if
+// you want to see how it looks. It is also less GPU intense by a little bit.
+void Renormalize(inout Interpolators i) {
+    i.normal = normalize(i.normal);
+
+    #if defined(_BUMPMAP_ENABLED) || defined(_PARALLAX_ENABLED)
+        i.tangent = normalize(i.tangent);
+        i.binormal = normalize(i.binormal);
+    #endif
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 

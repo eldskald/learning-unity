@@ -1,9 +1,6 @@
 #if !defined(CEL_SHADED_LIGHTING_INCLUDED)
 #define CEL_SHADED_LIGHTING_INCLUDED
 
-#pragma vertex vert
-#pragma fragment frag
-
 #if !defined(LIGHTMAP_ON) && defined(SHADOWS_SCREEN)
 	#if defined(SHADOWS_SHADOWMASK) && !defined(UNITY_NO_SCREENSPACE_SHADOWS)
 		#define ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS 1
@@ -56,26 +53,25 @@ sampler2D _GrabTexture;
 // usual interpolation stuff.                                                //
 ///////////////////////////////////////////////////////////////////////////////
 
-Interpolators vert (VertexData v) {
+Interpolators CelShadedVertex (VertexData v) {
     Interpolators o;
     UNITY_INITIALIZE_OUTPUT(Interpolators, o);
 
     o.pos = UnityObjectToClipPos(v.vertex);
     o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-    o.worldPos = mul(unity_ObjectToWorld, v.vertex);
-    o.worldViewDir = normalize(_WorldSpaceCameraPos - o.worldPos);
-    o.normal = UnityObjectToWorldNormal(v.normal);
+    o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+    o.normal = normalize(UnityObjectToWorldNormal(v.normal));
     
     UNITY_TRANSFER_SHADOW(o, v.uv1)
     UNITY_TRANSFER_FOG(o, o.pos);
 
     #if defined(_BUMPMAP_ENABLED) || defined(_PARALLAX_ENABLED)
-        o.tangent = float4(UnityObjectToWorldDir(v.tangent.xyz), v.tangent.w);
-        o.binormal = cross(o.normal, o.tangent.xyz) *
-            o.tangent.w * unity_WorldTransformParams.w;
+        o.tangent = normalize(UnityObjectToWorldDir(v.tangent.xyz));
+        o.binormal = normalize(cross(o.normal, o.tangent.xyz)) *
+            v.tangent.w * unity_WorldTransformParams.w;
     #endif
 
-    #if defined(_REFRACTION_ENABLED)
+    #if defined(_SCREEN_UV_INCLUDED)
         o.screenUV = ComputeGrabScreenPos(o.pos);
     #endif
 
@@ -114,10 +110,11 @@ Surface GetSurface(Interpolators i) {
     // Catlike Coding has a very good tutorial with a different method as well
     // at https://catlikecoding.com/unity/tutorials/rendering/part-20/.
     #if defined(_PARALLAX_ENABLED)
+        float3 viewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
         float3 tangentViewDir = normalize(float3(
-            dot(i.worldViewDir, normalize(i.tangent.xyz)),
-            dot(i.worldViewDir, normalize(i.binormal)),
-            dot(i.worldViewDir, normalize(i.normal))));
+            dot(viewDir, i.tangent),
+            dot(viewDir, i.binormal),
+            dot(viewDir, i.normal)));
         half height = tex2D(_ParallaxMap, uv).r;
         uv += ParallaxOffset(height, _ParallaxScale / 12.5, tangentViewDir);
     #endif
@@ -125,7 +122,7 @@ Surface GetSurface(Interpolators i) {
     s.albedo = _Color.rgb * tex2D(_MainTex, uv).rgb;
     s.alpha = _Color.a * tex2D(_MainTex, uv).a;
 
-    #if defined(_RENDERING_TRANSPARENT) || defined(_REFRACTION_ENABLED)
+    #if defined(_RENDERING_TRANSPARENT)
         s.albedo *= s.alpha;
     #endif
 
@@ -144,14 +141,14 @@ Surface GetSurface(Interpolators i) {
     #endif
 
     #if defined(_BUMPMAP_ENABLED)
-        fixed3 tangentNormal = UnpackScaleNormal(
+        float3 tangentNormal = UnpackScaleNormal(
             tex2D(_BumpMap, uv), _BumpScale);
         s.normal = normalize(
-            tangentNormal.x * normalize(i.tangent.xyz) +
-            tangentNormal.y * normalize(i.binormal) +
-            tangentNormal.z * normalize(i.normal));
+            tangentNormal.x * i.tangent +
+            tangentNormal.y * i.binormal +
+            tangentNormal.z * i.normal);
     #else
-        s.normal = normalize(i.normal);
+        s.normal = i.normal;
     #endif
 
     #if defined(_OCCLUSION_ENABLED)
@@ -167,10 +164,6 @@ Surface GetSurface(Interpolators i) {
         s.transmission = _Transmission * tex2D(_TransmissionMap, uv).r;
     #endif
 
-    #if defined(_REFRACTION_ENABLED)
-        s.refraction = _RefractionScale * tex2D(_RefractionMap, uv) / 10;
-    #endif
-
     return s;
 }
 
@@ -184,8 +177,8 @@ Surface GetSurface(Interpolators i) {
 // with the inclusion of ambient light, emission, reflections and etc.       //
 ///////////////////////////////////////////////////////////////////////////////
 
-float4 frag (Interpolators i) : SV_TARGET {
-    Surface s = GetSurface(i);
+float4 CelShadedFragment (Interpolators i, Surface s) {
+    float3 viewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
     UnityLight light = GetLight(i);
 
     #if defined(_RENDERING_CUTOUT)
@@ -193,8 +186,8 @@ float4 frag (Interpolators i) : SV_TARGET {
     #endif
 
     half3 diffuse = GetDiffuse(light, s);
-    half3 specular = GetSpecular(light, s, i.worldViewDir);
-    half3 fresnel = GetFresnel(light, s, i.worldViewDir);
+    half3 specular = GetSpecular(light, s, viewDir);
+    half3 fresnel = GetFresnel(light, s, viewDir);
     half4 col;
     col.rgb = diffuse + specular + fresnel;
     col.a = s.alpha;
@@ -213,40 +206,25 @@ float4 frag (Interpolators i) : SV_TARGET {
         // fragment in order to toonify them. Heavier than traditional vertex
         // lights, but still lighter than normal per fragment light.
         #if defined(VERTEXLIGHT_ON)
-            UnityLight vertexLight0;
-            vertexLight0.color = i.vertexLightColor._m00_m01_m02;
-            vertexLight0.dir = normalize(i.vertexLightPos._m00_m01_m02);
-            vertexLight0.attenuation = i.vertexLightColor._m03;
-
-            UnityLight vertexLight1;
-            vertexLight1.color = i.vertexLightColor._m10_m11_m12;
-            vertexLight1.dir = normalize(i.vertexLightPos._m10_m11_m12);
-            vertexLight1.attenuation = i.vertexLightColor._m13;
-
-            UnityLight vertexLight2;
-            vertexLight2.color = i.vertexLightColor._m20_m21_m22;
-            vertexLight2.dir = normalize(i.vertexLightPos._m20_m21_m22);
-            vertexLight2.attenuation = i.vertexLightColor._m23;
-
-            UnityLight vertexLight3;
-            vertexLight3.color = i.vertexLightColor._m30_m31_m32;
-            vertexLight3.dir = normalize(i.vertexLightPos._m30_m31_m32);
-            vertexLight3.attenuation = i.vertexLightColor._m33;
+            UnityLight vertexLight0 = GetVertexLight0(i);
+            UnityLight vertexLight1 = GetVertexLight1(i);
+            UnityLight vertexLight2 = GetVertexLight2(i);
+            UnityLight vertexLight3 = GetVertexLight3(i);
 
             additional += GetDiffuse(vertexLight0, s);
             additional += GetDiffuse(vertexLight1, s);
             additional += GetDiffuse(vertexLight2, s);
             additional += GetDiffuse(vertexLight3, s);
 
-            additional += GetSpecular(vertexLight0, s, i.worldViewDir);
-            additional += GetSpecular(vertexLight1, s, i.worldViewDir);
-            additional += GetSpecular(vertexLight2, s, i.worldViewDir);
-            additional += GetSpecular(vertexLight3, s, i.worldViewDir);
+            additional += GetSpecular(vertexLight0, s, viewDir);
+            additional += GetSpecular(vertexLight1, s, viewDir);
+            additional += GetSpecular(vertexLight2, s, viewDir);
+            additional += GetSpecular(vertexLight3, s, viewDir);
 
-            additional += GetRim(vertexLight0, s, i.worldViewDir);
-            additional += GetRim(vertexLight1, s, i.worldViewDir);
-            additional += GetRim(vertexLight2, s, i.worldViewDir);
-            additional += GetRim(vertexLight3, s, i.worldViewDir);
+            additional += GetRim(vertexLight0, s, viewDir);
+            additional += GetRim(vertexLight1, s, viewDir);
+            additional += GetRim(vertexLight2, s, viewDir);
+            additional += GetRim(vertexLight3, s, viewDir);
         #endif
 
         #if defined(LIGHTMAP_ON)
@@ -257,7 +235,7 @@ float4 frag (Interpolators i) : SV_TARGET {
         #endif
 
         #if defined(_REFLECTIONS_ENABLED)
-            float3 reflexDir = reflect(-i.worldViewDir, s.normal);
+            float3 reflexDir = reflect(-viewDir, s.normal);
             half roughness = 1.7 * s.blurriness +
                 0.7 * s.blurriness * s.blurriness;
             half4 envSample = UNITY_SAMPLE_TEXCUBE_LOD(
@@ -275,26 +253,20 @@ float4 frag (Interpolators i) : SV_TARGET {
             ambient *= s.occlusion;
         #endif
 
-        // Refraction code directly from Godot's base shader on my Godot code
-        // at https://godotshaders.com/shader/complete-toon-shader/. Unity's
-        // GrabPass makes it refract more things, but at the cost of GPU.
-        #if defined(_REFRACTION_ENABLED)
-            float3 viewN = mul(unity_WorldToObject, float4(s.normal, 0));
-            viewN = normalize(mul(UNITY_MATRIX_MV, float4(viewN, 0)));
-            float4 offset = float4(-s.refraction * viewN.xy, 0, 0);
-            additional += (1 - s.alpha) *
-                tex2Dproj(_GrabTexture, i.screenUV + offset).rgb;
-        #endif
+        // // Refraction code directly from Godot's base shader on my Godot code
+        // // at https://godotshaders.com/shader/complete-toon-shader/. Unity's
+        // // GrabPass makes it refract more things, but at the cost of GPU.
+        // #if defined(_REFRACTION_ENABLED)
+        //     float3 viewN = mul(unity_WorldToObject, float4(s.normal, 0));
+        //     viewN = normalize(mul(UNITY_MATRIX_MV, float4(viewN, 0)));
+        //     float4 offset = float4(-s.refraction * viewN.xy, 0, 0);
+        //     additional += (1 - s.alpha) *
+        //         tex2Dproj(_GrabTexture, i.screenUV + offset).rgb;
+        // #endif
 
         additional += ambient;
         col.rgb += additional;
     #endif
-
-    // Apply fog with Unity's built in fog tool. If you want to learn
-    // how Unity does it or how fog itself works, check Catlike Coding's
-    // https://catlikecoding.com/unity/tutorials/rendering/part-14/
-    // tutorial on fog, it's really in depth and worth a read.
-    UNITY_APPLY_FOG(i.fogCoord, col);
 
     return col;
 }

@@ -15,7 +15,8 @@ Material:
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - ALWAYS
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -94,11 +95,13 @@ Material:
     - _Mode: 0
     - _OcclusionScale: 1
     - _OcclusionStrength: 1
+    - _OutlineDisable: 1
     - _OutlineThickness: 3
     - _Parallax: 0.02
     - _ParallaxScale: 0.5
     - _Reflectivity: 0
     - _RefractionScale: 0.5
+    - _ShadowStrength: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularAmount: 0
     - _SpecularHighlights: 1

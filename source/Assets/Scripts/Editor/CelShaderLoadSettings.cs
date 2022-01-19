@@ -11,6 +11,8 @@ public class LoadCelShaderSettings {
     const string TEXTURE_PATH = "Textures/Gradients/DiffuseGradient";
     const float SPECULAR_SMOOTHNESS = 0.05f;
     const float FRESNEL_SMOOTHNESS = 0.05f;
+    static Color OUTLINE_COLOR = Color.black;
+    const float OUTLINE_THICKNESS = 3.0f;
 
     [InitializeOnLoadMethod]
     static void Manager () {
@@ -31,5 +33,7 @@ public class LoadCelShaderSettings {
         Shader.SetGlobalTexture("_DiffuseTexture", diffGrad);
         Shader.SetGlobalFloat("_SpecularSmooth", SPECULAR_SMOOTHNESS);
         Shader.SetGlobalFloat("_FresnelSmooth", FRESNEL_SMOOTHNESS);
+        Shader.SetGlobalVector("_OutlineColor", OUTLINE_COLOR);
+        Shader.SetGlobalFloat("_OutlineThickness", OUTLINE_THICKNESS);
     }
 }

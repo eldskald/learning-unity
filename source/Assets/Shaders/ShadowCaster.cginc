@@ -7,6 +7,7 @@
 #include "UnityCG.cginc"
 
 half _Cutoff;
+half _ShadowStrength;
 fixed4 _Color;
 sampler2D _MainTex;
 float4 _MainTex_ST;
@@ -66,7 +67,7 @@ float4 frag (Interpolators i) : SV_TARGET {
 
     #if defined(_DITHER_SHADOWS)
         half dither = tex3D(
-            _DitherMaskLOD, float3(i.vpos.xy * 0.25, alpha * 0.9375)).a;
+            _DitherMaskLOD, float3(i.vpos.xy * 0.25, _ShadowStrength * 0.9375)).a;
         clip(dither - 0.5);
     #endif
 

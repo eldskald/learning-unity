@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: stone-2
+  m_Name: stone-3
   m_Shader: {fileID: 4800000, guid: b135ffbb334b83a43a549f4d7e9fdd5b, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -94,11 +94,13 @@ Material:
     - _Mode: 0
     - _OcclusionScale: 1
     - _OcclusionStrength: 1
+    - _OutlineDisable: 0
     - _OutlineThickness: 3
     - _Parallax: 0.02
     - _ParallaxScale: 0.5
     - _Reflectivity: 0
     - _RefractionScale: 0.5
+    - _ShadowStrength: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularAmount: 0
     - _SpecularHighlights: 1
@@ -107,7 +109,7 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.19885999, g: 0.309048, b: 0.32599998, a: 1}
+    - _Color: {r: 0.44606623, g: 0.5180224, b: 0.5283019, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FresnelColor: {r: 0, g: 0, b: 0, a: 1}

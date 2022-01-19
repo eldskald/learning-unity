@@ -4,6 +4,7 @@ Shader "CelShaded/Opaque" {
 
         // Helper properties for the rendering modes.
         _Cutoff ("Alpha Cutoff", Range(0, 1)) = 0.5
+        _ShadowStrength ("Dither Strength", Range(0, 1)) = 0.5
         [HideInInspector] _SrcBlend ("_SrcBlend", Float) = 1
         [HideInInspector] _DstBlend ("_DstBlend", Float) = 0
         [HideInInspector] _ZWrite ("_ZWrite", Float) = 1
@@ -42,8 +43,7 @@ Shader "CelShaded/Opaque" {
         [NoScaleOffset] _ReflectionsMap ("Reflections Map", 2D) = "white" {}
 
         // Outline properties.
-        _OutlineThickness ("Outline Thickness", Float) = 3
-        _OutlineColor ("Outline Color", Color) = (0,0,0,1)
+        _OutlineDisable ("Disable Outline", Float) = 0
 
         // Emission properties.
         [HDR] _Emission ("Emission", Color) = (0,0,0,1)
@@ -82,15 +82,6 @@ Shader "CelShaded/Opaque" {
         // This effect is called transmission in Godot.
         _Transmission ("Translucency", Range(0, 1)) = 0
         _TransmissionMap ("Translucency Map", 2D) = "white" {}
-
-        // Refraction properties. We are using the grab pass here, so don't
-        // put a lot of these on the screen, it is very GPU intensive. You
-        // can create a lighter version by naming the grab pass, which in
-        // return, refractive materials won't show up behind one another.
-        // Since we can't disable the grab pass on a shader with code, we must
-        // have a different shader for just this effect.
-        [NoScaleOffset] _RefractionMap ("Refraction Map", 2D) = "white" {}
-        _RefractionScale ("Refraction Scale", Range(-1, 1)) = 0.5
     }
 
     SubShader {
@@ -120,6 +111,22 @@ Shader "CelShaded/Opaque" {
 
             #include "CelShadedLighting.cginc"
 
+            #pragma vertex vert
+            #pragma fragment frag
+
+            Interpolators vert (VertexData v) {
+                Interpolators o = CelShadedVertex(v);
+                return o;
+            }
+
+            float4 frag (Interpolators i) : SV_TARGET {
+                Renormalize(i);
+                Surface s = GetSurface(i);
+                float4 col = CelShadedFragment(i, s);
+                UNITY_APPLY_FOG(i.fogCoord, col);
+                return col;
+            }
+
             ENDCG
         }
 
@@ -147,6 +154,22 @@ Shader "CelShaded/Opaque" {
             
             #include "CelShadedLighting.cginc"
 
+            #pragma vertex vert
+            #pragma fragment frag
+
+            Interpolators vert (VertexData v) {
+                Interpolators o = CelShadedVertex(v);
+                return o;
+            }
+
+            float4 frag (Interpolators i) : SV_TARGET {
+                Renormalize(i);
+                Surface s = GetSurface(i);
+                float4 col = CelShadedFragment(i, s);
+                UNITY_APPLY_FOG(i.fogCoord, col);
+                return col;
+            }
+
             ENDCG
         }
 
@@ -166,6 +189,20 @@ Shader "CelShaded/Opaque" {
             #pragma multi_compile_fog
 
             #include "CelShaderOutline.cginc"
+
+            #pragma vertex vert
+            #pragma fragment frag
+
+            Interpolators vert (MeshData v) {
+                Interpolators o = OutlineVertex(v);
+                return o;
+            }
+
+            float4 frag (Interpolators i) : SV_TARGET {
+                float4 col = OutlineFragment(i);
+                UNITY_APPLY_FOG(i.fogCoord, col);
+                return col;
+            }
 
             ENDCG
         }

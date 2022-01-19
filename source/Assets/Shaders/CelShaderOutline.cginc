@@ -4,9 +4,6 @@
 #if !defined(CEL_SHADER_OUTLINE_INCLUDED) // Include guard check.
 #define CEL_SHADER_OUTLINE_INCLUDED
 
-#pragma vertex vert
-#pragma fragment frag
-
 #include "UnityCG.cginc"
 
 fixed4 _OutlineColor;
@@ -22,7 +19,7 @@ struct Interpolators {
     UNITY_FOG_COORDS(0)
 };
 
-Interpolators vert (MeshData v) {
+Interpolators OutlineVertex (MeshData v) {
     Interpolators o;
 
     // We convert to clip space to have higher control over thickness, making
@@ -42,10 +39,8 @@ Interpolators vert (MeshData v) {
     return o;
 }
 
-fixed4 frag (Interpolators i) : SV_TARGET {
-    fixed4 col = _OutlineColor;
-    UNITY_APPLY_FOG(i.fogCoord, col);
-    return col;
+float4 OutlineFragment (Interpolators i) {
+    return _OutlineColor;
 }
 
 #endif
