@@ -10,9 +10,9 @@
 // un-toonify as well. I go into more detail on how to use it on my
 // video at https://youtu.be/Y3tT_-GTXKg where I explain each feature
 // in detail. I would say this texture is the most important one.
-uniform sampler2D _DiffuseTexture;
-uniform float _SpecularSmooth;
-uniform float _FresnelSmooth;
+sampler2D _DiffuseTexture;
+float _SpecularSmooth;
+float _FresnelSmooth;
 
 
 

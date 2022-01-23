@@ -42,69 +42,70 @@ public class ToonWaterGUI : ShaderGUI {
         AddFoamMode();
         AddFresnelEffect();
         AddPlanarReflections();
+        AddUVEdgeFoam();
         GUIHelper.ShortSpace();
         AddTilingAndOffset();
     }
 
     // Main properties.
-    void AddColor () {
+    private void AddColor () {
         MaterialProperty prop = FindProperty("_Color", _properties);
         _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
     }
 
-    void AddReflectivity () {
+    private void AddReflectivity () {
         MaterialProperty prop = FindProperty("_Reflectivity", _properties);
         _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
     }
 
-    void AddAgitation () {
+    private void AddAgitation () {
         MaterialProperty prop = FindProperty("_Agitation", _properties);
         _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
     }
 
-    void AddSpecularity () {
+    private void AddSpecularity () {
         MaterialProperty prop = FindProperty("_Specularity", _properties);
         _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
     }
 
-    void AddTilingAndOffset () {
+    private void AddTilingAndOffset () {
         MaterialProperty prop = FindProperty("_MainTex", _properties);
         _editor.TextureScaleOffsetProperty(prop);
     }
 
     // Foam properties.
-    void AddFoamColor () {
+    private void AddFoamColor () {
         MaterialProperty prop = FindProperty("_FoamColor", _properties);
         _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
     }
 
-    void AddFoamSmoothness () {
+    private void AddFoamSmoothness () {
         MaterialProperty prop = FindProperty("_FoamSmooth", _properties);
         _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
     }
 
-    void AddFoamSize () {
+    private void AddFoamSize () {
         MaterialProperty prop = FindProperty("_FoamSize", _properties);
         _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
     }
 
-    void AddFoamDisplacement () {
+    private void AddFoamDisplacement () {
         MaterialProperty prop = FindProperty("_FoamDisplacement", _properties);
         _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
     }
 
-    void AddFoamNoiseTexture () {
+    private void AddFoamNoiseTexture () {
         MaterialProperty prop = FindProperty("_FoamNoiseTex", _properties);
         _editor.TexturePropertySingleLine(GUIHelper.MakeLabel(prop), prop);
     }
 
     // Normal map properties.
-    void AddNormalMap () {
+    private void AddNormalMap () {
         MaterialProperty prop = FindProperty("_NormalMap", _properties);
         _editor.TexturePropertySingleLine(GUIHelper.MakeLabel(prop), prop);
     }
 
-    void AddPanningVelocities () {
+    private void AddPanningVelocities () {
         MaterialProperty prop = FindProperty("_NormalPanVel", _properties);
         Vector2 velA = new Vector2(prop.vectorValue.x, prop.vectorValue.y);
         Vector2 velB = new Vector2(prop.vectorValue.z, prop.vectorValue.w);
@@ -117,28 +118,45 @@ public class ToonWaterGUI : ShaderGUI {
         }
     }
 
-    void AddNoDepthFog () {
+    private void AddNoDepthFog () {
         MaterialProperty prop = FindProperty("_NoDepthFog", _properties);
         _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
     }
 
-    void AddFoamMode () {
+    private void AddFoamMode () {
         MaterialProperty prop = FindProperty("_Foam", _properties);
         _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
     }
 
-    void AddFresnelEffect () {
+    private void AddFresnelEffect () {
         MaterialProperty prop = FindProperty("_FresnelEffect", _properties);
         _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
     }
 
-    void AddPlanarReflections () {
+    private void AddPlanarReflections () {
         MaterialProperty prop = FindProperty(
             "_PlanarReflections", _properties);
         _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
         if (_target.IsKeywordEnabled("_PLANAR_REFLECTIONS_ENABLED")) {
             prop = FindProperty("_PRID", _properties);
             _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
+        }
+    }
+    
+    private void AddUVEdgeFoam () {
+        MaterialProperty prop = FindProperty("_UVEdgeFoam", _properties);
+        _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
+        if (_target.IsKeywordEnabled("_UV_EDGE_FOAM_ENABLED")) {
+            prop = FindProperty("_UVEdgeSizes", _properties);
+            Vector2 lr = new Vector2(prop.vectorValue.x, prop.vectorValue.y);
+            Vector2 tb = new Vector2(prop.vectorValue.z, prop.vectorValue.w);
+            EditorGUI.BeginChangeCheck();
+            lr = EditorGUILayout.Vector2Field("Left/Right", lr);
+            tb = EditorGUILayout.Vector2Field("Top/Bottom", tb);
+            if (EditorGUI.EndChangeCheck()) {
+                _target.SetVector(
+                    "_UVEdgeSizes", new Vector4(lr.x, lr.y, tb.x, tb.y));
+            }
         }
     }
 }

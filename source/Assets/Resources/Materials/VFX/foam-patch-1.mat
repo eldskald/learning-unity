@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: water-pool-1
-  m_Shader: {fileID: 4800000, guid: 939bf56f654dd1b2c96e58fed67b4ca9, type: 3}
-  m_ShaderKeywords: _FOAM_NORMAL _PLANAR_REFLECTIONS_ENABLED _PRID_ONE
+  m_Name: foam-patch-1
+  m_Shader: {fileID: 4800000, guid: 2870e93c8219a83fd89fa3a49795ddca, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -40,19 +40,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FoamNoiseTex:
-        m_Texture: {fileID: 2800000, guid: 9089c52b63d379593808f012682a53b2, type: 3}
+        m_Texture: {fileID: 2800000, guid: cad3970e8da1f7df88dcc081f5b79657, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 3, y: 3}
+        m_Texture: {fileID: 2800000, guid: cad3970e8da1f7df88dcc081f5b79657, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _NormalMap:
-        m_Texture: {fileID: 2800000, guid: e89b875acf4d2a4009896f2ac1b8e2c5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -63,55 +59,29 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _PlanarReflectionsBuffer:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _PlanarReflectionsTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Agitation: 0.25
+    - _Agitation: 1
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _Foam: 0
-    - _FoamDisplacement: 0.4
-    - _FoamFixedStrength: 0
+    - _FoamDisplacement: 0.5
     - _FoamSize: 0.5
     - _FoamSmooth: 0.1
-    - _FoamSmoothness: 0.1
-    - _FoamStrength: 1
-    - _FresnelEffect: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NoDepthFog: 1
     - _OcclusionStrength: 1
-    - _OutlineDisable: 3
-    - _OutlineThickness: 3
-    - _PRID: 0
     - _Parallax: 0.02
-    - _PlanarReflections: 1
-    - _RealisticRefl: 0
-    - _RealisticReflections: 0
-    - _Reflectivity: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _Specularity: 0.5
     - _SrcBlend: 1
-    - _UVEdgeFoam: 0
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.05490196, g: 0.27450982, b: 0.2901961, a: 0.5019608}
+    - _Color: {r: 0.42352942, g: 0.5019608, b: 0.50980395, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FoamColor: {r: 0.42352942, g: 0.5019608, b: 0.50980395, a: 1}
-    - _NormalPanVel: {r: 0, g: -1, b: 1, a: 0}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _UVEdgeSizes: {r: 0.1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

@@ -42,9 +42,6 @@ sampler2D _AnisoFlowchart;
 half _AnisoScale;
 half _Transmission;
 sampler2D _TransmissionMap;
-sampler2D _RefractionMap;
-half _RefractionScale;
-sampler2D _GrabTexture;
 
 
 
@@ -252,17 +249,6 @@ float4 CelShadedFragment (Interpolators i, Surface s) {
         #if defined(_OCCLUSION_ENABLED)
             ambient *= s.occlusion;
         #endif
-
-        // // Refraction code directly from Godot's base shader on my Godot code
-        // // at https://godotshaders.com/shader/complete-toon-shader/. Unity's
-        // // GrabPass makes it refract more things, but at the cost of GPU.
-        // #if defined(_REFRACTION_ENABLED)
-        //     float3 viewN = mul(unity_WorldToObject, float4(s.normal, 0));
-        //     viewN = normalize(mul(UNITY_MATRIX_MV, float4(viewN, 0)));
-        //     float4 offset = float4(-s.refraction * viewN.xy, 0, 0);
-        //     additional += (1 - s.alpha) *
-        //         tex2Dproj(_GrabTexture, i.screenUV + offset).rgb;
-        // #endif
 
         additional += ambient;
         col.rgb += additional;

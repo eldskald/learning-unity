@@ -145,7 +145,8 @@ public class PlanarReflectionsProbe : MonoBehaviour {
         Vector3 probeForward = Vector3.Reflect(
             cam.transform.forward, planeNormal);
         _probe.transform.LookAt(_probe.transform.position + probeForward);
-        _probe.transform.Rotate(0f, 0f, cam.transform.eulerAngles.z - 180f);
+        _probe.transform.Rotate(0f, 0f, -cam.transform.eulerAngles.z);
+        // _probe.transform.Rotate(0f, 0f, 180f - cam.transform.eulerAngles.z);
         
     }
 

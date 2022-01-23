@@ -36,6 +36,9 @@ Shader "VFX/ToonWater" {
             _PlanarReflections ("Planar Reflections", Float) = 0
         [KeywordEnum(One, Two, Three, Four)]
             _PRID ("Planar Refl. ID", Float) = 0
+        [Toggle(_UV_EDGE_FOAM_ENABLED)]
+            _UVEdgeFoam ("UV Edge Foam", Float) = 0
+        _UVEdgeSizes ("UV Edge Sizes", Vector) = (0.1,0,0,0)
     }
 
     SubShader {
@@ -45,7 +48,7 @@ Shader "VFX/ToonWater" {
             "Queue" = "Transparent"
         }
 
-        GrabPass { "_UnderwaterTexture" }
+        GrabPass {}
 
         Pass {
             
@@ -67,6 +70,7 @@ Shader "VFX/ToonWater" {
             #pragma multi_compile _ _PLANAR_REFLECTIONS_ENABLED
             #pragma multi_compile _FOAM_NORMAL _FOAM_FIXED _FOAM_SPECULAR _FOAM_DISABLED
             #pragma multi_compile _PRID_ONE _PRID_TWO _PRID_THREE _PRID_FOUR
+            #pragma multi_compile _ _UV_EDGE_FOAM_ENABLED
 
             #pragma vertex vert
             #pragma fragment frag
@@ -107,12 +111,12 @@ Shader "VFX/ToonWater" {
             #pragma target 3.0
 
             #pragma multi_compile_fwdadd_fullshadows
-            #pragma multi_compile _ VERTEXLIGHT_ON
             #pragma multi_compile_fog
             
             #pragma multi_compile _ _DEPTH_FOG_ENABLED
             #pragma multi_compile _ _FRESNEL_EFFECT_ENABLED
             #pragma multi_compile _FOAM_NORMAL _FOAM_FIXED _FOAM_SPECULAR _FOAM_DISABLED
+            #pragma multi_compile _ _UV_EDGE_FOAM_ENABLED
 
             #pragma vertex vert
             #pragma fragment frag

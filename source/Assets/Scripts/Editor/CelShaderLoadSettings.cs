@@ -12,7 +12,7 @@ public class LoadCelShaderSettings {
     const float SPECULAR_SMOOTHNESS = 0.05f;
     const float FRESNEL_SMOOTHNESS = 0.05f;
     static Color OUTLINE_COLOR = Color.black;
-    const float OUTLINE_THICKNESS = 3.0f;
+    const float OUTLINE_THICKNESS = 2.0f;
 
     [InitializeOnLoadMethod]
     static void Manager () {
