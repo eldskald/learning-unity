@@ -30,11 +30,14 @@ public class ToonWaterGUI : ShaderGUI {
         AddFoamSize();
         AddFoamDisplacement();
         AddFoamNoiseTexture();
+        AddFoamNoiseTilings();
         GUIHelper.LongSpace();
 
         GUIHelper.GroupLabel("Normal Map Properties");
         AddNormalMap();
-        AddPanningVelocities();
+        AddHeightMap();
+        AddSurfacePanning();
+        AddSurfaceTilings();
         GUIHelper.LongSpace();
 
         GUIHelper.GroupLabel("Additional Customization");
@@ -43,8 +46,6 @@ public class ToonWaterGUI : ShaderGUI {
         AddFresnelEffect();
         AddPlanarReflections();
         AddUVEdgeFoam();
-        GUIHelper.ShortSpace();
-        AddTilingAndOffset();
     }
 
     // Main properties.
@@ -99,14 +100,30 @@ public class ToonWaterGUI : ShaderGUI {
         _editor.TexturePropertySingleLine(GUIHelper.MakeLabel(prop), prop);
     }
 
+    private void AddFoamNoiseTilings () {
+        MaterialProperty prop = FindProperty("_FoamNoiseTilings", _properties);
+        Vector2 vec = new Vector2(prop.vectorValue.x, prop.vectorValue.y);
+        EditorGUI.BeginChangeCheck();
+        vec = EditorGUILayout.Vector2Field("Noise Tiling", vec);
+        if (EditorGUI.EndChangeCheck()) {
+            _target.SetVector(
+                "_FoamNoiseTilings", new Vector4(vec.x, vec.y, 0f, 0f));
+        }
+    }
+
     // Normal map properties.
     private void AddNormalMap () {
         MaterialProperty prop = FindProperty("_NormalMap", _properties);
         _editor.TexturePropertySingleLine(GUIHelper.MakeLabel(prop), prop);
     }
 
-    private void AddPanningVelocities () {
-        MaterialProperty prop = FindProperty("_NormalPanVel", _properties);
+    private void AddHeightMap () {
+        MaterialProperty prop = FindProperty("_HeightMap", _properties);
+        _editor.TexturePropertySingleLine(GUIHelper.MakeLabel(prop), prop);
+    }
+
+    private void AddSurfacePanning () {
+        MaterialProperty prop = FindProperty("_SurfPanVel", _properties);
         Vector2 velA = new Vector2(prop.vectorValue.x, prop.vectorValue.y);
         Vector2 velB = new Vector2(prop.vectorValue.z, prop.vectorValue.w);
         EditorGUI.BeginChangeCheck();
@@ -114,10 +131,24 @@ public class ToonWaterGUI : ShaderGUI {
         velB = EditorGUILayout.Vector2Field("Panning Velocity B", velB);
         if (EditorGUI.EndChangeCheck()) {
             _target.SetVector(
-                "_NormalPanVel", new Vector4(velA.x, velA.y, velB.x, velB.y));
+                "_SurfPanVel", new Vector4(velA.x, velA.y, velB.x, velB.y));
         }
     }
 
+    private void AddSurfaceTilings () {
+        MaterialProperty prop = FindProperty("_SurfTilings", _properties);
+        Vector2 vecA = new Vector2(prop.vectorValue.x, prop.vectorValue.y);
+        Vector2 vecB = new Vector2(prop.vectorValue.z, prop.vectorValue.w);
+        EditorGUI.BeginChangeCheck();
+        vecA = EditorGUILayout.Vector2Field("Normal Tiling A", vecA);
+        vecB = EditorGUILayout.Vector2Field("Normal Tiling B", vecB);
+        if (EditorGUI.EndChangeCheck()) {
+            _target.SetVector(
+                "_SurfTilings", new Vector4(vecA.x, vecA.y, vecB.x, vecB.y));
+        }
+    }
+
+    // Additional properties.
     private void AddNoDepthFog () {
         MaterialProperty prop = FindProperty("_NoDepthFog", _properties);
         _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));

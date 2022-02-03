@@ -43,9 +43,13 @@ Material:
         m_Texture: {fileID: 2800000, guid: 9089c52b63d379593808f012682a53b2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _HeightMap:
+        m_Texture: {fileID: 2800000, guid: 96a427cd6e715d5969aa32148bd959db, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 3, y: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
@@ -102,7 +106,7 @@ Material:
     - _Reflectivity: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _Specularity: 0.5
+    - _Specularity: 0.7
     - _SrcBlend: 1
     - _UVEdgeFoam: 0
     - _UVSec: 0
@@ -110,8 +114,13 @@ Material:
     m_Colors:
     - _Color: {r: 0.05490196, g: 0.27450982, b: 0.2901961, a: 0.5019608}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FoamColor: {r: 0.42352942, g: 0.5019608, b: 0.50980395, a: 1}
+    - _FoamColor: {r: 0.52705586, g: 0.76832587, b: 0.7924528, a: 1}
+    - _FoamNoiseTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _FoamNoiseTilings: {r: 3, g: 3, b: 0, a: 0}
     - _NormalPanVel: {r: 0, g: -1, b: 1, a: 0}
+    - _NormalTilings: {r: 3, g: 3, b: 3, a: 3}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SurfPanVel: {r: 1, g: 0, b: 0, a: 2}
+    - _SurfTilings: {r: 3, g: 3, b: 6, a: 6}
     - _UVEdgeSizes: {r: 0.1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

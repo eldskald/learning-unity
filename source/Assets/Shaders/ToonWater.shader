@@ -8,22 +8,20 @@ Shader "VFX/ToonWater" {
         _Agitation ("Agitation", Range(0, 1)) = 0.3
         _Specularity ("Specularity", Range(0, 1)) = 0.5
 
-        // Main texture for tiling the other textures and better
-        // compatibility with built-in Unity functions and the
-        // Cel Shaded include files.
-        [HideInInspector] _MainTex ("Texture", 2D) = "white" {}
-
         // Foam properties.
         _FoamColor ("Foam Color", Color) = (1,1,1,1)
         _FoamSmooth ("Foam Smoothness", Range(0, 1)) = 0.1
         _FoamSize ("Foam Size", Range(0, 1)) = 0.4
         _FoamDisplacement ("Foam Displacement", Range(0, 1)) = 0.6
         [NoScaleOffset] _FoamNoiseTex ("Foam Noise Texture", 2D) = "black" {}
+        _FoamNoiseTilings ("Noise Texture Tiling", Vector) = (1,1,0,0)
 
-        // Ripples properties. The velocity is a 4D vector containing
-        // two 2D velocities in order.
+        // Surface properties. The velocity is a 4D vector containing
+        // two 2D velocities in order, the same for the tilings.
+        [NoScaleOffset] _HeightMap ("Height Map", 2D) = "black" {}
         [NoScaleOffset] [Normal] _NormalMap ("Normal Map", 2D) = "bump" {}
-        _NormalPanVel ("Normal Panning Speeds", Vector) = (1,0,0,1)
+        _SurfPanVel ("Surface Panning Speeds", Vector) = (1,0,0,1)
+        _SurfTilings ("Surface Tilings", Vector) = (1,1,1,1)
 
         // Customizing options.
         [ToggleOff(_DEPTH_FOG_ENABLED)]
@@ -84,8 +82,7 @@ Shader "VFX/ToonWater" {
             #include "ToonWaterLighting.cginc"
             
             Interpolators vert (VertexData v) {
-                Interpolators o = CelShadedVertex(v);
-                o.screenUV = ComputeGrabScreenPos(o.pos);
+                Interpolators o = BasicVertex(v);
                 return o;
             }
 
@@ -130,8 +127,7 @@ Shader "VFX/ToonWater" {
             #include "ToonWaterLighting.cginc"
             
             Interpolators vert (VertexData v) {
-                Interpolators o = CelShadedVertex(v);
-                o.screenUV = ComputeGrabScreenPos(o.pos);
+                Interpolators o = BasicVertex(v);
                 return o;
             }
 

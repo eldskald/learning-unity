@@ -115,7 +115,8 @@ Shader "CelShaded/Opaque" {
             #pragma fragment frag
 
             Interpolators vert (VertexData v) {
-                Interpolators o = CelShadedVertex(v);
+                Interpolators o = BasicVertex(v);
+                o.uv = o.uv * _MainTex_ST.xy + _MainTex_ST.zw;
                 return o;
             }
 
@@ -158,7 +159,8 @@ Shader "CelShaded/Opaque" {
             #pragma fragment frag
 
             Interpolators vert (VertexData v) {
-                Interpolators o = CelShadedVertex(v);
+                Interpolators o = BasicVertex(v);
+                o.uv = o.uv * _MainTex_ST.xy + _MainTex_ST.zw;
                 return o;
             }
 
