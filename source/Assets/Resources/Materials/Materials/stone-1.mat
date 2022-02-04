@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: stone-1
-  m_Shader: {fileID: 4800000, guid: b135ffbb334b83a43a549f4d7e9fdd5b, type: 3}
+  m_Shader: {fileID: 4800000, guid: a7745a00b6760e880894123da1df99a7, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -100,6 +100,7 @@ Material:
     - _ParallaxScale: 0.5
     - _Reflectivity: 0
     - _RefractionScale: 0.5
+    - _ShadowStrength: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularAmount: 0
     - _SpecularHighlights: 1
