@@ -1,8 +1,7 @@
 Shader "Particles/ToonWaterRipple" {
 
     Properties {
-
-        _Size ("Size", Range(0, 10)) = 1
+        
         _Width ("Width", Range(0.01, 0.3)) = 0.1
     }
 

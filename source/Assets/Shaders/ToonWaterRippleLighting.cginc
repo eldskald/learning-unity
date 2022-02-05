@@ -31,20 +31,11 @@ half _Size;
 half _Width;
 
 v2f WaterRippleVertex (appdata v) {
-
-    // Modifying geometry based on particle age.
-    // float2 outerPos = v.vertex.xy * v.uv.z * _Size;
-    // float2 innerPos = normalize(v.vertex.xy) * v.uv.z * (
-    //     _Size - _Width * smoothstep(0.9, 1.0, v.uv.z));
-    // v.vertex.xy = length(v.vertex.xy < 0.99) ? innerPos : outerPos;
-
-    // Pass modified geometry as interpolators.
     v2f o;
     UNITY_INITIALIZE_OUTPUT(v2f, o)
 
     o.pos = UnityObjectToClipPos(v.vertex);
-    o.uv.xy = v.uv.xy;
-    o.uv.z = v.uv.z;
+    o.uv = v.uv;
     o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
     o.normal = normalize(UnityObjectToWorldNormal(v.normal));
     o.color = v.color;

@@ -82,9 +82,9 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _Foam: 0
-    - _FoamDisplacement: 0.4
+    - _FoamDisplacement: 0.3
     - _FoamFixedStrength: 0
-    - _FoamSize: 0.5
+    - _FoamSize: 0.4
     - _FoamSmooth: 0.1
     - _FoamSmoothness: 0.1
     - _FoamStrength: 1
