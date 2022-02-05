@@ -106,7 +106,7 @@ Material:
     - _Reflectivity: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _Specularity: 0.7
+    - _Specularity: 1
     - _SrcBlend: 1
     - _UVEdgeFoam: 0
     - _UVSec: 0

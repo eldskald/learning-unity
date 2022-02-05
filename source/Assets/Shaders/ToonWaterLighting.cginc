@@ -92,9 +92,9 @@ fixed4 ToonWaterFragment (Interpolators i) {
     uvA += _SurfPanVel.xy * _Time.y * _Agitation;
     uvB += _SurfPanVel.zw * _Time.y * _Agitation;
     half height = (tex2D(_HeightMap, uvA).r + tex2D(_HeightMap, uvB)) / 2;
-    half shine = smoothstep(0.95, 0.98, height);
+    half shine = smoothstep(0.96, 0.97, height);
     s.specularAmount = height * 0.6 + 0.4 * shine;
-    s.specularColor += s.specularColor * shine;
+    s.specularColor += s.specularColor * shine * 10;
     half scale = saturate(_Agitation * 1.5);
     float3 normalA = UnpackNormal(tex2D(_NormalMap, uvA));
     float3 normalB = UnpackNormal(tex2D(_NormalMap, uvB));
