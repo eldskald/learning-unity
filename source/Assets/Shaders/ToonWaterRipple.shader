@@ -1,13 +1,9 @@
-Shader "VFX/ToonWaterFoamPatch" {
+Shader "Particles/ToonWaterRipple" {
 
     Properties {
 
-        _Color ("Foam Color", Color) = (1,1,1,1)
-        _FoamSmooth ("Foam Smoothness", Range(0, 1)) = 0.1
-        _FoamSize ("Foam Size", Range(0, 1)) = 0.5
-        _FoamDisplacement ("Foam Displacement", Range(0, 1)) = 0.3
-        _Agitation ("Agitation", Range(0, 1)) = 0.3
-        _MainTex ("Foam Noise Texture", 2D) = "black" {}
+        _Size ("Size", Range(0, 10)) = 1
+        _Width ("Width", Range(0.01, 0.3)) = 0.1
     }
 
     SubShader {
@@ -32,21 +28,18 @@ Shader "VFX/ToonWaterFoamPatch" {
             #pragma multi_compile _ VERTEXLIGHT_ON
             #pragma multi_compile_fog
 
-            #define _TRANSMISSION_ENABLED
-
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "ToonWaterFoamPatchLighting.cginc"
-            
-            Interpolators vert (VertexData v) {
-                Interpolators o = BasicVertex(v);
-                o.uv = o.uv * _MainTex_ST.xy + _MainTex_ST.zw;
+            #include "ToonWaterRippleLighting.cginc"
+
+            v2f vert (appdata v) {
+                v2f o = WaterRippleVertex(v);
                 return o;
             }
 
-            float4 frag (Interpolators i) : SV_TARGET {
-                float4 col = FoamPatchFragment(i);
+            fixed4 frag (v2f i) : SV_TARGET {
+                fixed4 col = WaterRippleFragment(i);
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;
             }
@@ -68,21 +61,18 @@ Shader "VFX/ToonWaterFoamPatch" {
             #pragma multi_compile_fwdadd_fullshadows
             #pragma multi_compile_fog
 
-            #define _TRANSMISSION_ENABLED
-
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "ToonWaterFoamPatchLighting.cginc"
-            
-            Interpolators vert (VertexData v) {
-                Interpolators o = BasicVertex(v);
-                o.uv = o.uv * _MainTex_ST.xy + _MainTex_ST.zw;
+            #include "ToonWaterRippleLighting.cginc"
+
+            v2f vert (appdata v) {
+                v2f o = WaterRippleVertex(v);
                 return o;
             }
 
-            float4 frag (Interpolators i) : SV_TARGET {
-                float4 col = FoamPatchFragment(i);
+            fixed4 frag (v2f i) : SV_TARGET {
+                fixed4 col = WaterRippleFragment(i);
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;
             }

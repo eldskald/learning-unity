@@ -1,10 +1,13 @@
 #if !defined(FOAM_PATCH_LIGHTING_INCLUDED)
 #define FOAM_PATCH_LIGHTING_INCLUDED
 
-#include "CelShadedLighting.cginc"
+#include "CelShaderLightHandler.cginc"
 
 #define PI 3.14159265358979323846
 
+fixed4 _Color;
+sampler2D _MainTex;
+half4 _MainTex_ST;
 half _FoamSmooth;
 half _FoamSize;
 half _FoamDisplacement;

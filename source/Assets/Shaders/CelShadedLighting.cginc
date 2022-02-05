@@ -46,48 +46,6 @@ sampler2D _TransmissionMap;
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Vertex function. We don't change geometry, so we just calculate the       //
-// usual interpolation stuff.                                                //
-///////////////////////////////////////////////////////////////////////////////
-
-Interpolators CelShadedVertex (VertexData v) {
-    Interpolators o;
-    UNITY_INITIALIZE_OUTPUT(Interpolators, o);
-
-    o.pos = UnityObjectToClipPos(v.vertex);
-    o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-    o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-    o.normal = normalize(UnityObjectToWorldNormal(v.normal));
-    
-    UNITY_TRANSFER_SHADOW(o, v.uv1)
-    UNITY_TRANSFER_FOG(o, o.pos);
-
-    #if defined(_BUMPMAP_ENABLED) || defined(_PARALLAX_ENABLED)
-        o.tangent = normalize(UnityObjectToWorldDir(v.tangent.xyz));
-        o.binormal = normalize(cross(o.normal, o.tangent.xyz)) *
-            v.tangent.w * unity_WorldTransformParams.w;
-    #endif
-
-    #if defined(_SCREEN_UV_INCLUDED)
-        o.screenUV = ComputeGrabScreenPos(o.pos);
-    #endif
-
-    #if defined(VERTEXLIGHT_ON)
-        Set4VertexLights(o);
-    #endif
-
-    #if defined(LIGHTMAP_ON) || ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
-        o.lightmapUV = v.uv1 * unity_LightmapST.xy + unity_LightmapST.zw;
-    #endif
-
-    return o;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-
-
-///////////////////////////////////////////////////////////////////////////////
 // Surface function. Works a little bit like a surface type shader, setting  //
 // all the data from the material properties to be used by fragment.         //
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,59 +1,9 @@
 fileFormatVersion: 2
-guid: ecd4810975829532a899e19c549ecfb4
+guid: 84ffceef8ea9257e8a8e568f4d5564c8
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Black
-    second: {fileID: 2100000, guid: 913ff7ce7e49c47f3ab40ba70d7f13ad, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Ground
-    second: {fileID: 2100000, guid: f02deabcdd1e5e29ba515232bd51a786, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Pool
-    second: {fileID: 2100000, guid: aa222c7a19b10f2789c5628f32fa5b8c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: PoolBottom
-    second: {fileID: 2100000, guid: f02deabcdd1e5e29ba515232bd51a786, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: RunningWater
-    second: {fileID: 2100000, guid: 749ac3dfedea6f42e93b0c56f764bea0, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: StoneDark
-    second: {fileID: 2100000, guid: f17eafa132a4971dd9855b7273a20712, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: StoneLight
-    second: {fileID: 2100000, guid: bb912fa24e7a4944198953e0ccb03f67, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: StoneLighter
-    second: {fileID: 2100000, guid: 86bf67cc58ecc3d23aa2f6f89edfc216, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: UpperPool
-    second: {fileID: 2100000, guid: de314de7533aa0c80bee00644ad99a32, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Water
-    second: {fileID: 2100000, guid: aa222c7a19b10f2789c5628f32fa5b8c, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
