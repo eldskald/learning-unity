@@ -27,7 +27,7 @@ struct v2f {
     #endif
 };
 
-half _Size;
+half _FadeStart;
 half _Width;
 
 v2f WaterRippleVertex (appdata v) {
@@ -55,7 +55,7 @@ fixed4 WaterRippleFragment (v2f i) {
 
     float r = length(i.uv.xy - 0.5) * 2;
     float outer = i.uv.z;
-    float inner = i.uv.z - _Width * (1 - smoothstep(0.9, 1.0, i.uv.z));
+    float inner = i.uv.z - _Width * (1 - smoothstep(_FadeStart, 1.0, i.uv.z));
     half check = r > inner && r < outer ? 1.0 : 0.0;
     clip(check - 0.5);
 
