@@ -27,6 +27,8 @@ struct v2f {
     #endif
 };
 
+sampler2D _NoiseTex;
+half4 _NoiseTex_ST;
 half _FadeStart;
 half _Width;
 
@@ -53,7 +55,9 @@ v2f WaterRippleVertex (appdata v) {
 fixed4 WaterRippleFragment (v2f i) {
     fixed4 col = float4(0, 0, 0, 1);
 
-    float r = length(i.uv.xy - 0.5) * 2;
+    float2 noiseUV = i.uv.xy * _NoiseTex_ST.xy + _NoiseTex_ST.wz;
+    float noise = tex2D(_NoiseTex, noiseUV + _Time.y).r * 0.2;
+    float r = length(i.uv.xy - 0.5) * 2 + noise;
     float outer = i.uv.z;
     float inner = i.uv.z - _Width * (1 - smoothstep(_FadeStart, 1.0, i.uv.z));
     half check = r > inner && r < outer ? 1.0 : 0.0;

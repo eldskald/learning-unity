@@ -1,9 +1,6 @@
 #if !defined(SHADOW_CASTER_INCLUDED)
 #define SHADOW_CASTER_INCLUDED
 
-#pragma vertex vert
-#pragma fragment frag
-
 #include "UnityCG.cginc"
 
 half _Cutoff;
@@ -42,7 +39,7 @@ struct Interpolators {
     #endif
 };
 
-VertexInterpolators vert (MeshData v) {
+VertexInterpolators ShadowCasterVertex (MeshData v) {
     VertexInterpolators o;
     o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
@@ -58,7 +55,7 @@ VertexInterpolators vert (MeshData v) {
     return o;
 }
 
-float4 frag (Interpolators i) : SV_TARGET {
+float4 ShadowCasterFragment (Interpolators i) {
     half alpha = _Color.a * tex2D(_MainTex, i.uv).a;
 
     #if defined(_CUTOUT_SHADOWS)

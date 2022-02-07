@@ -47,6 +47,16 @@ public class CelShaderGUI : ShaderGUI {
         AddTransmission();
         GUIHelper.ShortSpace();
         AddTilingAndOffset();
+        GUIHelper.LongSpace();
+
+        AddToggleWind();
+        if (_target.IsKeywordEnabled("_WIND_ENABLED")) {
+            AddWindDirection();
+            AddWindResistance();
+            AddWindInterval();
+            AddWindHeightOffset();
+            AddWindSway();
+        }
     }
 
     // Helper functions for convenience of writing and reading.
@@ -161,6 +171,11 @@ public class CelShaderGUI : ShaderGUI {
 
     enum ShadowsMode {
         Dither, Cutout
+    }
+
+    void CheckShadowsMode (ShadowsMode mode) {
+        SetKeyword("_DITHER_SHADOWS", mode == ShadowsMode.Dither);
+        SetKeyword("_CUTOUT_SHADOWS", mode == ShadowsMode.Cutout);
     }
 
     void AddShadowsMode () {
@@ -337,10 +352,50 @@ public class CelShaderGUI : ShaderGUI {
         }
     }
 
-    // Last helper functions, to set up some keywords and passes when
-    // the shader changes.
-    void CheckShadowsMode (ShadowsMode mode) {
-        SetKeyword("_DITHER_SHADOWS", mode == ShadowsMode.Dither);
-        SetKeyword("_CUTOUT_SHADOWS", mode == ShadowsMode.Cutout);
+    // Wind properties.
+    void AddToggleWind () {
+        bool toggle = _target.IsKeywordEnabled("_WIND_ENABLED");
+        EditorGUI.BeginChangeCheck();
+        toggle = EditorGUILayout.ToggleLeft("Enable Wind", toggle);
+        if (EditorGUI.EndChangeCheck()) {
+            SetKeyword("_WIND_ENABLED", toggle);
+        }
     }
+
+    void AddWindDirection () {
+        MaterialProperty prop = GetProperty("_Wind");
+        Vector2 vec = new Vector2(prop.vectorValue.x, prop.vectorValue.y);
+        EditorGUI.BeginChangeCheck();
+        vec = EditorGUILayout.Vector2Field("Wind", vec);
+        if (EditorGUI.EndChangeCheck()) {
+            _target.SetVector("_wind", new Vector4(vec.x, vec.y, 0f, 0f));
+        }
+    }
+
+    void AddWindResistance () {
+        MaterialProperty prop = GetProperty("_Resistance");
+        _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
+    }
+
+    void AddWindInterval () {
+        MaterialProperty prop = GetProperty("_Interval");
+        _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
+    }
+
+    void AddWindHeightOffset () {
+        MaterialProperty prop = GetProperty("_HeightOffset");
+        _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
+    }
+
+    void AddWindSway () {
+        MaterialProperty curve = GetProperty("_VarCurve");
+        MaterialProperty intensity = GetProperty("_VarIntensity");
+        MaterialProperty frequency = GetProperty("_VarFrequency");
+        _editor.TexturePropertySingleLine(
+            GUIHelper.MakeLabel(
+                curve, "Sway curve gradient texture. The numbers " +
+                "represent sway intensity and frequency respectively."),
+            curve, intensity, frequency);
+    }
+    
 }

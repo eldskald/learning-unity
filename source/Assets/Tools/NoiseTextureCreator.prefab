@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6313724051198407717}
-  - component: {fileID: 7195032686677023402}
+  - component: {fileID: 2396153325302870878}
   m_Layer: 0
   m_Name: NoiseTextureCreator
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7195032686677023402
+--- !u!114 &2396153325302870878
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,12 +40,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 7758425988006765007}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7e2953811b49559cae388e90350f871, type: 3}
+  m_Script: {fileID: 11500000, guid: 7a866606ad9ffb8dbb2e8b46c532b4ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   resolution: {x: 128, y: 128}
   scale: 1
-  seed: 1
+  seed: 0
   octaves: 4
   persistance: 0.5
   lacunarity: 2

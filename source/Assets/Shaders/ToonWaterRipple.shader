@@ -2,6 +2,7 @@ Shader "Particles/ToonWaterRipple" {
 
     Properties {
         
+        _NoiseTex ("Noise Texture", 2D) = "black" {}
         _FadeStart ("Fade Start", Range(0, 1)) = 0.9
         _Width ("Width", Range(0.01, 0.3)) = 0.1
     }

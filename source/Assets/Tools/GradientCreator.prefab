@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 704507128050095987}
-  - component: {fileID: 4815734281780849665}
+  - component: {fileID: 1739788358169161023}
   m_Layer: 0
   m_Name: GradientCreator
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4815734281780849665
+--- !u!114 &1739788358169161023
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,7 +40,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8700967565054073427}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71a5e8306b0dbe5e299daf19e5cadfb0, type: 3}
+  m_Script: {fileID: 11500000, guid: 933248add8495c49d83d322a51d000b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   gradient:
@@ -73,4 +73,4 @@ MonoBehaviour:
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   resolution: 128
-  filePath: Textures/Gradients/Gradient0.png
+  filePath: Resources/Textures/Gradients/Gradient0.png

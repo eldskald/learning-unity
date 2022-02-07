@@ -82,6 +82,15 @@ Shader "CelShaded/Opaque" {
         // This effect is called transmission in Godot.
         _Transmission ("Translucency", Range(0, 1)) = 0
         _TransmissionMap ("Translucency Map", 2D) = "white" {}
+
+        // Wind properties.
+        _Wind ("Wind", Vector) = (1,0,0,0)
+        _Resistance ("Resistance", Float) = 1
+        _Interval ("Interval", Float) = 3.5
+        _HeightOffset ("HeightOffset", Float) = 0
+        _VarCurve ("Sway Curve", 2D) = "white" {}
+        _VarIntensity ("Sway Intensity", Float) = 1
+        _VarFrequency ("Sway Frequency", Float) = 1
     }
 
     SubShader {
@@ -108,13 +117,23 @@ Shader "CelShaded/Opaque" {
             #pragma shader_feature _OCCLUSION_ENABLED
             #pragma shader_feature _ANISOTROPY_ENABLED
             #pragma shader_feature _TRANSMISSION_ENABLED
+            #pragma shader_feature _WIND_ENABLED
 
             #include "CelShadedLighting.cginc"
+
+            #if defined(_WIND_ENABLED)
+                #include "WindSway.cginc"
+            #endif
 
             #pragma vertex vert
             #pragma fragment frag
 
             Interpolators vert (VertexData v) {
+
+                #if defined(_WIND_ENABLED)
+                    v.vertex = WindDisplaceVertex(v.vertex);
+                #endif
+
                 Interpolators o = BasicVertex(v);
                 o.uv = o.uv * _MainTex_ST.xy + _MainTex_ST.zw;
                 return o;
@@ -152,13 +171,23 @@ Shader "CelShaded/Opaque" {
             #pragma shader_feature _PARALLAX_ENABLED
             #pragma shader_feature _ANISOTROPY_ENABLED
             #pragma shader_feature _TRANSMISSION_ENABLED
+            #pragma shader_feature _WIND_ENABLED
             
             #include "CelShadedLighting.cginc"
+
+            #if defined(_WIND_ENABLED)
+                #include "WindSway.cginc"
+            #endif
 
             #pragma vertex vert
             #pragma fragment frag
 
             Interpolators vert (VertexData v) {
+
+                #if defined(_WIND_ENABLED)
+                    v.vertex = WindDisplaceVertex(v.vertex);
+                #endif
+
                 Interpolators o = BasicVertex(v);
                 o.uv = o.uv * _MainTex_ST.xy + _MainTex_ST.zw;
                 return o;
@@ -189,13 +218,23 @@ Shader "CelShaded/Opaque" {
             #pragma target 3.0
 
             #pragma multi_compile_fog
+            #pragma shader_feature _WIND_ENABLED
 
             #include "CelShaderOutline.cginc"
+
+            #if defined(_WIND_ENABLED)
+                #include "WindSway.cginc"
+            #endif
 
             #pragma vertex vert
             #pragma fragment frag
 
             Interpolators vert (MeshData v) {
+
+                #if defined(_WIND_ENABLED)
+                    v.vertex = WindDisplaceVertex(v.vertex);
+                #endif
+
                 Interpolators o = OutlineVertex(v);
                 return o;
             }
@@ -222,8 +261,29 @@ Shader "CelShaded/Opaque" {
             #pragma target 3.0
 
             #pragma multi_compile_shadowcaster
+            #pragma shader_feature _WIND_ENABLED
 
             #include "ShadowCaster.cginc"
+
+            #if defined(_WIND_ENABLED)
+                #include "WindSway.cginc"
+            #endif
+
+            #pragma vertex vert
+            #pragma fragment frag
+
+            VertexInterpolators vert (MeshData v) {
+                
+                #if defined(_WIND_ENABLED)
+                    v.vertex = WindDisplaceVertex(v.vertex);
+                #endif
+
+                return ShadowCasterVertex(v);
+            }
+
+            float4 frag (Interpolators i) : SV_TARGET {
+                return ShadowCasterFragment(i);
+            }
 
             ENDCG
         }
