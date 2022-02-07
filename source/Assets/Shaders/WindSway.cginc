@@ -18,8 +18,8 @@ float Rand(float2 seed) {
 
 // Wind function from godotshaders, slightly modified.
 float GetWind(float height, float time) {
-	float maxStrength = length(_Wind.xy) * 5 / _Resistance;
-	float minStrength = length(_Wind.xy) / _Resistance;
+	float maxStrength = 5 / _Resistance;
+	float minStrength = 1 / _Resistance;
 	float diff = pow(maxStrength - minStrength, 2.0);
     float strength = minStrength + diff + sin(time / _Interval) * diff;
     strength = max(strength, minStrength);
@@ -34,15 +34,13 @@ float GetWind(float height, float time) {
     return deform * heightScale;
 }
 
-// Vertex displacing function.
-float4 WindDisplaceVertex(float4 vertex) {
+float4 WindDisplaceVertex (float4 vertex) {
     float4 worldOrigin = mul(unity_ObjectToWorld, float4(0, 0, 0, 1));
-    float windTime = _Time.y * length(_Wind) + Rand(worldOrigin.xz) * 256;
-    float2 localWind = mul(
-        unity_WorldToObject, float4(_Wind.x, 0, _Wind.y, 0)).xz;
-    float4 r = vertex;
-    r.xz += localWind * GetWind(vertex.y, windTime);
-    return r;
+    float windTime = _Time.y * length(_Wind.xyz) + Rand(worldOrigin.xz) * 256;
+
+    float4 r = mul(unity_ObjectToWorld, vertex);
+    r.xyz += _Wind.xyz * GetWind(r.y, windTime);
+    return mul(unity_WorldToObject, r);
 }
 
 #endif

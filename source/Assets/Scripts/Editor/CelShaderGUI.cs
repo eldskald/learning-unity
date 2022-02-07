@@ -364,11 +364,12 @@ public class CelShaderGUI : ShaderGUI {
 
     void AddWindDirection () {
         MaterialProperty prop = GetProperty("_Wind");
-        Vector2 vec = new Vector2(prop.vectorValue.x, prop.vectorValue.y);
+        Vector3 vec = new Vector3(
+            prop.vectorValue.x, prop.vectorValue.y, prop.vectorValue.z);
         EditorGUI.BeginChangeCheck();
-        vec = EditorGUILayout.Vector2Field("Wind", vec);
+        vec = EditorGUILayout.Vector3Field("Wind", vec);
         if (EditorGUI.EndChangeCheck()) {
-            _target.SetVector("_wind", new Vector4(vec.x, vec.y, 0f, 0f));
+            _target.SetVector("_Wind", new Vector4(vec.x, vec.y, vec.z, 0f));
         }
     }
 
