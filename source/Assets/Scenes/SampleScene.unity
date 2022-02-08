@@ -593,6 +593,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5084846065294048191, guid: ecd4810975829532a899e19c549ecfb4, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -2333668015826065791, guid: ecd4810975829532a899e19c549ecfb4, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -600,6 +604,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ecd4810975829532a899e19c549ecfb4, type: 3}
       propertyPath: m_Name
       value: ruins-fountain-1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1774161969120837241, guid: ecd4810975829532a899e19c549ecfb4, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8661592007448868996, guid: ecd4810975829532a899e19c549ecfb4, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ecd4810975829532a899e19c549ecfb4, type: 3}
