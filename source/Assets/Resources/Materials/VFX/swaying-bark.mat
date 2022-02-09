@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: swaying-leaves-2
+  m_Name: swaying-bark
   m_Shader: {fileID: 4800000, guid: a7745a00b6760e880894123da1df99a7, type: 3}
   m_ShaderKeywords: _WIND_ENABLED
   m_LightmapFlags: 4
@@ -90,7 +90,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _FresnelAmount: 0.3
+    - _FresnelAmount: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -112,17 +112,16 @@ Material:
     - _SpecularAmount: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _ToggleWind: 0
     - _Transmission: 0
     - _UVSec: 0
     - _VarFrequency: 0.5
     - _VarIntensity: 1
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.082455575, g: 0.3301887, b: 0.06697223, a: 1}
+    - _Color: {r: 0.25490198, g: 0.17178273, b: 0.12156863, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+    - _FresnelColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecularColor: {r: 0, g: 0, b: 0, a: 1}
     - _Wind: {r: 1, g: 0, b: 0, a: 0}

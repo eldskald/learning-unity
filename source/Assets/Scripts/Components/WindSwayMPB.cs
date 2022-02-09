@@ -5,12 +5,12 @@ using UnityEngine;
 public class WindSwayMPB : MonoBehaviour {
     
     public Vector3 wind;
-    [MinAttribute(0.01f)] public float resistance;
-    [MinAttribute(0.01f)] public float interval;
-    public float heightOffset;
+    [MinAttribute(0.01f)] public float resistance = 10.0f;
+    [MinAttribute(0.01f)] public float interval = 3.5f;
+    public float heightOffset = 0.0f;
     public Texture swayCurve;
-    public float swayIntensity;
-    public float swayFrequency;
+    public float swayIntensity = 1.0f;
+    public float swayFrequency = 1.0f;
 
     private MaterialPropertyBlock _mpb;
 
