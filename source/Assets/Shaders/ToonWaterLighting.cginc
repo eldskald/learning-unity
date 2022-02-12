@@ -33,7 +33,6 @@ fixed4 ToonWaterFragment (Interpolators i) {
     Surface s;
     UNITY_INITIALIZE_OUTPUT(Surface, s);
     s.albedo = _Color.rgb;
-    s.specularColor = half3(1, 1, 1) * _Specularity * saturate(_Agitation * 2);
     s.transmission = 1.0;
 
     // Depth calculations is the base of foam, refraction and depth fog.
@@ -94,7 +93,8 @@ fixed4 ToonWaterFragment (Interpolators i) {
     half height = (tex2D(_HeightMap, uvA).r + tex2D(_HeightMap, uvB)) / 2;
     half shine = smoothstep(0.96, 0.97, height);
     s.specularAmount = height * 0.6 + 0.4 * shine;
-    s.specularColor += s.specularColor * shine * 10;
+    s.specularColor = half3(2, 2, 2) * _Specularity * saturate(_Agitation * 2);
+    s.specularColor += s.specularColor * shine * 5;
     half scale = saturate(_Agitation * 1.5);
     float3 normalA = UnpackNormal(tex2D(_NormalMap, uvA));
     float3 normalB = UnpackNormal(tex2D(_NormalMap, uvB));

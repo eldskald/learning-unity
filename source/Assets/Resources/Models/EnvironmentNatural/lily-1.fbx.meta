@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 76af0bb22a570b3e0b43555a07d7a133
+guid: 2e75cb489a7903037a1dd7598b33f078
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
@@ -7,28 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Grass
-    second: {fileID: 2100000, guid: f02deabcdd1e5e29ba515232bd51a786, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: StoneDark
-    second: {fileID: 2100000, guid: f17eafa132a4971dd9855b7273a20712, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: StoneLight
-    second: {fileID: 2100000, guid: bb912fa24e7a4944198953e0ccb03f67, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: StoneLighter
-    second: {fileID: 2100000, guid: 86bf67cc58ecc3d23aa2f6f89edfc216, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: StoneRaw
-    second: {fileID: 2100000, guid: 17674dd22b32517cbb40aca17b49b14a, type: 2}
+      name: Leaves
+    second: {fileID: 2100000, guid: 12c8916762e38431c9ac1391baa495f6, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -61,7 +41,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 1
+    addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
     importVisibility: 1
