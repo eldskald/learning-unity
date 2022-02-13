@@ -15,8 +15,7 @@ Material:
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses:
-  - ALWAYS
+  disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -80,6 +79,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _VarCurve:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AnisoScale: 0.5
     - _Blurriness: 0
@@ -91,16 +94,19 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _HeightOffset: 0
+    - _Interval: 3.5
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionScale: 1
     - _OcclusionStrength: 1
-    - _OutlineDisable: 1
+    - _OutlineDisable: 0
     - _OutlineThickness: 3
     - _Parallax: 0.02
     - _ParallaxScale: 0.5
     - _Reflectivity: 0
     - _RefractionScale: 0.5
+    - _Resistance: 1
     - _ShadowStrength: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularAmount: 0
@@ -108,6 +114,8 @@ Material:
     - _SrcBlend: 1
     - _Transmission: 0
     - _UVSec: 0
+    - _VarFrequency: 1
+    - _VarIntensity: 1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 0.054970376, g: 0.21200001, b: 0.045156017, a: 1}
@@ -116,4 +124,5 @@ Material:
     - _FresnelColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecularColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Wind: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

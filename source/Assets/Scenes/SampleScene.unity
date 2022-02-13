@@ -4733,9 +4733,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -1627417741986707070, guid: 76af0bb22a570b3e0b43555a07d7a133, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1459556360003528303, guid: 76af0bb22a570b3e0b43555a07d7a133, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1026051817504319122, guid: 76af0bb22a570b3e0b43555a07d7a133, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 76af0bb22a570b3e0b43555a07d7a133, type: 3}
       propertyPath: m_Name
       value: ruins-arch-2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2435701309970407688, guid: 76af0bb22a570b3e0b43555a07d7a133, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4095372233970792056, guid: 76af0bb22a570b3e0b43555a07d7a133, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4095372233970792056, guid: 76af0bb22a570b3e0b43555a07d7a133, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6918406757992507093, guid: 76af0bb22a570b3e0b43555a07d7a133, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76af0bb22a570b3e0b43555a07d7a133, type: 3}
