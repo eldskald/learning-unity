@@ -16,14 +16,15 @@ public class PlayerControls : MonoBehaviour {
     [MinAttribute(0f)] public float jumpHeight = 0f;
     [MinAttribute(0f)] public float gravity = 0f;
 
-    // Private variables to assist the functions.
+    // Private variables and constants to assist methods.
     private Camera _playerCam;
     private CharacterController _controller;
     private Vector3 _velocity;
+    const float GROUND_DETECTION_SAFETY = -10f;
 
 
 
-    // Start and FixedUpdate functions that run the component.
+    // Start and FixedUpdate methods that run the component.
     private void Start () {
         Cursor.lockState = CursorLockMode.Locked;
         _controller = GetComponent<CharacterController>();
@@ -98,6 +99,12 @@ public class PlayerControls : MonoBehaviour {
 
     private void Gravity () {
         _velocity -= Vector3.up * gravity * Time.fixedDeltaTime;
+
+        // For better ground detection, we need to push the character
+        // against the ground.
+        if (_controller.isGrounded) {
+            _velocity.y = GROUND_DETECTION_SAFETY;
+        }
     }
 
     private void Jumping () {
