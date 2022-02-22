@@ -29,6 +29,7 @@ public class PlayerControls : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Locked;
         _controller = GetComponent<CharacterController>();
         _playerCam = GetComponentInChildren<Camera>();
+        CelShaderSettings.LoadSettings(); // For when you build the game.
     }
 
     private void FixedUpdate () {
@@ -47,6 +48,11 @@ public class PlayerControls : MonoBehaviour {
         Gravity();
         Jumping();
         _controller.Move(_velocity * Time.fixedDeltaTime);
+
+        // Press esc to quit the game.
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            Application.Quit();
+        }
     }
 
 
@@ -92,7 +98,6 @@ public class PlayerControls : MonoBehaviour {
             Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
         move = move.normalized * speed;
         move = move.x * transform.right + move.z * transform.forward;
-
         _velocity.x = move.x;
         _velocity.z = move.z;
     }
