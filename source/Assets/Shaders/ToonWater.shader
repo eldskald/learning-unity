@@ -79,7 +79,7 @@ Shader "VFX/ToonWater" {
             #define _REFLECTIONS_ENABLED
             #define _SCREEN_UV_INCLUDED
 
-            #include "ToonWaterLighting.cginc"
+            #include "ToonWaterInc.cginc"
             
             Interpolators vert (VertexData v) {
                 Interpolators o = BasicVertex(v);
@@ -124,7 +124,7 @@ Shader "VFX/ToonWater" {
             #define _REFLECTIONS_ENABLED
             #define _SCREEN_UV_INCLUDED
             
-            #include "ToonWaterLighting.cginc"
+            #include "ToonWaterInc.cginc"
             
             Interpolators vert (VertexData v) {
                 Interpolators o = BasicVertex(v);

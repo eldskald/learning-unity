@@ -37,7 +37,7 @@ Shader "VFX/ToonWaterFoamPatch" {
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "ToonWaterFoamPatchLighting.cginc"
+            #include "ToonWaterFoamPatchInc.cginc"
             
             Interpolators vert (VertexData v) {
                 Interpolators o = BasicVertex(v);
@@ -73,7 +73,7 @@ Shader "VFX/ToonWaterFoamPatch" {
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "ToonWaterFoamPatchLighting.cginc"
+            #include "ToonWaterFoamPatchInc.cginc"
             
             Interpolators vert (VertexData v) {
                 Interpolators o = BasicVertex(v);

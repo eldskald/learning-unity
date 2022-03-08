@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.55136174, g: 0.65086675, b: 0.71538043, a: 1}
+  m_IndirectSpecularColor: {r: 0.55165017, g: 0.65102226, b: 0.715254, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -24415,7 +24415,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8106816005667023284, guid: f7da9befad16ff466828a867e1159cca, type: 3}
       propertyPath: ShapeModule.radius.value
-      value: 0.15
+      value: 0.18
       objectReference: {fileID: 0}
     - target: {fileID: 8106816005667023286, guid: f7da9befad16ff466828a867e1159cca, type: 3}
       propertyPath: m_RootOrder

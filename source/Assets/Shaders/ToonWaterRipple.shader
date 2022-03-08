@@ -32,7 +32,7 @@ Shader "Particles/ToonWaterRipple" {
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "ToonWaterRippleLighting.cginc"
+            #include "ToonWaterRippleInc.cginc"
 
             v2f vert (appdata v) {
                 v2f o = WaterRippleVertex(v);
@@ -65,7 +65,7 @@ Shader "Particles/ToonWaterRipple" {
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "ToonWaterRippleLighting.cginc"
+            #include "ToonWaterRippleInc.cginc"
 
             v2f vert (appdata v) {
                 v2f o = WaterRippleVertex(v);
