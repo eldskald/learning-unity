@@ -16,9 +16,11 @@ Shader "Particles/Smoke" {
         _SpeedYA ("Noise A Speed Y", Range(-10, 10)) = 0
         _SpeedXB ("Noise B Speed X", Range(-10, 10)) = 0
         _SpeedYB ("Noise B Speed Y", Range(-10, 10)) = 0
-        _Softness ("Softness", Range(0, 1)) = 0.5
+        _Softness ("Softness", Range(0, 1)) = 0.1
         _FadeIn ("Fade In", Range(0, 1)) = 0.2
         _FadeOut ("Fade Out", Range(0, 1)) = 0.8
+        _NearFade ("Near Fade", Float) = 1
+        _FarFade ("Far Fade", Float) = 100
     }
 
     SubShader {

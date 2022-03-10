@@ -103,7 +103,7 @@ Material:
     - _PlanarReflections: 1
     - _RealisticRefl: 0
     - _RealisticReflections: 0
-    - _Reflectivity: 0.7
+    - _Reflectivity: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _Specularity: 1
