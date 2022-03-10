@@ -83,6 +83,11 @@ Shader "VFX/ToonWater" {
             
             Interpolators vert (VertexData v) {
                 Interpolators o = BasicVertex(v);
+
+                #if defined(VERTEXLIGHT_ON)
+                    Set4VertexLights(o);
+                #endif
+                
                 return o;
             }
 
@@ -128,6 +133,11 @@ Shader "VFX/ToonWater" {
             
             Interpolators vert (VertexData v) {
                 Interpolators o = BasicVertex(v);
+
+                #if defined(VERTEXLIGHT_ON)
+                    Set4VertexLights(o);
+                #endif
+
                 return o;
             }
 
@@ -192,9 +202,18 @@ Shader "VFX/ToonWater" {
 
             #pragma multi_compile_shadowcaster
 
-            #define _DITHER_SHADOWS
-
             #include "ShadowCaster.cginc"
+
+            #pragma vertex vert
+            #pragma fragment frag
+
+            VertexInterpolators vert (MeshData v) {
+                return ShadowCasterVertex(v);
+            }
+
+            float4 frag (Interpolators i) : SV_TARGET {
+                return ShadowCasterFragment(i);
+            }
 
             ENDCG
         }

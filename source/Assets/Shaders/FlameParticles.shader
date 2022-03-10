@@ -33,7 +33,6 @@ Shader "Particles/Flames" {
         Cull Off
         Lighting Off
         ZWrite Off
-        ZTest Off
             
         Pass {
 

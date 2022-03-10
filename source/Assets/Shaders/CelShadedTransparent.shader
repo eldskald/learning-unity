@@ -141,6 +141,11 @@ Shader "CelShaded/Transparent" {
 
                 Interpolators o = BasicVertex(v);
                 o.uv = o.uv * _MainTex_ST.xy + _MainTex_ST.zw;
+
+                #if defined(VERTEXLIGHT_ON)
+                    Set4VertexLights(o);
+                #endif
+
                 return o;
             }
 
@@ -197,6 +202,11 @@ Shader "CelShaded/Transparent" {
 
                 Interpolators o = BasicVertex(v);
                 o.uv = o.uv * _MainTex_ST.xy + _MainTex_ST.zw;
+
+                #if defined(VERTEXLIGHT_ON)
+                    Set4VertexLights(o);
+                #endif
+                
                 return o;
             }
 

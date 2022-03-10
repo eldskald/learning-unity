@@ -30,12 +30,14 @@ struct v2f {
 
 sampler2D _MainTex, _NoiseA, _NoiseB;
 float4 _NoiseA_ST, _NoiseB_ST;
-half _SpeedXA, _SpeedYA, _SpeedXB, _SpeedYB, _Softness;
+half _SpeedXA, _SpeedYA, _SpeedXB, _SpeedYB, _Softness, _FadeIn, _FadeOut;
 
 sampler2D_float _CameraDepthTexture;
 
 v2f SmokeVertex (appdata v) {
     v2f o;
+    UNITY_INITIALIZE_OUTPUT(v2f, o);
+
     o.worldNormal = mul(unity_ObjectToWorld,v.normal);
     o.pos = UnityObjectToClipPos(v.vertex);
     o.uv = v.uv;
@@ -91,6 +93,8 @@ fixed4 SmokeFragment (v2f i) {
     UnityLight light = GetLight(inter);
     col.rgb = light.color * i.color.rgb;
     col.a = mask * noiseA * noiseB;
+    col.a *= smoothstep(0, _FadeIn, i.uv.z);
+    col.a *= 1 - smoothstep(_FadeOut, 1, i.uv.z);
 
     #if defined(UNITY_PASS_FORWARDBASE)
 

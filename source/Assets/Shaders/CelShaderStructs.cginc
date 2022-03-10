@@ -125,10 +125,6 @@ Interpolators BasicVertex (VertexData v) {
         o.screenUV = ComputeGrabScreenPos(o.pos);
     #endif
 
-    #if defined(VERTEXLIGHT_ON)
-        Set4VertexLights(o);
-    #endif
-
     #if defined(LIGHTMAP_ON) || ADDITIONAL_MASKED_DIRECTIONAL_SHADOWS
         o.lightmapUV = v.uv1 * unity_LightmapST.xy + unity_LightmapST.zw;
     #endif

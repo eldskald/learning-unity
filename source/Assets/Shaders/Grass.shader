@@ -37,7 +37,13 @@ Shader "VFX/Grass" {
 
             Interpolators vert (VertexData v) {
                 v.vertex = WindDisplaceVertex(v.vertex);
-                return BasicVertex(v);
+                Interpolators o = BasicVertex(v);
+
+                #if defined(VERTEXLIGHT_ON)
+                    Set4VertexLights(o);
+                #endif
+
+                return o;
             }
 
             fixed4 frag (Interpolators i) : SV_TARGET {
@@ -90,7 +96,13 @@ Shader "VFX/Grass" {
 
             Interpolators vert (VertexData v) {
                 v.vertex = WindDisplaceVertex(v.vertex);
-                return BasicVertex(v);
+                Interpolators o = BasicVertex(v);
+
+                #if defined(VERTEXLIGHT_ON)
+                    Set4VertexLights(o);
+                #endif
+
+                return o;
             }
 
             fixed4 frag (Interpolators i) : SV_TARGET {

@@ -17,6 +17,8 @@ Shader "Particles/Smoke" {
         _SpeedXB ("Noise B Speed X", Range(-10, 10)) = 0
         _SpeedYB ("Noise B Speed Y", Range(-10, 10)) = 0
         _Softness ("Softness", Range(0, 1)) = 0.5
+        _FadeIn ("Fade In", Range(0, 1)) = 0.2
+        _FadeOut ("Fade Out", Range(0, 1)) = 0.8
     }
 
     SubShader {
@@ -31,7 +33,6 @@ Shader "Particles/Smoke" {
         ColorMask RGB
         Cull Off
         ZWrite Off
-        ZTest Off
 
         Pass {
 
@@ -54,6 +55,11 @@ Shader "Particles/Smoke" {
 
             v2f vert (appdata v) {
                 v2f o = SmokeVertex(v);
+
+                #if defined(VERTEXLIGHT_ON)
+                    Set4VertexLights(o);
+                #endif
+
                 return o;
             }
 
@@ -86,6 +92,11 @@ Shader "Particles/Smoke" {
 
             v2f vert (appdata v) {
                 v2f o = SmokeVertex(v);
+
+                #if defined(VERTEXLIGHT_ON)
+                    Set4VertexLights(o);
+                #endif
+
                 return o;
             }
 
