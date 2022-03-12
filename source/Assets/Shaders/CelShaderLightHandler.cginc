@@ -53,6 +53,13 @@ UnityLight GetLight (Interpolators i) {
     UNITY_LIGHT_ATTENUATION(attenuation, i, i.worldPos);
     attenuation = FadeShadows(i, attenuation);
     light.color = _LightColor0.rgb * attenuation;
+
+    // This is to remove fall off from point and spot lights.
+    #if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
+        float3 lightVec = _WorldSpaceLightPos0.xyz - i.worldPos;
+        light.color *= 1 + dot(lightVec, lightVec);
+    #endif
+
     return light;
 }
 
