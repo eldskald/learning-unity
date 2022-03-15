@@ -9,6 +9,8 @@ public class FPSCounter : MonoBehaviour {
 
     private Text _text;
     private float _time;
+    private float _totalFrames;
+    private float _frameCounter;
 
     void Start () {
         _text = GetComponent<Text>();
@@ -17,11 +19,20 @@ public class FPSCounter : MonoBehaviour {
 
     void Update () {
         _time += Time.deltaTime;
+        _totalFrames += Time.unscaledDeltaTime;
+        _frameCounter += 1f;
         if (_time >= updateTime) {
-            _time = 0f;
-            int fps = (int)(1f / Time.unscaledDeltaTime);
+            int fps = (int)(_totalFrames / _frameCounter);
             fps = Mathf.Clamp(fps, 0, 999);
             _text.text = "FPS: " + fps.ToString();
+            _time = 0f;
+            _totalFrames = 0f;
+            _frameCounter = 0f;
+        }
+
+        if (Input.GetKeyDown(KeyCode.H)) {
+            Canvas counter = GetComponentInParent<Canvas>();
+            counter.enabled = !counter.enabled;
         }
     }
 }
