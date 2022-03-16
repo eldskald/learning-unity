@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.59014946, g: 0.6818078, b: 0.6922102, a: 1}
+  m_IndirectSpecularColor: {r: 0.58842283, g: 0.6799143, b: 0.6904049, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -11558,7 +11558,7 @@ LensFlare:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
   m_Enabled: 1
-  m_Flare: {fileID: 0}
+  m_Flare: {fileID: 12100000, guid: fda6a8540e99e57069c032b7fe77799a, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_Brightness: 1
   m_FadeSpeed: 3

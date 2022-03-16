@@ -13,3 +13,4 @@ At the start, it was a Unity adaptation of [this](https://gitlab.com/eldskald/3d
 - Skybox shader by [Harry Alisavakis](https://halisavakis.com/my-take-on-shaders-sky-shader/), with a few modifications by me.
 - Wind sway and water shaders are adaptations and lessons from many different sources, all of which use very similar techniques. I heavily modified them to adapt to my toon shader base code.
 - Noise and gradient textures generators by me.
+- Lens flare textures by [kindpng.com](https://www.kindpng.com/imgv/mxJwm_rainbow-ring-circle-colorful-colors-light-flare-circle/), [freeiconspng.com](https://www.freeiconspng.com/img/33412) and [hc](https://opengameart.org/content/lens-flares-and-particles).
