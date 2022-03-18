@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: water-pool-1
-  m_Shader: {fileID: 4800000, guid: ec22096975854a6a2a10ea84c237fe13, type: 3}
-  m_ShaderKeywords: _FOAM_NORMAL _PLANAR_REFLECTIONS_ENABLED _PRID_ONE
+  m_Name: smoke-2
+  m_Shader: {fileID: 4800000, guid: a7f2bc84852f3f1cb879ee08defb36bc, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -39,24 +39,24 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _FoamNoiseTex:
-        m_Texture: {fileID: 2800000, guid: 6fd21198f0827cf62bb10190a60d28ab, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _HeightMap:
-        m_Texture: {fileID: 2800000, guid: 83b2abfc654c86dbda0be8d9b040cc3d, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _NormalMap:
-        m_Texture: {fileID: 2800000, guid: 1a6113dc52130863086e16edb5d4e3d6, type: 3}
+    - _Noise:
+        m_Texture: {fileID: 2800000, guid: 6fd21198f0827cf62bb10190a60d28ab, type: 3}
+        m_Scale: {x: 0.2, y: 0.2}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseA:
+        m_Texture: {fileID: 2800000, guid: ade9d70f3d9bbee96b5d9f46f575f99d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseB:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -67,61 +67,36 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _PlanarReflectionsBuffer:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _PlanarReflectionsTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Agitation: 0.25
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _Foam: 0
-    - _FoamDisplacement: 0.3
-    - _FoamFixedStrength: 0
-    - _FoamSize: 0.4
-    - _FoamSmooth: 0.1
-    - _FoamSmoothness: 0.1
-    - _FoamStrength: 1
-    - _FresnelEffect: 0
+    - _Fade: 0.5
+    - _FadeIn: 0.3
+    - _FadeOut: 0.6
+    - _FarFade: 100
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NoDepthFog: 1
+    - _NearFade: 0
     - _OcclusionStrength: 1
-    - _OutlineDisable: 3
-    - _OutlineThickness: 3
-    - _PRID: 0
     - _Parallax: 0.02
-    - _PlanarReflections: 1
-    - _RealisticRefl: 0
-    - _RealisticReflections: 0
-    - _Reflectivity: 0.5
-    - _ShadowStrength: 0.5
     - _SmoothnessTextureChannel: 0
+    - _Softness: 0.5
     - _SpecularHighlights: 1
-    - _Specularity: 1
+    - _SpeedX: 0.1
+    - _SpeedXA: 0
+    - _SpeedXB: 0
+    - _SpeedY: -0.1
+    - _SpeedYA: 0.5
+    - _SpeedYB: 0
     - _SrcBlend: 1
-    - _UVEdgeFoam: 0
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.05490196, g: 0.27450982, b: 0.2901961, a: 0.5019608}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FoamColor: {r: 0.52705586, g: 0.76832587, b: 0.7924528, a: 1}
-    - _FoamNoiseTiling: {r: 1, g: 1, b: 0, a: 0}
-    - _FoamNoiseTilings: {r: 3, g: 3, b: 0, a: 0}
-    - _NormalPanVel: {r: 0, g: -1, b: 1, a: 0}
-    - _NormalTilings: {r: 3, g: 3, b: 3, a: 3}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SurfPanVel: {r: 1, g: 0, b: 0, a: 2}
-    - _SurfTilings: {r: 3, g: 3, b: 6, a: 6}
-    - _UVEdgeSizes: {r: 0.1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

@@ -7,6 +7,7 @@ Shader "VFX/ToonWater" {
         _Reflectivity ("Reflectivity", Range(0, 1)) = 0.5
         _Agitation ("Agitation", Range(0, 1)) = 0.3
         _Specularity ("Specularity", Range(0, 1)) = 0.5
+        _ShadowStrength ("Shadow Strength", Range(0, 1)) = 0.5
 
         // Foam properties.
         _FoamColor ("Foam Color", Color) = (1,1,1,1)
@@ -201,6 +202,7 @@ Shader "VFX/ToonWater" {
             #pragma target 3.0
 
             #pragma multi_compile_shadowcaster
+            #define _DITHER_SHADOWS
 
             #include "ShadowCaster.cginc"
 

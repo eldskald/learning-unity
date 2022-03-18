@@ -22,6 +22,7 @@ public class ToonWaterGUI : ShaderGUI {
         AddReflectivity();
         AddAgitation();
         AddSpecularity();
+        AddShadowStrength();
         GUIHelper.LongSpace();
 
         GUIHelper.GroupLabel("Foam Properties");
@@ -66,6 +67,11 @@ public class ToonWaterGUI : ShaderGUI {
 
     private void AddSpecularity () {
         MaterialProperty prop = FindProperty("_Specularity", _properties);
+        _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
+    }
+
+    private void AddShadowStrength () {
+        MaterialProperty prop = FindProperty("_ShadowStrength", _properties);
         _editor.ShaderProperty(prop, GUIHelper.MakeLabel(prop));
     }
 

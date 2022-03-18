@@ -16,7 +16,7 @@ Flare:
     m_Color: {r: 0.033707857, g: 0.25, b: 0.21910113, a: 1}
     m_UseLightColor: 1
     m_Rotate: 0
-    m_Zoom: 1
+    m_Zoom: 0
     m_Fade: 1
   - m_ImageIndex: 1
     m_Position: 0.25
@@ -24,7 +24,7 @@ Flare:
     m_Color: {r: 0, g: 0.25, b: 0.005617976, a: 1}
     m_UseLightColor: 1
     m_Rotate: 0
-    m_Zoom: 1
+    m_Zoom: 0
     m_Fade: 1
   - m_ImageIndex: 1
     m_Position: 0.3
@@ -32,7 +32,7 @@ Flare:
     m_Color: {r: 0, g: 0.08606555, b: 0.35, a: 1}
     m_UseLightColor: 1
     m_Rotate: 0
-    m_Zoom: 1
+    m_Zoom: 0
     m_Fade: 1
   - m_ImageIndex: 1
     m_Position: 0.38
@@ -40,7 +40,7 @@ Flare:
     m_Color: {r: 0, g: 0.27499998, b: 0.3, a: 1}
     m_UseLightColor: 1
     m_Rotate: 0
-    m_Zoom: 1
+    m_Zoom: 0
     m_Fade: 1
   - m_ImageIndex: 1
     m_Position: 0.47
@@ -48,7 +48,7 @@ Flare:
     m_Color: {r: 0, g: 0.3, b: 0.19821432, a: 1}
     m_UseLightColor: 1
     m_Rotate: 0
-    m_Zoom: 1
+    m_Zoom: 0
     m_Fade: 1
   - m_ImageIndex: 1
     m_Position: 0.56
@@ -56,7 +56,7 @@ Flare:
     m_Color: {r: 0, g: 0.35, b: 0.120833285, a: 1}
     m_UseLightColor: 1
     m_Rotate: 0
-    m_Zoom: 1
+    m_Zoom: 0
     m_Fade: 1
   - m_ImageIndex: 1
     m_Position: 0.65
@@ -64,7 +64,7 @@ Flare:
     m_Color: {r: 0, g: 0.3, b: 0.23670739, a: 1}
     m_UseLightColor: 1
     m_Rotate: 0
-    m_Zoom: 1
+    m_Zoom: 0
     m_Fade: 1
   - m_ImageIndex: 1
     m_Position: 0.75
@@ -72,7 +72,7 @@ Flare:
     m_Color: {r: 0, g: 0.1710527, b: 0.25, a: 1}
     m_UseLightColor: 1
     m_Rotate: 0
-    m_Zoom: 1
+    m_Zoom: 0
     m_Fade: 1
   - m_ImageIndex: 1
     m_Position: 0.9
@@ -80,7 +80,7 @@ Flare:
     m_Color: {r: 0, g: 0.03947363, b: 0.2, a: 1}
     m_UseLightColor: 1
     m_Rotate: 0
-    m_Zoom: 1
+    m_Zoom: 0
     m_Fade: 1
   - m_ImageIndex: 2
     m_Position: 0.4
@@ -89,7 +89,7 @@ Flare:
     m_UseLightColor: 1
     m_Rotate: 0
     m_Zoom: 1
-    m_Fade: 1
+    m_Fade: 0
   - m_ImageIndex: 2
     m_Position: 0.46
     m_Size: 14
@@ -97,7 +97,7 @@ Flare:
     m_UseLightColor: 1
     m_Rotate: 0
     m_Zoom: 1
-    m_Fade: 1
+    m_Fade: 0
   - m_ImageIndex: 3
     m_Position: 0
     m_Size: 80
