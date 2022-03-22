@@ -70,12 +70,12 @@ public class NoiseTextureCreatorGUI : Editor {
                     minValue, maxValue, sampleValues[i, j]);
 
                 // This math is to apply power.
+                float k = Mathf.Pow(2f, creator.power - 1f);
                 if (value < 0.5f) {
-                    value = creator.power * Mathf.Pow(value, creator.power);
+                    value = k * Mathf.Pow(value, creator.power);
                 }
                 else {
-                    value = 1f - creator.power * Mathf.Pow(
-                        1f - value, creator.power);
+                    value = 1f - k * Mathf.Pow(1f - value, creator.power);
                 }
 
                 // This is in case inverted is toggled.
@@ -120,7 +120,7 @@ public class NoiseTextureCreatorGUI : Editor {
         creator.lacunarity = EditorGUILayout.Slider(
             "Lacunarity", creator.lacunarity, 0.1f, 4.0f);
         creator.power = EditorGUILayout.Slider(
-            "Power", creator.power, 1f, 4f);
+            "Power", creator.power, 1f, 8f);
         creator.inverted = EditorGUILayout.Toggle(
             "Inverted", creator.inverted);
         if (EditorGUI.EndChangeCheck()) {

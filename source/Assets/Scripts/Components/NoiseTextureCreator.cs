@@ -14,7 +14,7 @@ public class NoiseTextureCreator : MonoBehaviour {
     public float persistance = 0.5f;
     [Range(0.1f, 4f)]
     public float lacunarity = 2f;
-    [Range(1f, 4f)]
+    [Range(1f, 8f)]
     public float power = 1.0f;
     public bool inverted = false;
 
