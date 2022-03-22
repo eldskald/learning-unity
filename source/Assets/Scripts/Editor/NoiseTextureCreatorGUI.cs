@@ -68,6 +68,19 @@ public class NoiseTextureCreatorGUI : Editor {
             for (int j = 0; j < creator.resolution.y; j++) {
                 float value = Mathf.InverseLerp(
                     minValue, maxValue, sampleValues[i, j]);
+
+                // This math is to apply power.
+                if (value < 0.5f) {
+                    value = creator.power * Mathf.Pow(value, creator.power);
+                }
+                else {
+                    value = 1f - creator.power * Mathf.Pow(
+                        1f - value, creator.power);
+                }
+
+                // This is in case inverted is toggled.
+                value = creator.inverted ? 1f - value : value;
+
                 tex.SetPixel(i, j, new Color(value, value, value, 1.0f));
             }
         }
@@ -89,24 +102,32 @@ public class NoiseTextureCreatorGUI : Editor {
         GUILayout.Space(224);
 
         EditorGUI.BeginChangeCheck();
-        creator.resolution = EditorGUILayout.Vector2IntField(
-            "Resolution", creator.resolution);
-        creator.scale = EditorGUILayout.FloatField(
-            "Scale", creator.scale);
         creator.seed = EditorGUILayout.IntField(
             "Seed", creator.seed);
+        creator.resolution = EditorGUILayout.Vector2IntField(
+            "Resolution", creator.resolution);
+        creator.filePath = EditorGUILayout.TextField(
+            "File Path", creator.filePath);
+
+        GUIHelper.LongSpace();
+
+        creator.scale = EditorGUILayout.FloatField(
+            "Scale", creator.scale);
         creator.octaves = EditorGUILayout.IntSlider(
             "Octaves", creator.octaves, 1, 9);
         creator.persistance = EditorGUILayout.Slider(
             "Persistance", creator.persistance, 0, 1);
         creator.lacunarity = EditorGUILayout.Slider(
             "Lacunarity", creator.lacunarity, 0.1f, 4.0f);
+        creator.power = EditorGUILayout.Slider(
+            "Power", creator.power, 1f, 4f);
+        creator.inverted = EditorGUILayout.Toggle(
+            "Inverted", creator.inverted);
         if (EditorGUI.EndChangeCheck()) {
             creator.noiseTexture = UpdateTexture(creator);
         }
 
-        creator.filePath = EditorGUILayout.TextField(
-            "File Path", creator.filePath);
+        
         GUILayout.Space(32);
 
         if (GUILayout.Button("Save Texture")) {

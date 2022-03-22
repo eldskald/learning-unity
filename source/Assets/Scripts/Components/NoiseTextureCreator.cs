@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class NoiseTextureCreator : MonoBehaviour {
-    public Vector2Int resolution = new Vector2Int(128, 128);
-    public float scale = 1.0f;
     public int seed = 0;
+    public Vector2Int resolution = new Vector2Int(128, 128);
 
+    [Space(10)]
+    public float scale = 1f;
     [Range(1, 9)]
     public int octaves = 4;
-
-    [Range(0.0f, 1.0f)]
+    [Range(0f, 1f)]
     public float persistance = 0.5f;
+    [Range(0.1f, 4f)]
+    public float lacunarity = 2f;
+    [Range(1f, 4f)]
+    public float power = 1.0f;
+    public bool inverted = false;
 
-    [Range(0.1f, 4.0f)]
-    public float lacunarity = 2.0f;
-
+    [Space(10)]
     public string filePath = "Resources/Textures/Noise/Noise0.png";
     public Texture2D noiseTexture;
 }
