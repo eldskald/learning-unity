@@ -22,7 +22,7 @@ public class FPSCounter : MonoBehaviour {
         _totalFrames += Time.unscaledDeltaTime;
         _frameCounter += 1f;
         if (_time >= updateTime) {
-            int fps = (int)(_totalFrames / _frameCounter);
+            int fps = (int)(_frameCounter / _totalFrames);
             fps = Mathf.Clamp(fps, 0, 999);
             _text.text = "FPS: " + fps.ToString();
             _time = 0f;

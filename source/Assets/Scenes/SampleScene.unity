@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.59039843, g: 0.6817892, b: 0.69222766, a: 1}
+  m_IndirectSpecularColor: {r: 0.5905853, g: 0.6818051, b: 0.6922627, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1526,7 +1526,7 @@ GameObject:
   - component: {fileID: 166427917}
   - component: {fileID: 166427916}
   - component: {fileID: 166427915}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Fog
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1807,7 +1807,7 @@ GameObject:
   m_Component:
   - component: {fileID: 198681859}
   - component: {fileID: 198681858}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: InvisibleWall (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2724,7 +2724,7 @@ GameObject:
   m_Component:
   - component: {fileID: 284959244}
   - component: {fileID: 284959243}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: InvisibleWall (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3034,7 +3034,7 @@ GameObject:
   m_Component:
   - component: {fileID: 346065840}
   - component: {fileID: 346065839}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: InvisibleWall (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3216,7 +3216,7 @@ GameObject:
   m_Component:
   - component: {fileID: 353625918}
   - component: {fileID: 353625917}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: LevelEdge2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11561,10 +11561,10 @@ LensFlare:
   m_Flare: {fileID: 12100000, guid: fda6a8540e99e57069c032b7fe77799a, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_Brightness: 1
-  m_FadeSpeed: 3
+  m_FadeSpeed: 1
   m_IgnoreLayers:
     serializedVersion: 2
-    m_Bits: 6
+    m_Bits: 14
   m_Directional: 1
 --- !u!1001 &707759717
 PrefabInstance:
@@ -13244,6 +13244,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: water-ripples (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 7651159065469281532, guid: 33699ffc17c3ff2309fb40efe9b0d2d9, type: 3}
+      propertyPath: m_Layer
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33699ffc17c3ff2309fb40efe9b0d2d9, type: 3}
 --- !u!1001 &795484137
@@ -14150,6 +14154,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4095372233970792056, guid: 76af0bb22a570b3e0b43555a07d7a133, type: 3}
       propertyPath: m_ReceiveShadows
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5717381511068015028, guid: 76af0bb22a570b3e0b43555a07d7a133, type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6918406757992507093, guid: 76af0bb22a570b3e0b43555a07d7a133, type: 3}
@@ -15148,7 +15156,7 @@ GameObject:
   m_Component:
   - component: {fileID: 943269578}
   - component: {fileID: 943269577}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: InvisibleWall (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16585,7 +16593,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1027030900}
   - component: {fileID: 1027030899}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: LevelEdge1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17880,7 +17888,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1154876225}
   - component: {fileID: 1154876224}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: LevelEdge0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23358,6 +23366,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: water-ripples (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 7651159065469281532, guid: 33699ffc17c3ff2309fb40efe9b0d2d9, type: 3}
+      propertyPath: m_Layer
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33699ffc17c3ff2309fb40efe9b0d2d9, type: 3}
 --- !u!1001 &1618737794
@@ -23643,6 +23655,10 @@ PrefabInstance:
     - target: {fileID: 7651159065469281532, guid: 33699ffc17c3ff2309fb40efe9b0d2d9, type: 3}
       propertyPath: m_Name
       value: water-ripples (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7651159065469281532, guid: 33699ffc17c3ff2309fb40efe9b0d2d9, type: 3}
+      propertyPath: m_Layer
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33699ffc17c3ff2309fb40efe9b0d2d9, type: 3}
@@ -24212,7 +24228,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1698457294}
   - component: {fileID: 1698457293}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: InvisibleWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30106,6 +30122,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: water-ripples (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 7651159065469281532, guid: 33699ffc17c3ff2309fb40efe9b0d2d9, type: 3}
+      propertyPath: m_Layer
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33699ffc17c3ff2309fb40efe9b0d2d9, type: 3}
 --- !u!1001 &1834832828
@@ -30641,6 +30661,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -1635016387306889811, guid: ecd4810975829532a899e19c549ecfb4, type: 3}
+      propertyPath: m_Layer
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ecd4810975829532a899e19c549ecfb4, type: 3}
       propertyPath: m_Name
       value: ruins-fountain-1
@@ -30648,6 +30672,14 @@ PrefabInstance:
     - target: {fileID: 1774161969120837241, guid: ecd4810975829532a899e19c549ecfb4, type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6572683484597976625, guid: ecd4810975829532a899e19c549ecfb4, type: 3}
+      propertyPath: m_Layer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7826115961356520321, guid: ecd4810975829532a899e19c549ecfb4, type: 3}
+      propertyPath: m_Layer
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ecd4810975829532a899e19c549ecfb4, type: 3}
@@ -31160,7 +31192,7 @@ GameObject:
   - component: {fileID: 1935090781}
   - component: {fileID: 1935090780}
   - component: {fileID: 1935090779}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Fog (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
